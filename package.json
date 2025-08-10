@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "generate": "pnpx prisma generate",
+    "generate": "prisma generate",
     "build:only": "next build",
     "build": "next build",
     "start": "next start",
