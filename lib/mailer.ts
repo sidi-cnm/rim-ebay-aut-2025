@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport(
 );
 
 export async function sendVerificationEmailLocal(to: string, token: string) {
-  let baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const url = `${baseUrl}/fr/api/mail/verify?token=${token}`;
  // console.log("Envoi de l'email de vérification à", to, "avec le lien", url);
 
@@ -25,7 +25,7 @@ export async function sendVerificationEmailLocal(to: string, token: string) {
 }
 
 export async function sendResetPasswordLinkLocal(to: string, token: string) {
-  let baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const url = `${baseUrl}/fr/p/users/reset-password?token=${token}`;
  // console.log("Envoi de l'email de vérification à", to, "avec le lien", url);
 

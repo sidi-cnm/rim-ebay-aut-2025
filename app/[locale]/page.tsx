@@ -44,7 +44,8 @@ export default async function Home(props: {
   const price = searchParams?.price;
 
   // Build the where clause for filtering
-  const where: any = {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where:any = {};
   where.isPublished = true; // Assuming you want to filter only published annonces 
   if (typeAnnonceId && typeAnnonceId !== "") where.typeAnnonceId = typeAnnonceId;
   if (categorieId && categorieId !== "") where.categorieId = categorieId;
@@ -57,11 +58,15 @@ export default async function Home(props: {
     id: annonce.id,
     typeAnnonceId: annonce.typeAnnonceId,
     typeAnnonceid: annonce.typeAnnonceId,
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     typeAnnonceName: (annonce as any).type_annonce?.name ?? "",
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     typeAnnonceNameAr: (annonce as any).type_annonce?.nameAr ?? "",
     categorieId: annonce.categorieId,
     categorieid: annonce.categorieId,
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     categorieName: (annonce as any).categorie?.name ?? "",
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     categorieNameAr: (annonce as any).categorie?.nameAr ?? "",
     lieuId: annonce.lieuId,
     lieuid: annonce.lieuId,
