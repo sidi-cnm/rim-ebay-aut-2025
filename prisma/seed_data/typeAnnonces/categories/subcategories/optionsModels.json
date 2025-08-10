@@ -1,0 +1,151 @@
+[
+  {
+    "name": "Studio",
+    "nameAr": "استوديو",
+    "priority": 1,
+    "tag": "subcategory"
+  },
+  {
+    "name": "Voitures",
+    "nameAr": "سيارات",
+    "priority": 1,
+    "tag": "subcategory",
+    "parentName": "Vehicules"
+  },
+  {
+    "name": "Motos",
+    "nameAr": "دراجات نارية",
+    "priority": 2,
+    "tag": "subcategory",
+    "parentName": "Vehicules"
+  },
+  {
+    "name": "smartphones",
+    "nameAr": "هواتف ذكية",
+    "priority": 1,
+    "tag": "subcategory",
+    "parentName": "telephonie, informatique, multimedia"
+  },
+  {
+    "name": "Ordinateurs",
+    "nameAr": "أجهزة الكمبيوتر",
+    "priority": 2,
+    "tag": "subcategory",
+    "parentName": "telephonie, informatique, multimedia"
+  },
+  {
+    "name": "Tablettes",
+    "nameAr": "أجهزة الكمبيوتر اللوحية",
+    "priority": 3,
+    "tag": "subcategory",
+    "parentName": "telephonie, informatique, multimedia"
+  },
+  {
+    "name": "Accessoires",
+    "nameAr": "ملحقات",
+    "priority": 4,
+    "tag": "subcategory",
+    "parentName": "telephonie, informatique, multimedia"
+  },
+  {
+    "name": "Appartement",
+    "nameAr": "شقة",
+    "priority": 1,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  {
+    "name": "Maison",
+    "nameAr": "منزل",
+    "priority": 2,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  {
+    "name": "Terrain",
+    "nameAr": "أرض",
+    "priority": 3,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  {
+    "name": "Location",
+    "nameAr": "تأجير",
+    "priority": 4,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  {
+    "name": "Villa",
+    "nameAr": "فيلا",
+    "priority": 5,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  {
+    "name": "Bureau",
+    "nameAr": "مكتب",
+    "priority": 6,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  {
+    "name": "Magasin",
+    "nameAr": "متجر",
+    "priority": 7,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  
+  {
+    "name": "Maisons",
+    "nameAr": "منازل",
+    "priority": 2,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  {
+    "name": "Location Court Terme",
+    "tag": "subcategory",
+    "parentName": "Location appartement"
+  },
+  {
+    "name": "Vêtements Homme",
+    "nameAr": "ملابس رجالية",
+    "tag": "subcategory"
+  },
+  {
+    "name": "Appartement",
+    "nameAr": "شقة",
+    "priority": 3,
+    "tag": "subcategory",
+    "parentName": "Immobilier,maison,appartement"
+  },
+  {
+    "name": "Service jardinage",
+    "nameAr": "خدمات البستنة",
+    "priority": 1,
+    "tag": "subcategory",
+    "parentName": "Service jardinage"
+  },
+  {
+    "name": "Service enseignement",
+    "nameAr": "خدمات التعليم",
+    "priority": 1,
+    "tag": "subcategory",
+    "parentName": "Service enseignement"
+  },
+  {
+    "name": "Service nettoyage",
+    "nameAr": "خدمات التنظيف",
+    "priority": 1,
+    "tag": "subcategory",
+    "parentName": "Service nettoyage"
+  },
+  {
+    "name": "General",
+    "nameAr": "عام",
+    "priority": 99,
+    "tag": "subcategory"
+  }
+]

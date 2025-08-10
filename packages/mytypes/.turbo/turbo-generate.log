@@ -1,0 +1,14 @@
+
+
+> @repo/mytypes@1.0.0 generate /home/ely/Documents/rim-ijar-6-7-2024/rim-ijar-turbo2/packages/mytypes
+> prisma generate
+
+[2mPrisma schema loaded from prisma/schema.prisma[22m
+
+
+✔ Generated [1mPrisma Client[22m (v6.5.0)[2m to ./../../node_modules/.pnpm/@prisma+client@6.5.0_prisma@6.5.0_typescript@5.8.2__typescript@5.8.2/node_modules/@prisma/client[22m in 348ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Help us improve the Prisma ORM for everyone. Share your feedback in a short 2-min survey: https://pris.ly/orm/survey/release-5-22
+

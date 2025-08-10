@@ -1,0 +1,14 @@
+services:
+  mongodb-dev:
+    image: mongo:latest
+    container_name: mongodb-dev
+    hostname: localhost
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    restart: unless-stopped  # Politique de redémarrage
+    command: --replSet rs0 --noauth
+
+volumes:
+  mongodb-data:

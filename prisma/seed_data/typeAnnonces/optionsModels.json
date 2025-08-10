@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Location",
+    "nameAr": "الإيجار",
+    "priority": 1,
+    "tag": "typeAnnonce"
+  },
+  {
+    "name": "Vente",
+    "nameAr": "بيع",
+    "priority": 2,
+    "tag": "typeAnnonce"
+  },
+  {
+    "name": "Service",
+    "nameAr": "خدمة",
+    "priority": 3,
+    "tag": "typeAnnonce"
+  },
+  {
+    "name": "autre types",
+    "nameAr": "أنواع أخرى",
+    "priority": 4,
+    "tag": "typeAnnonce"
+  }
+]

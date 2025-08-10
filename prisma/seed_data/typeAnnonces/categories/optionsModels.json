@@ -1,0 +1,149 @@
+[
+  {
+    "name": "Vehicules",
+    "nameAr": "المركبات",
+    "priority": 1,
+    "tag": "category",
+    "parentName": "Location"
+  },
+  {
+    "name": "telephonie, informatique, multimedia",
+    "nameAr": "الهواتف والحواسيب والوسائط المتعددة",
+    "priority": 2,
+    "tag": "category",
+    "parentName": "Vente"
+  },
+  {
+    "name": "Immobilier,maison,appartement",
+    "nameAr": "العقارات والمنازل والشقق",
+    "priority": 3,
+    "tag": "category",
+    "parentName": "Vente"
+  },
+  {
+    "name": "Location appartement",
+    "nameAr": "شقة للإيجار",
+    "priority": 4,
+    "tag": "category",
+    "parentName": "Location"
+  },
+  {
+    "name": "Location voiture",
+    "nameAr": "سيارة للإيجار",
+    "priority": 5,
+    "tag": "category",
+    "parentName": "Location"
+  },
+  {
+    "name": "Location matériel",
+    "nameAr": "تأجير المعدات",
+    "priority": 6,
+    "tag": "category",
+    "parentName": "Location"
+  },
+  {
+    "name": "Location vacances",
+    "nameAr": "تأجير العطلات",
+    "priority": 13,
+    "tag": "category",
+    "parentName": "Location"
+  },
+  {
+    "name": "Location bureau",
+    "nameAr": "تأجير مكتب",
+    "priority": 14,
+    "tag": "category",
+    "parentName": "Location"
+  },
+  {
+    "name": "Location commerce",
+    "nameAr": "تأجير تجاري",
+    "priority": 15,
+    "tag": "category",
+    "parentName": "Location"
+  },
+  {
+    "name": "Vente vêtements",
+    "nameAr": "بيع ملابس",
+    "priority": 7,
+    "tag": "category",
+    "parentName": "Vente"
+  },
+  {
+    "name": "Vente immobilier",
+    "nameAr": "بيع العقارات",
+    "priority": 8,
+    "tag": "category",
+    "parentName": "Vente"
+  },
+  {
+    "name": "Vente voiture",
+    "nameAr": "بيع سيارات",
+    "priority": 9,
+    "tag": "category",
+    "parentName": "Vente"
+  },
+  {
+    "name": "Vente meubles",
+    "nameAr": "بيع الأثاث",
+    "priority": 16,
+    "tag": "category",
+    "parentName": "Vente"
+  },
+  {
+    "name": "Vente matériel informatique",
+    "nameAr": "بيع معدات الكمبيوتر",
+    "priority": 17,
+    "tag": "category",
+    "parentName": "Vente"
+  },
+  {
+    "name": "Vente téléphones",
+    "nameAr": "بيع الهواتف",
+    "priority": 18,
+    "tag": "category",
+    "parentName": "Vente"
+  },
+  {
+    "name": "Service réparation",
+    "nameAr": "خدمة إصلاح",
+    "priority": 10,
+    "tag": "category",
+    "parentName": "Service"
+  },
+  {
+    "name": "Service nettoyage",
+    "nameAr": "خدمة تنظيف",
+    "priority": 11,
+    "tag": "category",
+    "parentName": "Service"
+  },
+  {
+    "name": "Service enseignement",
+    "nameAr": "خدمة التدريس",
+    "priority": 12,
+    "tag": "category",
+    "parentName": "Service"
+  },
+  {
+    "name": "Service plomberie",
+    "nameAr": "خدمة سباكة",
+    "priority": 19,
+    "tag": "category",
+    "parentName": "Service"
+  },
+  {
+    "name": "Service électricité",
+    "nameAr": "خدمة كهرباء",
+    "priority": 20,
+    "tag": "category",
+    "parentName": "Service"
+  },
+  {
+    "name": "Service jardinage",
+    "nameAr": "خدمة بستنة",
+    "priority": 21,
+    "tag": "category",
+    "parentName": "Service"
+  }
+]

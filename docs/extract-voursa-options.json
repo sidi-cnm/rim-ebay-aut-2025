@@ -1,0 +1,1674 @@
+{
+    "category": [
+      {
+        "value": 0,
+        "text": "اختيار التصنيف"
+      },
+      {
+        "value": 1,
+        "text": "سيارات ومركبات"
+      },
+      {
+        "value": 2,
+        "text": "معلوماتية، هواتف، وسائط متعددة"
+      },
+      {
+        "value": 3,
+        "text": "عقارات للبيع"
+      },
+      {
+        "value": 4,
+        "text": "عقارات للإيجار"
+      },
+      {
+        "value": 5,
+        "text": "كهربائيات، أثاث وأدوات منزلية"
+      },
+      {
+        "value": 6,
+        "text": "ملابس وموضة"
+      },
+      {
+        "value": 7,
+        "text": "حيوانات"
+      },
+      {
+        "value": 8,
+        "text": "سياحة، سفر وعطل"
+      },
+      {
+        "value": 9,
+        "text": "وظائف، خدمات، شركات"
+      },
+      {
+        "value": 10,
+        "text": "تصنيف آخر"
+      }
+    ],
+    "categorie": [
+      {
+        "value": 0,
+        "text": "التصنيف الفرعي: الكل"
+      }
+    ],
+    "pc_marque": [
+      {
+        "value": 0,
+        "text": "ماركة الحاسوب: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Acer"
+      },
+      {
+        "value": 2,
+        "text": "Asus"
+      },
+      {
+        "value": 3,
+        "text": "Apple"
+      },
+      {
+        "value": 4,
+        "text": "Compaq"
+      },
+      {
+        "value": 5,
+        "text": "Dell"
+      },
+      {
+        "value": 6,
+        "text": "Gateway"
+      },
+      {
+        "value": 7,
+        "text": "HP"
+      },
+      {
+        "value": 8,
+        "text": "Lenovo"
+      },
+      {
+        "value": 9,
+        "text": "LG"
+      },
+      {
+        "value": 10,
+        "text": "Microsoft"
+      },
+      {
+        "value": 11,
+        "text": "Samsung"
+      },
+      {
+        "value": 12,
+        "text": "Sony"
+      },
+      {
+        "value": 13,
+        "text": "Toshiba"
+      },
+      {
+        "value": 14,
+        "text": "ماركة أخرى"
+      }
+    ],
+    "processeur": [
+      {
+        "value": 0,
+        "text": "المعالج: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Intel Core i9"
+      },
+      {
+        "value": 2,
+        "text": "Intel Core i7"
+      },
+      {
+        "value": 3,
+        "text": "Intel Core i5"
+      },
+      {
+        "value": 4,
+        "text": "Intel Core i3"
+      },
+      {
+        "value": 5,
+        "text": "Intel Core 2"
+      },
+      {
+        "value": 6,
+        "text": "Intel Celeron"
+      },
+      {
+        "value": 7,
+        "text": "Intel Xeon"
+      },
+      {
+        "value": 8,
+        "text": "Intel Pentium"
+      },
+      {
+        "value": 9,
+        "text": "AMD"
+      },
+      {
+        "value": 10,
+        "text": "معالج آخر"
+      }
+    ],
+    "pc_ram": [
+      {
+        "value": 0,
+        "text": "الذاكرة (رام): الكل"
+      },
+      {
+        "value": 1,
+        "text": "Moin de 2GB"
+      },
+      {
+        "value": 2,
+        "text": "2 GB"
+      },
+      {
+        "value": 3,
+        "text": "3 GB"
+      },
+      {
+        "value": 4,
+        "text": "4 GB"
+      },
+      {
+        "value": 5,
+        "text": "6 GB"
+      },
+      {
+        "value": 6,
+        "text": "8 GB"
+      },
+      {
+        "value": 7,
+        "text": "10 GB"
+      },
+      {
+        "value": 8,
+        "text": "12 GB"
+      },
+      {
+        "value": 9,
+        "text": "14 GB"
+      },
+      {
+        "value": 10,
+        "text": "16 GB"
+      },
+      {
+        "value": 11,
+        "text": "18 GB"
+      },
+      {
+        "value": 12,
+        "text": "20 GB"
+      },
+      {
+        "value": 13,
+        "text": "24 GB"
+      },
+      {
+        "value": 14,
+        "text": "28 GB"
+      },
+      {
+        "value": 15,
+        "text": "32 GB"
+      },
+      {
+        "value": 16,
+        "text": "Entre 32 et 64 GB"
+      },
+      {
+        "value": 17,
+        "text": "64 GB et plus"
+      }
+    ],
+    "pc_dd": [
+      {
+        "value": 0,
+        "text": "القرص الصلب: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Moins de 250 GB"
+      },
+      {
+        "value": 2,
+        "text": "250 GB ou (256 GB SSD)"
+      },
+      {
+        "value": 3,
+        "text": "Entre 250 et 500 GB"
+      },
+      {
+        "value": 4,
+        "text": "500 GB ou (512 GB SSD)"
+      },
+      {
+        "value": 5,
+        "text": "Entre 500 et 1000 GB (1 TB)"
+      },
+      {
+        "value": 6,
+        "text": "1000 GB (1 TB)"
+      },
+      {
+        "value": 7,
+        "text": "Entre 1000 et 2000 GB"
+      },
+      {
+        "value": 8,
+        "text": "2000 GB (2 TB)"
+      },
+      {
+        "value": 9,
+        "text": "plus de 2000 GB (2 TB)"
+      }
+    ],
+    "tv_marque": [
+      {
+        "value": 0,
+        "text": "ماركة التلفزيون: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Hisense"
+      },
+      {
+        "value": 2,
+        "text": "LG"
+      },
+      {
+        "value": 3,
+        "text": "Panasonic"
+      },
+      {
+        "value": 4,
+        "text": "Philips"
+      },
+      {
+        "value": 5,
+        "text": "Samsung"
+      },
+      {
+        "value": 6,
+        "text": "Sharp"
+      },
+      {
+        "value": 7,
+        "text": "Sony"
+      },
+      {
+        "value": 8,
+        "text": "Star Sat"
+      },
+      {
+        "value": 9,
+        "text": "TCL"
+      },
+      {
+        "value": 10,
+        "text": "ماركة أخرى"
+      }
+    ],
+    "tv_resolution": [
+      {
+        "value": 0,
+        "text": "حجم التلفزيون: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Moins de 32 Pouces"
+      },
+      {
+        "value": 2,
+        "text": "32 Pouces"
+      },
+      {
+        "value": 3,
+        "text": "Entre 33 et 39 Pouces"
+      },
+      {
+        "value": 4,
+        "text": "40 Pouces"
+      },
+      {
+        "value": 5,
+        "text": "41 Pouces"
+      },
+      {
+        "value": 6,
+        "text": "42 Pouces"
+      },
+      {
+        "value": 7,
+        "text": "43 Pouces"
+      },
+      {
+        "value": 8,
+        "text": "Entre 44 et 48 Pouces"
+      },
+      {
+        "value": 9,
+        "text": "Entre 49 et 55 Pouces"
+      },
+      {
+        "value": 10,
+        "text": "Entre 56 et 60 Pouces"
+      },
+      {
+        "value": 11,
+        "text": "Plus de 60 Pouces"
+      },
+      {
+        "value": 12,
+        "text": "حجم آخر"
+      }
+    ],
+    "tv_3d": [
+      {
+        "value": 0,
+        "text": "دعم النظارات الإفتراضية"
+      },
+      {
+        "value": 1,
+        "text": "نعم"
+      },
+      {
+        "value": 2,
+        "text": "لا"
+      },
+      {
+        "value": 3,
+        "text": "غير محدد"
+      }
+    ],
+    "domaine": [
+      {
+        "value": 0,
+        "text": "المجال: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Carreleur, parqueteur"
+      },
+      {
+        "value": 2,
+        "text": "Cours particuliers, soutien"
+      },
+      {
+        "value": 3,
+        "text": "Comptable"
+      },
+      {
+        "value": 4,
+        "text": "Conseil juridique"
+      },
+      {
+        "value": 5,
+        "text": "Electricien"
+      },
+      {
+        "value": 6,
+        "text": "Evénementiel, mariage, fête"
+      },
+      {
+        "value": 7,
+        "text": "Gardiennage maison"
+      },
+      {
+        "value": 8,
+        "text": "Installation de climatisation"
+      },
+      {
+        "value": 9,
+        "text": "Jardinier, paysagiste"
+      },
+      {
+        "value": 10,
+        "text": "Maçon, Menuisier, Bricolage"
+      },
+      {
+        "value": 11,
+        "text": "Montage Meuble"
+      },
+      {
+        "value": 12,
+        "text": "Peintre"
+      },
+      {
+        "value": 13,
+        "text": "Pisciniste"
+      },
+      {
+        "value": 14,
+        "text": "Plombier, chauffagiste"
+      },
+      {
+        "value": 15,
+        "text": "Secrétariat"
+      },
+      {
+        "value": 16,
+        "text": "Traduction, rédaction"
+      },
+      {
+        "value": 17,
+        "text": "خدمات أخرى"
+      }
+    ],
+    "jeux_vid_tp": [
+      {
+        "value": 0,
+        "text": "تحديد النوع: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Console لعبة"
+      },
+      {
+        "value": 2,
+        "text": "Jeux (CD/DVD/Blue-Ray...)"
+      },
+      {
+        "value": 3,
+        "text": "ملحقات (مانت، كاسك...)"
+      }
+    ],
+    "platforme": [
+      {
+        "value": 0,
+        "text": "اللعبة أو المنصة: الكل"
+      },
+      {
+        "value": 1,
+        "text": "PC"
+      },
+      {
+        "value": 2,
+        "text": "PlayStation 1"
+      },
+      {
+        "value": 3,
+        "text": "PlayStation 2"
+      },
+      {
+        "value": 4,
+        "text": "PlayStation 3"
+      },
+      {
+        "value": 5,
+        "text": "PlayStation 4"
+      },
+      {
+        "value": 6,
+        "text": "PlayStation Vita"
+      },
+      {
+        "value": 7,
+        "text": "Xbox One"
+      },
+      {
+        "value": 8,
+        "text": "Xbox 360"
+      },
+      {
+        "value": 9,
+        "text": "Wii U"
+      },
+      {
+        "value": 10,
+        "text": "Wii"
+      },
+      {
+        "value": 11,
+        "text": "Nintendo 3DS"
+      },
+      {
+        "value": 12,
+        "text": "Nintendo DS"
+      },
+      {
+        "value": 13,
+        "text": "Sony PSP"
+      },
+      {
+        "value": 14,
+        "text": "أخرى"
+      }
+    ],
+    "montre_bijou": [
+      {
+        "value": 0,
+        "text": "تحديد النوع"
+      },
+      {
+        "value": 1,
+        "text": "للرجال"
+      },
+      {
+        "value": 2,
+        "text": "للنساء"
+      }
+    ],
+    "chaussure_tp": [
+      {
+        "value": 0,
+        "text": "تحديد النوع"
+      },
+      {
+        "value": 1,
+        "text": "للرجال"
+      },
+      {
+        "value": 2,
+        "text": "للنساء"
+      },
+      {
+        "value": 3,
+        "text": "للأطفال"
+      }
+    ],
+    "chaussure_point": [
+      {
+        "value": 0,
+        "text": "المقاس: الكل"
+      },
+      {
+        "value": 16,
+        "text": "16"
+      },
+      {
+        "value": 17,
+        "text": "17"
+      },
+      {
+        "value": 18,
+        "text": "18"
+      },
+      {
+        "value": 19,
+        "text": "19"
+      },
+      {
+        "value": 20,
+        "text": "20"
+      },
+      {
+        "value": 21,
+        "text": "21"
+      },
+      {
+        "value": 22,
+        "text": "22"
+      },
+      {
+        "value": 23,
+        "text": "23"
+      },
+      {
+        "value": 24,
+        "text": "24"
+      },
+      {
+        "value": 25,
+        "text": "25"
+      },
+      {
+        "value": 26,
+        "text": "26"
+      },
+      {
+        "value": 27,
+        "text": "27"
+      },
+      {
+        "value": 28,
+        "text": "28"
+      },
+      {
+        "value": 29,
+        "text": "29"
+      },
+      {
+        "value": 30,
+        "text": "30"
+      },
+      {
+        "value": 31,
+        "text": "31"
+      },
+      {
+        "value": 32,
+        "text": "32"
+      },
+      {
+        "value": 33,
+        "text": "33"
+      },
+      {
+        "value": 34,
+        "text": "34"
+      },
+      {
+        "value": 35,
+        "text": "35"
+      },
+      {
+        "value": 36,
+        "text": "36"
+      },
+      {
+        "value": 37,
+        "text": "37"
+      },
+      {
+        "value": 38,
+        "text": "38"
+      },
+      {
+        "value": 39,
+        "text": "39"
+      },
+      {
+        "value": 40,
+        "text": "40"
+      },
+      {
+        "value": 41,
+        "text": "41"
+      },
+      {
+        "value": 42,
+        "text": "42"
+      },
+      {
+        "value": 43,
+        "text": "43"
+      },
+      {
+        "value": 44,
+        "text": "44"
+      },
+      {
+        "value": 45,
+        "text": "45"
+      },
+      {
+        "value": 46,
+        "text": "46"
+      },
+      {
+        "value": 47,
+        "text": "47"
+      },
+      {
+        "value": 48,
+        "text": "48"
+      },
+      {
+        "value": 49,
+        "text": "49"
+      },
+      {
+        "value": 50,
+        "text": "50 et plus"
+      }
+    ],
+    "vet_h_type": [
+      {
+        "value": 0,
+        "text": "نوع الملابس"
+      },
+      {
+        "value": 1,
+        "text": "Habit traditionnel (Boubou et autres)"
+      },
+      {
+        "value": 2,
+        "text": "Costume"
+      },
+      {
+        "value": 3,
+        "text": "Chemise"
+      },
+      {
+        "value": 4,
+        "text": "Manteau"
+      },
+      {
+        "value": 5,
+        "text": "Pantalon"
+      },
+      {
+        "value": 6,
+        "text": "Polo"
+      },
+      {
+        "value": 7,
+        "text": "Pull"
+      },
+      {
+        "value": 8,
+        "text": "T-Shirt"
+      },
+      {
+        "value": 9,
+        "text": "Veste"
+      },
+      {
+        "value": 10,
+        "text": "أخرى"
+      }
+    ],
+    "vet_h_taille": [
+      {
+        "value": 0,
+        "text": "تحديد قياس الملابس"
+      },
+      {
+        "value": 1,
+        "text": "XS"
+      },
+      {
+        "value": 2,
+        "text": "S"
+      },
+      {
+        "value": 3,
+        "text": "M"
+      },
+      {
+        "value": 4,
+        "text": "L"
+      },
+      {
+        "value": 5,
+        "text": "XL"
+      },
+      {
+        "value": 6,
+        "text": "XXL"
+      },
+      {
+        "value": 7,
+        "text": "XXXL et plus"
+      },
+      {
+        "value": 8,
+        "text": "Boubou 10m"
+      },
+      {
+        "value": 9,
+        "text": "Boubou 9m"
+      },
+      {
+        "value": 10,
+        "text": "Boubou 8m"
+      },
+      {
+        "value": 11,
+        "text": "قياس آخر"
+      }
+    ],
+    "phone_marque": [
+      {
+        "value": 0,
+        "text": "ماركة الهاتف: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Apple (iPhone)"
+      },
+      {
+        "value": 2,
+        "text": "Samsung"
+      },
+      {
+        "value": 3,
+        "text": "Alcatel"
+      },
+      {
+        "value": 4,
+        "text": "Huawei"
+      },
+      {
+        "value": 5,
+        "text": "Nokia"
+      },
+      {
+        "value": 6,
+        "text": "BlackBerry"
+      },
+      {
+        "value": 7,
+        "text": "Google"
+      },
+      {
+        "value": 8,
+        "text": "iTel"
+      },
+      {
+        "value": 9,
+        "text": "LG"
+      },
+      {
+        "value": 10,
+        "text": "Motorola"
+      },
+      {
+        "value": 11,
+        "text": "HTC"
+      },
+      {
+        "value": 12,
+        "text": "Honor"
+      },
+      {
+        "value": 13,
+        "text": "Zte"
+      },
+      {
+        "value": 14,
+        "text": "Sony"
+      },
+      {
+        "value": 15,
+        "text": "Xiaomi"
+      },
+      {
+        "value": 16,
+        "text": "ماركة أخرى"
+      }
+    ],
+    "phone_model": [
+      {
+        "value": 0,
+        "text": "تحديد مودل الآيفون"
+      },
+      {
+        "value": 17,
+        "text": "iPhone 3G"
+      },
+      {
+        "value": 18,
+        "text": "iPhone 3GS"
+      },
+      {
+        "value": 19,
+        "text": "iPhone 4"
+      },
+      {
+        "value": 20,
+        "text": "iPhone 4S"
+      },
+      {
+        "value": 21,
+        "text": "iPhone 5"
+      },
+      {
+        "value": 22,
+        "text": "iPhone 5S"
+      },
+      {
+        "value": 23,
+        "text": "iPhone 5c"
+      },
+      {
+        "value": 24,
+        "text": "Iphone 6"
+      },
+      {
+        "value": 25,
+        "text": "Iphone 6 Plus"
+      },
+      {
+        "value": 26,
+        "text": "Iphone 6S"
+      },
+      {
+        "value": 27,
+        "text": "Iphone 6S Plus"
+      },
+      {
+        "value": 28,
+        "text": "iPhone SE"
+      },
+      {
+        "value": 29,
+        "text": "iPhone 7"
+      },
+      {
+        "value": 30,
+        "text": "IPhone 7 Plus"
+      },
+      {
+        "value": 31,
+        "text": "IPhone 8"
+      },
+      {
+        "value": 32,
+        "text": "IPhone 8 Plus"
+      },
+      {
+        "value": 33,
+        "text": "Iphone X"
+      },
+      {
+        "value": 34,
+        "text": "iPhone XR"
+      },
+      {
+        "value": 35,
+        "text": "iPhone XS Max"
+      },
+      {
+        "value": 36,
+        "text": "iPhone XS"
+      },
+      {
+        "value": 37,
+        "text": "iPhone 11"
+      },
+      {
+        "value": 38,
+        "text": "iPhone 11 Pro"
+      },
+      {
+        "value": 39,
+        "text": "iPhone 11 Pro Max"
+      },
+      {
+        "value": 40,
+        "text": "iPhone 12"
+      },
+      {
+        "value": 41,
+        "text": "iPhone 12 mini"
+      },
+      {
+        "value": 42,
+        "text": "iPhone 12 Pro"
+      },
+      {
+        "value": 43,
+        "text": "iPhone 12 Pro Max"
+      },
+      {
+        "value": 44,
+        "text": "iPhone 13"
+      },
+      {
+        "value": 45,
+        "text": "iPhone 13 mini"
+      },
+      {
+        "value": 46,
+        "text": "iPhone 13 Pro"
+      },
+      {
+        "value": 47,
+        "text": "iPhone 13 Pro Max"
+      },
+      {
+        "value": 48,
+        "text": "iPhone 14"
+      },
+      {
+        "value": 49,
+        "text": "iPhone 14 Plus"
+      },
+      {
+        "value": 50,
+        "text": "iPhone 14 Pro"
+      },
+      {
+        "value": 51,
+        "text": "iPhone 14 Pro Max"
+      },
+      {
+        "value": 52,
+        "text": "iPhone 15"
+      },
+      {
+        "value": 53,
+        "text": "iPhone 15 Plus"
+      },
+      {
+        "value": 54,
+        "text": "iPhone 15 Pro"
+      },
+      {
+        "value": 55,
+        "text": "iPhone 15 Pro Max"
+      }
+    ],
+    "phone_Stock": [
+      {
+        "value": 0,
+        "text": "سعة التخزين الداخلية: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Moins de 4GB"
+      },
+      {
+        "value": 2,
+        "text": "4GB"
+      },
+      {
+        "value": 3,
+        "text": "8GB"
+      },
+      {
+        "value": 4,
+        "text": "16GB"
+      },
+      {
+        "value": 5,
+        "text": "32GB"
+      },
+      {
+        "value": 6,
+        "text": "64GB"
+      },
+      {
+        "value": 7,
+        "text": "128GB"
+      },
+      {
+        "value": 8,
+        "text": "256GB"
+      },
+      {
+        "value": 9,
+        "text": "Plus de 256GB"
+      },
+      {
+        "value": 10,
+        "text": "Autre capacité"
+      }
+    ],
+    "tf": [
+      {
+        "value": 0,
+        "text": "سند عقاري؟"
+      },
+      {
+        "value": 1,
+        "text": "نعم"
+      },
+      {
+        "value": 2,
+        "text": "لا"
+      },
+      {
+        "value": 3,
+        "text": "غير محدد"
+      }
+    ],
+    "marque": [
+      {
+        "value": 0,
+        "text": "ماركة السيارة: الكل"
+      },
+      {
+        "value": 1,
+        "text": "Toyota"
+      },
+      {
+        "value": 2,
+        "text": "Mercedes"
+      },
+      {
+        "value": 3,
+        "text": "Mitsubishi"
+      },
+      {
+        "value": 4,
+        "text": "Hyundai"
+      },
+      {
+        "value": 5,
+        "text": "Audi"
+      },
+      {
+        "value": 6,
+        "text": "BMW"
+      },
+      {
+        "value": 7,
+        "text": "Land rover"
+      },
+      {
+        "value": 8,
+        "text": "Nissan"
+      },
+      {
+        "value": 9,
+        "text": "Peugeot"
+      },
+      {
+        "value": 10,
+        "text": "Renault"
+      },
+      {
+        "value": 11,
+        "text": "Volkswagen"
+      },
+      {
+        "value": 12,
+        "text": "Citroen"
+      },
+      {
+        "value": 13,
+        "text": "Fiat"
+      },
+      {
+        "value": 14,
+        "text": "Ford"
+      },
+      {
+        "value": 15,
+        "text": "Opel"
+      },
+      {
+        "value": 16,
+        "text": "Seat"
+      },
+      {
+        "value": 17,
+        "text": "Suzuki"
+      },
+      {
+        "value": 18,
+        "text": "ماركة أخرى"
+      }
+    ],
+    "modele": [
+      {
+        "value": 0,
+        "text": "مودل السيارة: الكل"
+      }
+    ],
+    "regdate": [
+      {
+        "value": 0,
+        "text": "السنة: الكل"
+      },
+      {
+        "value": 2022,
+        "text": "2022"
+      },
+      {
+        "value": 2021,
+        "text": "2021"
+      },
+      {
+        "value": 2020,
+        "text": "2020"
+      },
+      {
+        "value": 2019,
+        "text": "2019"
+      },
+      {
+        "value": 2018,
+        "text": "2018"
+      },
+      {
+        "value": 2017,
+        "text": "2017"
+      },
+      {
+        "value": 2016,
+        "text": "2016"
+      },
+      {
+        "value": 2015,
+        "text": "2015"
+      },
+      {
+        "value": 2014,
+        "text": "2014"
+      },
+      {
+        "value": 2013,
+        "text": "2013"
+      },
+      {
+        "value": 2012,
+        "text": "2012"
+      },
+      {
+        "value": 2011,
+        "text": "2011"
+      },
+      {
+        "value": 2010,
+        "text": "2010"
+      },
+      {
+        "value": 2009,
+        "text": "2009"
+      },
+      {
+        "value": 2008,
+        "text": "2008"
+      },
+      {
+        "value": 2007,
+        "text": "2007"
+      },
+      {
+        "value": 2006,
+        "text": "2006"
+      },
+      {
+        "value": 2005,
+        "text": "2005"
+      },
+      {
+        "value": 2004,
+        "text": "2004"
+      },
+      {
+        "value": 2003,
+        "text": "2003"
+      },
+      {
+        "value": 2002,
+        "text": "2002"
+      },
+      {
+        "value": 2001,
+        "text": "2001"
+      },
+      {
+        "value": 2000,
+        "text": "2000"
+      },
+      {
+        "value": 1999,
+        "text": "1999"
+      },
+      {
+        "value": 1998,
+        "text": "1998"
+      },
+      {
+        "value": 1997,
+        "text": "1997"
+      },
+      {
+        "value": 1996,
+        "text": "1996"
+      },
+      {
+        "value": 1995,
+        "text": "1995"
+      },
+      {
+        "value": 1994,
+        "text": "1994"
+      },
+      {
+        "value": 1993,
+        "text": "1993"
+      },
+      {
+        "value": 1992,
+        "text": "1992"
+      },
+      {
+        "value": 1991,
+        "text": "1991"
+      },
+      {
+        "value": 1990,
+        "text": "1990"
+      },
+      {
+        "value": 1989,
+        "text": "1989"
+      },
+      {
+        "value": 1988,
+        "text": "1988"
+      },
+      {
+        "value": 1987,
+        "text": "1987"
+      },
+      {
+        "value": 1986,
+        "text": "1986"
+      },
+      {
+        "value": 1985,
+        "text": "1985"
+      },
+      {
+        "value": 1984,
+        "text": "1984"
+      },
+      {
+        "value": 1983,
+        "text": "1983"
+      },
+      {
+        "value": 1982,
+        "text": "1982"
+      },
+      {
+        "value": 1981,
+        "text": "1981"
+      },
+      {
+        "value": 1980,
+        "text": "1980"
+      },
+      {
+        "value": 1979,
+        "text": "1979"
+      },
+      {
+        "value": 1978,
+        "text": "1978"
+      },
+      {
+        "value": 1977,
+        "text": "1977"
+      },
+      {
+        "value": 1976,
+        "text": "1976"
+      },
+      {
+        "value": 1975,
+        "text": "1975"
+      },
+      {
+        "value": 1974,
+        "text": "1974"
+      },
+      {
+        "value": 1973,
+        "text": "1973"
+      },
+      {
+        "value": 1972,
+        "text": "1972"
+      },
+      {
+        "value": 1971,
+        "text": "1971"
+      },
+      {
+        "value": 1970,
+        "text": "1970"
+      },
+      {
+        "value": 1969,
+        "text": "1969"
+      },
+      {
+        "value": 1968,
+        "text": "1968"
+      },
+      {
+        "value": 1967,
+        "text": "1967"
+      },
+      {
+        "value": 1966,
+        "text": "1966"
+      },
+      {
+        "value": 1965,
+        "text": "1965"
+      },
+      {
+        "value": 1964,
+        "text": "1964"
+      },
+      {
+        "value": 1963,
+        "text": "1963"
+      },
+      {
+        "value": 1962,
+        "text": "1962"
+      },
+      {
+        "value": 1961,
+        "text": "1961"
+      },
+      {
+        "value": 1960,
+        "text": "1960 ou avant"
+      }
+    ],
+    "fuel": [
+      {
+        "value": 0,
+        "text": "نوعية الوقود"
+      },
+      {
+        "value": 1,
+        "text": "ديزل (كازوال)"
+      },
+      {
+        "value": 2,
+        "text": "بنزين (اسانس)"
+      },
+      {
+        "value": 3,
+        "text": "هجيـنة Hybride"
+      },
+      {
+        "value": 4,
+        "text": "كهرباء"
+      },
+      {
+        "value": 5,
+        "text": "GPL"
+      },
+      {
+        "value": 6,
+        "text": "آخر"
+      }
+    ],
+    "gearbox": [
+      {
+        "value": 0,
+        "text": "علبة السرعة"
+      },
+      {
+        "value": 1,
+        "text": "يدوية"
+      },
+      {
+        "value": 2,
+        "text": "أوتوماتيكية"
+      }
+    ],
+    "kmtrage": [
+      {
+        "value": 0,
+        "text": "العداد (كيلمتراج)"
+      },
+      {
+        "value": 1,
+        "text": "0 - 5.000"
+      },
+      {
+        "value": 2,
+        "text": "5.000 - 10.000"
+      },
+      {
+        "value": 3,
+        "text": "10.000 - 20.000"
+      },
+      {
+        "value": 4,
+        "text": "20.000 - 50.000"
+      },
+      {
+        "value": 5,
+        "text": "50.000 - 100.000"
+      },
+      {
+        "value": 6,
+        "text": "100.000 - 150.000"
+      },
+      {
+        "value": 7,
+        "text": "150.000 - 200.000"
+      },
+      {
+        "value": 8,
+        "text": "200.000 - 300.000"
+      },
+      {
+        "value": 9,
+        "text": "أكثر من 300.000"
+      }
+    ],
+    "prixpar": [
+      {
+        "value": 0,
+        "text": "السعر حسب: الكل"
+      },
+      {
+        "value": 1,
+        "text": "الساعة"
+      },
+      {
+        "value": 2,
+        "text": "اليوم"
+      },
+      {
+        "value": 3,
+        "text": "الاسبوع"
+      },
+      {
+        "value": 4,
+        "text": "الشهر"
+      },
+      {
+        "value": 5,
+        "text": "السنة"
+      }
+    ],
+    "lieu": [
+      {
+        "value": 0,
+        "text": "المدينة"
+      },
+      {
+        "value": 1,
+        "text": "نواكشوط"
+      },
+      {
+        "value": 2,
+        "text": "نواذيبو"
+      },
+      {
+        "value": 3,
+        "text": "لعيون"
+      },
+      {
+        "value": 4,
+        "text": "اكجوجت"
+      },
+      {
+        "value": 5,
+        "text": "أطار"
+      },
+      {
+        "value": 6,
+        "text": "ألاك"
+      },
+      {
+        "value": 7,
+        "text": "كيهيدي"
+      },
+      {
+        "value": 8,
+        "text": "كيفة"
+      },
+      {
+        "value": 9,
+        "text": "النعمة"
+      },
+      {
+        "value": 10,
+        "text": "روصو"
+      },
+      {
+        "value": 11,
+        "text": "سيليبابي"
+      },
+      {
+        "value": 12,
+        "text": "تجكجة"
+      },
+      {
+        "value": 13,
+        "text": "ازويرات"
+      }
+    ],
+    "souslieu": [
+      {
+        "value": 0,
+        "text": "المقاطعة"
+      },
+      {
+        "value": 14,
+        "text": "تفرغ زينة"
+      },
+      {
+        "value": 15,
+        "text": "لكصر"
+      },
+      {
+        "value": 16,
+        "text": "تيارت"
+      },
+      {
+        "value": 17,
+        "text": "عرفات"
+      },
+      {
+        "value": 18,
+        "text": "دار النعيم"
+      },
+      {
+        "value": 19,
+        "text": "الميناء"
+      },
+      {
+        "value": 20,
+        "text": "الرياض"
+      },
+      {
+        "value": 21,
+        "text": "السبخة"
+      },
+      {
+        "value": 22,
+        "text": "توجونين"
+      }
+    ]
+  }
