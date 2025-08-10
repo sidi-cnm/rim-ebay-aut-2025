@@ -11,7 +11,7 @@
     "dev": "next dev --turbopack",
     "dev:test": "NODE_ENV=test next dev",
     "check-types": "tsc --noEmit",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "next lint",
     "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
   "dependencies": {
@@ -61,6 +61,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.1.0",
     "@types/nodemailer": "^6.4.17",

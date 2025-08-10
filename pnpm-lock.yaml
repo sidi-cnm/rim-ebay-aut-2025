@@ -141,6 +141,9 @@ importers:
         specifier: ^3.23.8
         version: 3.25.76
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.3.1
+        version: 3.3.1
       '@types/better-sqlite3':
         specifier: ^7.6.13
         version: 7.6.13
