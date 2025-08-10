@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "generate": "pnpx prisma generate",
+    "generate2": "pnpx prisma generate --schema=./packages/mytypes/prisma/schema.prisma",
     "build:only": "next build",
     "build": "next build",
     "start": "next start",
