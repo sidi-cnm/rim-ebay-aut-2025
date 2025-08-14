@@ -1,0 +1,1 @@
+i18n search in app/[locale]/page.tsx
