@@ -56,7 +56,11 @@ export default async function AnnonceDetail(props: {
       </div>
 
       <div>
-        <AnnonceDetailCompo annonceId={params.id} annonce={formattedAnnonce} />
+        <AnnonceDetailCompo
+          annonceId={params.id}
+          annonce={formattedAnnonce}
+          imageServiceUrl="https://picsum.photos"
+        />
       </div>
     </div>
   );

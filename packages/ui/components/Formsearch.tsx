@@ -21,18 +21,19 @@ interface FormSearchProps {
   subCategoryLabel?: string;
   priceLabel?: string;
   searchButtonLabel?: string;
-  modeOptionsApi: "sqlite" | "tursor";
+  // API endpoints
+  typeAnnoncesEndpoint: string;
+  categoriesEndpoint: string;
+  subCategoriesEndpoint: string;
 }
 
 export default function FormSearch({
   lang = "ar",
   onSubmit,
-  modeOptionsApi = "sqlite", // ✅ Ajout de la prop pour le mode API
+  typeAnnoncesEndpoint,
+  categoriesEndpoint,
+  subCategoriesEndpoint,
 }: FormSearchProps) {
-  let baseApiOptions = "/fr/p/api/tursor/";
-  if (modeOptionsApi === "sqlite") {
-    baseApiOptions = "/fr/p/api/sqlite/";
-  }
   const [typeAnnonces, setTypeAnnonces] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]); // ✅ Toujours un tableau
   const [subCategories, setSubCategories] = useState<any[]>([]);
@@ -45,16 +46,16 @@ export default function FormSearch({
  
   // 🔹 Charger les types d'annonces au chargement
   useEffect(() => {
-    fetch(`${baseApiOptions}/options`)
+    fetch(typeAnnoncesEndpoint)
       .then((res) => res.json())
       .then((data) => setTypeAnnonces(data))
       .catch((error) => console.error("Error fetching typeAnnonces:", error));
-  }, [lang]);
+  }, [typeAnnoncesEndpoint]);
 
   useEffect(() => {
     if (selectedTypeId !== undefined) {
       console.log(`Fetching categories for typeAnnonceId: ${selectedTypeId}`);
-      fetch(`${baseApiOptions}/options?parentId=${selectedTypeId}`)
+      fetch(`${categoriesEndpoint}?parentId=${selectedTypeId}`)
         .then((res) => res.json())
         .then((data) => {
           setCategories(data);
@@ -65,14 +66,14 @@ export default function FormSearch({
       setCategories([]);
       setSubCategories([]);
     }
-  }, [selectedTypeId, lang]);
+  }, [selectedTypeId, categoriesEndpoint]);
 
   useEffect(() => {
     if (selectedCategoryId !== undefined) {
       console.log(
         `Fetching subcategories for categoryId: ${selectedCategoryId}`,
       );
-      fetch(`${baseApiOptions}/options?parentId=${selectedCategoryId}`)
+      fetch(`${subCategoriesEndpoint}?parentId=${selectedCategoryId}`)
         .then((res) => res.json())
         .then((data) => setSubCategories(data))
         .catch((error) =>
@@ -81,7 +82,7 @@ export default function FormSearch({
     } else {
       setSubCategories([]);
     }
-  }, [selectedCategoryId, lang]);
+  }, [selectedCategoryId, subCategoriesEndpoint]);
 
   const handleTypeChange = (value: string) => {
     console.log("Nouvelle valeur sélectionnée pour Type d'annonce:", value);

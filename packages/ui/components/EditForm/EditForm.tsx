@@ -35,7 +35,11 @@ export interface EditFormProps {
   labelPrice?: string;
   labelUpdate?: string;
   labelCancel?: string;
-  baseApiOptions: string;
+  // API endpoints
+  typeAnnoncesEndpoint: string;
+  categoriesEndpoint: string;
+  subCategoriesEndpoint: string;
+  updateAnnonceEndpoint: string;
 }
 
 const EditForm: React.FC<EditFormProps> = ({
@@ -59,7 +63,11 @@ const EditForm: React.FC<EditFormProps> = ({
   labelPrice = "Price",
   labelUpdate = "Update",
   labelCancel = "Cancel",
-  baseApiOptions = "",
+  // API endpoints
+  typeAnnoncesEndpoint,
+  categoriesEndpoint,
+  subCategoriesEndpoint,
+  updateAnnonceEndpoint,
 }) => {
   //const t = useI18n();
 
@@ -88,7 +96,7 @@ const EditForm: React.FC<EditFormProps> = ({
   useEffect(() => {
     const fetchTypeAnnonces = async () => {
       try {
-        const response = await axios.get(`${baseApiOptions}/options`);
+        const response = await axios.get(typeAnnoncesEndpoint);
         setTypeAnnonces(response.data);
       } catch (error) {
         toast.error(errorsFetchTypeAnnonces);
@@ -96,14 +104,14 @@ const EditForm: React.FC<EditFormProps> = ({
     };
 
     fetchTypeAnnonces();
-  }, [lang, errorsFetchTypeAnnonces]);
+  }, [typeAnnoncesEndpoint, errorsFetchTypeAnnonces]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       if (selectedTypeId) {
         try {
           const response = await axios.get(
-            `${baseApiOptions}/options?parentId=${selectedTypeId}`,
+            `${categoriesEndpoint}?parentId=${selectedTypeId}`,
           );
           setCategories(response.data);
         } catch (error) {
@@ -115,14 +123,14 @@ const EditForm: React.FC<EditFormProps> = ({
     };
 
     fetchCategories();
-  }, [selectedTypeId, lang, errorsFetchCategories]);
+  }, [selectedTypeId, categoriesEndpoint, errorsFetchCategories]);
 
   useEffect(() => {
     const fetchSubCategories = async () => {
       if (selectedCategoryId) {
         try {
           const response = await axios.get(
-            `${baseApiOptions}/options?parentId=${selectedCategoryId}`,
+            `${subCategoriesEndpoint}?parentId=${selectedCategoryId}`,
           );
           setFilteredSubCategories(response.data);
         } catch (error) {
@@ -134,7 +142,7 @@ const EditForm: React.FC<EditFormProps> = ({
     };
 
     fetchSubCategories();
-  }, [selectedCategoryId, lang, errorsFetchSubCategories]);
+  }, [selectedCategoryId, subCategoriesEndpoint, errorsFetchSubCategories]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -159,7 +167,7 @@ const EditForm: React.FC<EditFormProps> = ({
       };
 
       const response = await axios.put(
-        `/${lang}/api/annonces/${annonceId}`,
+        updateAnnonceEndpoint,
         annonceData,
         {
           headers: {

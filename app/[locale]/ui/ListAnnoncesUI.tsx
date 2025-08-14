@@ -8,10 +8,12 @@ export default function ListAnnoncesUI({
   totalPages,
   currentPage,
   annonces,
+  imageServiceUrl,
 }: {
   totalPages: number;
   currentPage: number;
   annonces: Annonce[];
+  imageServiceUrl?: string;
 }) {
   return (
     <div className="container  px-4">
@@ -22,7 +24,7 @@ export default function ListAnnoncesUI({
             key={annonce.id}
             className="block"
           >
-            <AnnonceItemUI {...annonce} />
+            <AnnonceItemUI {...annonce} imageServiceUrl={imageServiceUrl} />
           </Link>
         ))}
       </div>

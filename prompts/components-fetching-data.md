@@ -16,3 +16,9 @@ relavieUrlAnnonces = ""
 
 
 easy api ?
+
+refactor component 
+contexte :
+there are some components in packages/ui/components fetching data (sending or requesting, Get or POST) form some endpoint but the endpont url is hard coded in the component
+task :
+for each component in packages/ui/components where url or urls for fetching data is hard coded, refactor his code in a way that the url or urls are passed in the compoenent props props and seached in our code where this compenent is used and fix the code broken but befor doing it creating new branch for this task
