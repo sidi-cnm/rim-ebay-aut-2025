@@ -131,11 +131,13 @@ export function MyListAnnoncesUI({
   lang = "ar",
   currentPage,
   annonces,
+  imageServiceUrl
 }: {
   lang?: string;
   totalPages: number;
   currentPage: number;
   annonces: Annonce[];
+  imageServiceUrl?: string;
 }) {
  // console.log("annonces:::::", annonces);
   const t = useI18n();
