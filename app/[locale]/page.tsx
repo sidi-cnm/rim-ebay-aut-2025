@@ -1,5 +1,5 @@
 import ListAnnoncesUI from "./ui/ListAnnoncesUI";
-import { FormSearchUI } from "../../packages/ui/components/FormSearchUI";
+import { FormSearchUI } from "../../packages/ui/components/FormSearch/FormSearchUI";
 //"@repo/ui/FormSearchUI";
 import AnnoceTitle from "../../packages/ui/components/AnnoceTitle";
 //"@repo/ui/AnnoceTitle";

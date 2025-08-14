@@ -6,7 +6,7 @@ import prisma from "../../../../lib/prisma";
 //import { Annonce } from "@/annonce.interface";
 import { Annonce } from "../../../../packages/mytypes/types";
 //"@repo/mytypes/types";
-import { FormSearchUI } from "../../../../packages/ui/components/FormSearchUI";
+import { FormSearchUI } from "../../../../packages/ui/components/FormSearch/FormSearchUI";
 //"@repo/ui/FormSearchUI";
 import { getUserFromCookies } from "../../../../utiles/getUserFomCookies";
 
