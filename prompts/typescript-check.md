@@ -1,0 +1,1 @@
+une commande qui verifie qu'il y a pas de problem de syntaxe/type dans le code ts pour eviter de casser une partie des fonctionalie lors d'un changement de variable
