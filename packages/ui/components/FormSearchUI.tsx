@@ -15,11 +15,19 @@ interface Filters {
 
 interface InputProps {
   lang: string;
-  modeOptionsApi: "sqlite" | "tursor";
+  typeAnnoncesEndpoint: string;
+  categoriesEndpoint: string;
+  subCategoriesEndpoint: string;
   mobile?: boolean;
 }
 
-export function FormSearchUI({ lang, modeOptionsApi = "sqlite", mobile = false }: InputProps) {
+export function FormSearchUI({
+  lang,
+  typeAnnoncesEndpoint,
+  categoriesEndpoint,
+  subCategoriesEndpoint,
+  mobile = false
+}: InputProps) {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -62,7 +70,9 @@ export function FormSearchUI({ lang, modeOptionsApi = "sqlite", mobile = false }
               <FormSearch
                 lang={lang}
                 onSubmit={handleSearchSubmit}
-                modeOptionsApi={modeOptionsApi}
+                typeAnnoncesEndpoint={typeAnnoncesEndpoint}
+                categoriesEndpoint={categoriesEndpoint}
+                subCategoriesEndpoint={subCategoriesEndpoint}
               />
             {/* </I18nProviderClient> */}
           </div>
@@ -82,7 +92,9 @@ export function FormSearchUI({ lang, modeOptionsApi = "sqlite", mobile = false }
       <FormSearch
         lang={lang}
         onSubmit={handleSearchSubmit}
-        modeOptionsApi={modeOptionsApi}
+        typeAnnoncesEndpoint={typeAnnoncesEndpoint}
+        categoriesEndpoint={categoriesEndpoint}
+        subCategoriesEndpoint={subCategoriesEndpoint}
       />
     {/* </I18nProviderClient> */}
     </div>

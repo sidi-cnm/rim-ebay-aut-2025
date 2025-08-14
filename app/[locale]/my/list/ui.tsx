@@ -56,17 +56,18 @@ const fallbackImageUrl = "/noimage.jpg";
 function AnnonceItemUI({
   annonce,
   lang = "ar",
+  imageServiceUrl = "https://picsum.photos",
 }: {
   annonce: Annonce;
   lang: string;
+  imageServiceUrl?: string;
 }) {
   //console.log("annonceUI", annonce);
 
   const t = useI18n();
 
   const getImage = () => {
-    const hostServerForImages = "https://picsum.photos";
-    const imgUrl = `${hostServerForImages}/${annonce.firstImagePath}`;
+    const imgUrl = `${imageServiceUrl}/${annonce.firstImagePath}`;
     return (
       <>
         <Image
@@ -152,7 +153,7 @@ export function MyListAnnoncesUI({
               key={annonce.id}
               className="block"
             >
-              <AnnonceItemUI annonce={annonce} lang={lang} />
+              <AnnonceItemUI annonce={annonce} lang={lang} imageServiceUrl="https://picsum.photos" />
             </Link>
           ))}
         </div>

@@ -84,12 +84,23 @@ export default async function Home(props: {
     <main className="min-h-screen bg-gray-100">
       {/* Mobile Filter Button/Modal */}
       <div className="block md:hidden w-full px-2 pt-4">
-        <FormSearchUI lang={params.locale} modeOptionsApi="sqlite" mobile />
+        <FormSearchUI
+          lang={params.locale}
+          typeAnnoncesEndpoint="/fr/p/api/sqlite/options"
+          categoriesEndpoint="/fr/p/api/sqlite/options"
+          subCategoriesEndpoint="/fr/p/api/sqlite/options"
+          mobile
+        />
       </div>
       <div className="flex flex-col md:flex-row min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
         {/* Sidebar (only on md+) */}
         <div className="hidden md:block md:basis-1/5 md:w-1/5">
-          <FormSearchUI lang={params.locale} modeOptionsApi="sqlite" />
+          <FormSearchUI
+            lang={params.locale}
+            typeAnnoncesEndpoint="/fr/p/api/sqlite/options"
+            categoriesEndpoint="/fr/p/api/sqlite/options"
+            subCategoriesEndpoint="/fr/p/api/sqlite/options"
+          />
         </div>
         {/* Main Content */}
         <section className="flex-1 bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">
@@ -99,6 +110,7 @@ export default async function Home(props: {
               currentPage={currentPage}
               annonces={annonces}
               lang={params.locale}
+              imageServiceUrl="https://picsum.photos"
             />
           ) : (
             <div className="flex justify-center items-center">

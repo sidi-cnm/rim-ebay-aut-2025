@@ -17,7 +17,6 @@ import MyAnnonceDetailsView from "./MyAnnonceDetailsView";
 export default function MyAnnonceDetailsCompo({
   lang = "ar",
   annonceId,
-  baseApiOptions,
   retiveUrldetailsAnnonce,
   i18nAnnonce,
   i18nContact,
@@ -25,10 +24,14 @@ export default function MyAnnonceDetailsCompo({
   i18nNotificationsCreating,
   i18nNotificationsSuccessDelete,
   i18nNotificationsErrorDelete,
+  // API endpoints
+  typeAnnoncesEndpoint,
+  categoriesEndpoint,
+  subCategoriesEndpoint,
+  updateAnnonceEndpoint,
 }: {
   lang?: string;
   annonceId: string;
-  baseApiOptions: string;
   retiveUrldetailsAnnonce: string;
   i18nAnnonce: string;
   i18nContact: string;
@@ -36,6 +39,11 @@ export default function MyAnnonceDetailsCompo({
   i18nNotificationsCreating: string;
   i18nNotificationsSuccessDelete: string;
   i18nNotificationsErrorDelete: string;
+  // API endpoints
+  typeAnnoncesEndpoint: string;
+  categoriesEndpoint: string;
+  subCategoriesEndpoint: string;
+  updateAnnonceEndpoint: string;
 }) {
   const hostServerForImages = "https://picsum.photos";
   const getImageUrl = (imagePath: string) =>
@@ -136,7 +144,10 @@ export default function MyAnnonceDetailsCompo({
           initialData={initialData}
           onClose={() => setEditModalOpen(false)}
           onUpdate={handleUpdate}
-          baseApiOptions={baseApiOptions}
+          typeAnnoncesEndpoint={typeAnnoncesEndpoint}
+          categoriesEndpoint={categoriesEndpoint}
+          subCategoriesEndpoint={subCategoriesEndpoint}
+          updateAnnonceEndpoint={updateAnnonceEndpoint}
         />
       )}
     </>

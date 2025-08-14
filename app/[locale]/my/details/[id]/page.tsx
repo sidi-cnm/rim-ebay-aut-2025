@@ -46,7 +46,11 @@ export default async function AnnonceDetail(props: {
   let baseApiOptions = "/fr/p/api/tursor";
   if (modeOptionsApi === "sqlite") {
     baseApiOptions = "/fr/p/api/sqlite";
-  } 
+  }
+  const typeAnnoncesEndpoint = `${baseApiOptions}/options`;
+  const categoriesEndpoint = `${baseApiOptions}/options`;
+  const subCategoriesEndpoint = `${baseApiOptions}/options`;
+  const updateAnnonceEndpoint = `/${params.locale}/api/annonces/${userIdConverted}`;
   const t = await getI18n();
   return (
     <div className="p-4 sm:p-6 md:p-9 overflow-hidden">
@@ -62,7 +66,10 @@ export default async function AnnonceDetail(props: {
         i18nNotificationsSuccessDelete={t("notifications.successdelete")}
         lang={params.locale}
         annonceId={contact}
-        baseApiOptions={baseApiOptions}
+        typeAnnoncesEndpoint={typeAnnoncesEndpoint}
+        categoriesEndpoint={categoriesEndpoint}
+        subCategoriesEndpoint={subCategoriesEndpoint}
+        updateAnnonceEndpoint={updateAnnonceEndpoint}
         retiveUrldetailsAnnonce={`${params.locale}/api/my/annonces/${userIdConverted}`}
       />
     </div>

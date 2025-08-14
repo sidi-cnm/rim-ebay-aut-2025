@@ -9,13 +9,14 @@ const fallbackImageUrl = "/noimage.jpg";
 export default function AnnonceDetailUI({
   annonceId,
   annonce,
+  imageServiceUrl = "https://picsum.photos"
 }: {
   annonceId: string;
   annonce: Annonce;
+  imageServiceUrl?: string;
 }) {
-  const hostServerForImages = "https://picsum.photos";
   const getImageUrl = (imagePath: string) =>
-    `${hostServerForImages}/${imagePath}`;
+    `${imageServiceUrl}/${imagePath}`;
 
   const getImage = (imagePath: string, imageDescription: string = "") => {
     const imgUrl = getImageUrl(imagePath);

@@ -4,10 +4,13 @@ import Image from "next/image";
 import { Annonce } from "../../../mytypes/types";
 const fallbackImageUrl = "/noimage.jpg";
 
-export default function AnnonceItemUI(annonce: Annonce) {
+interface AnnonceItemUIProps extends Annonce {
+  imageServiceUrl?: string;
+}
+
+export default function AnnonceItemUI({ imageServiceUrl = "https://picsum.photos", ...annonce }: AnnonceItemUIProps) {
   const getImage = () => {
-    const hostServerForImages = "https://picsum.photos";
-    const imgUrl = `${hostServerForImages}/${annonce.firstImagePath}`;
+    const imgUrl = `${imageServiceUrl}/${annonce.firstImagePath}`;
     return (
       // <Image
       //   src={imgUrl}
