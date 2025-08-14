@@ -1,0 +1,1 @@
+use Mongoose for momgodb request then remove prisma related stuff, making our project mor simple
