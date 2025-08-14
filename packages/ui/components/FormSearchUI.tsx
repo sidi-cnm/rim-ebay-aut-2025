@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import FormSearch from "./FormSearch";
+import FormSearch from "./FormSearchdDynamicOptions";
 import { useRouter } from "next/navigation"; 
 
 interface Filters {
