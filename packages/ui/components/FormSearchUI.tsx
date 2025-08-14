@@ -73,6 +73,14 @@ export function FormSearchUI({
                 typeAnnoncesEndpoint={typeAnnoncesEndpoint}
                 categoriesEndpoint={categoriesEndpoint}
                 subCategoriesEndpoint={subCategoriesEndpoint}
+                //i18n keys
+                annonceTypeLabel="Type d'annonce"
+                selectTypeLabel="Sélectionner le type"
+                selectCategoryLabel="Sélectionner la catégorie"
+                selectSubCategoryLabel="Sélectionner la sous-catégorie"
+                formTitle="Rechercher une annonce"
+                priceLabel="Prix"
+                searchButtonLabel="Rechercher"
               />
             {/* </I18nProviderClient> */}
           </div>
@@ -95,6 +103,14 @@ export function FormSearchUI({
         typeAnnoncesEndpoint={typeAnnoncesEndpoint}
         categoriesEndpoint={categoriesEndpoint}
         subCategoriesEndpoint={subCategoriesEndpoint}
+        //i18n keys
+        annonceTypeLabel="Type d'annonce"
+        selectTypeLabel="Sélectionner le type"
+        selectCategoryLabel="Sélectionner la catégorie"   
+        selectSubCategoryLabel="Sélectionner la sous-catégorie"
+        formTitle="Rechercher une annonce"
+        priceLabel="Prix"
+        searchButtonLabel="Rechercher"
       />
     {/* </I18nProviderClient> */}
     </div>

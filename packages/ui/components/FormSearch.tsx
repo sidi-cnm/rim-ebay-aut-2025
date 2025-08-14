@@ -15,16 +15,21 @@ import FormSearchView from "./FormSearchView";
 
 interface FormSearchProps {
   lang?: string;
-  onSubmit: (filters: Filters) => void;
-  typeAnnonceLabel?: string;
+  onSubmit: (filters: Filters) => void; 
   categoryLabel?: string;
-  subCategoryLabel?: string;
-  priceLabel?: string;
-  searchButtonLabel?: string;
+  subCategoryLabel?: string;  
   // API endpoints
   typeAnnoncesEndpoint: string;
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
+  //i18n keys
+  annonceTypeLabel: string;
+  selectTypeLabel: string;
+  selectCategoryLabel: string;
+  selectSubCategoryLabel: string;
+  formTitle: string;
+  priceLabel:string;
+  searchButtonLabel: string;
 }
 
 export default function FormSearch({
@@ -33,6 +38,14 @@ export default function FormSearch({
   typeAnnoncesEndpoint,
   categoriesEndpoint,
   subCategoriesEndpoint,
+   //i18n keys
+  annonceTypeLabel,
+  selectTypeLabel,
+  selectCategoryLabel,
+  selectSubCategoryLabel,
+  formTitle,
+  priceLabel,
+  searchButtonLabel
 }: FormSearchProps) {
   const [typeAnnonces, setTypeAnnonces] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]); // ✅ Toujours un tableau
@@ -135,15 +148,24 @@ export default function FormSearch({
       onCategoryChange={handleCategoryChange}
       onSubCategoryChange={setSelectedSubCategoryId}
       onPriceChange={handlePriceChange}
-      annonceTypeLabel="filter.type"
-      selectTypeLabel="filter.type"
-      categoryLabel="filter.category"
-      selectCategoryLabel="filter.category"
-      subCategoryLabel="filter.subcategory"
-      selectSubCategoryLabel="filter.subcategory"
-      formTitle="filter.title"
-      priceLabel="filter.price"
-      searchButtonLabel="filter.search"
+      annonceTypeLabel={annonceTypeLabel}
+      // ="filter.type"
+      selectTypeLabel={selectTypeLabel}
+      //="filter.type"
+      categoryLabel={selectCategoryLabel}
+      //"filter.category"
+      selectCategoryLabel={selectCategoryLabel}
+     // "filter.category"
+      subCategoryLabel={selectSubCategoryLabel}
+      //"filter.subcategory"
+      selectSubCategoryLabel={selectSubCategoryLabel}
+      //"filter.subcategory"
+      formTitle={formTitle}
+      //"filter.title"
+      priceLabel={priceLabel}
+      //"filter.price"
+      searchButtonLabel={searchButtonLabel}
+      //="filter.search"
     />
   );
 }
