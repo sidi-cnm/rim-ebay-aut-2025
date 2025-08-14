@@ -5,27 +5,27 @@ import { NextResponse } from "next/server";
 import prisma from "../../../../../lib/prisma";
 
 import jwt from "jsonwebtoken";
-import { cookies } from "next/headers"; 
+import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
-export async function GET(request: Request) { 
+export async function GET(request: Request) {
 
-    const url = new URL(request.url);
+  const url = new URL(request.url);
   const tokenFromEmail = url.searchParams.get("token");
   if (!tokenFromEmail) {
     return NextResponse.json({ error: "Token manquant" }, { status: 400 });
   }
 
-   try { 
- 
+  try {
+
     // Utiliser une transaction pour s'assurer que toutes les opérations sont effectuées
     //const result = 
-    await prisma.$transaction( async (tx: any) => {
+    await prisma.$transaction(async (tx: any) => {
       // Rechercher l'utilisateur
       const user = await tx.user.findFirst({
-        where: { 
-          verifyToken: tokenFromEmail, 
-         },
+        where: {
+          verifyToken: tokenFromEmail,
+        },
       });
       console.log("User found:", user);
 
@@ -35,14 +35,14 @@ export async function GET(request: Request) {
 
       await tx.user.update({
         where: { id: user.id },
-        data: { 
+        data: {
           isActive: true,
           emailVerified: true,
         },
       });
 
       // Vérifier le mot de passe avec bcrypt
-    
+
       // Marquer les sessions existantes comme expirées
       await tx.userSession.updateMany({
         where: {
