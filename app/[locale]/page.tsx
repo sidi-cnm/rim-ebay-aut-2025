@@ -109,6 +109,15 @@ export default async function Home(props: {
           categoriesEndpoint={categoriesEndpoint}
           subCategoriesEndpoint={subCategoriesEndpoint}
           mobile
+            //i18n keys
+             annonceTypeLabel={t("filter.type")}
+                //annonceTypeLabel="Type d'annonce"
+                selectTypeLabel="Sélectionner le type"
+                selectCategoryLabel="Sélectionner la catégorie"
+                selectSubCategoryLabel="Sélectionner la sous-catégorie"
+                formTitle="Rechercher une annonce"
+                priceLabel="Prix"
+                searchButtonLabel="Rechercher"
         />
       </div>
       <div className="flex flex-col md:flex-row min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
@@ -119,6 +128,15 @@ export default async function Home(props: {
             typeAnnoncesEndpoint={typeAnnoncesEndpoint}
             categoriesEndpoint={categoriesEndpoint}
             subCategoriesEndpoint={subCategoriesEndpoint}
+              //i18n keys
+                annonceTypeLabel={t("filter.type")}
+                //"Type d'annonce"
+                selectTypeLabel="Sélectionner le type"
+                selectCategoryLabel="Sélectionner la catégorie"
+                selectSubCategoryLabel="Sélectionner la sous-catégorie"
+                formTitle="Rechercher une annonce"
+                priceLabel="Prix"
+                searchButtonLabel="Rechercher"
           />
         </div>
         {/* Main Content */}

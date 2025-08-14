@@ -19,6 +19,14 @@ interface InputProps {
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
   mobile?: boolean;
+   //i18n keys
+  annonceTypeLabel: string;
+  selectTypeLabel: string;
+  selectCategoryLabel: string;
+  selectSubCategoryLabel: string;
+  formTitle: string;
+  priceLabel:string;
+  searchButtonLabel: string;
 }
 
 export function FormSearchUI({
@@ -26,7 +34,15 @@ export function FormSearchUI({
   typeAnnoncesEndpoint,
   categoriesEndpoint,
   subCategoriesEndpoint,
-  mobile = false
+  mobile = false,
+   //i18n keys
+  annonceTypeLabel,
+  selectTypeLabel,
+  selectCategoryLabel,
+  selectSubCategoryLabel,
+  formTitle,
+  priceLabel,
+  searchButtonLabel
 }: InputProps) {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
@@ -74,13 +90,31 @@ export function FormSearchUI({
                 categoriesEndpoint={categoriesEndpoint}
                 subCategoriesEndpoint={subCategoriesEndpoint}
                 //i18n keys
-                annonceTypeLabel="Type d'annonce"
-                selectTypeLabel="Sélectionner le type"
-                selectCategoryLabel="Sélectionner la catégorie"
-                selectSubCategoryLabel="Sélectionner la sous-catégorie"
-                formTitle="Rechercher une annonce"
-                priceLabel="Prix"
-                searchButtonLabel="Rechercher"
+                // annonceTypeLabel="Type d'annonce"
+                // selectTypeLabel="Sélectionner le type"
+                // selectCategoryLabel="Sélectionner la catégorie"
+                // selectSubCategoryLabel="Sélectionner la sous-catégorie"
+                // formTitle="Rechercher une annonce"
+                // priceLabel="Prix"
+                // searchButtonLabel="Rechercher"
+                      annonceTypeLabel={annonceTypeLabel}
+      // ="filter.type"
+      selectTypeLabel={selectTypeLabel}
+      //="filter.type"
+      categoryLabel={selectCategoryLabel}
+      //"filter.category"
+      selectCategoryLabel={selectCategoryLabel}
+     // "filter.category"
+      subCategoryLabel={selectSubCategoryLabel}
+      //"filter.subcategory"
+      selectSubCategoryLabel={selectSubCategoryLabel}
+      //"filter.subcategory"
+      formTitle={formTitle}
+      //"filter.title"
+      priceLabel={priceLabel}
+      //"filter.price"
+      searchButtonLabel={searchButtonLabel}
+      //="filter.search"
               />
             {/* </I18nProviderClient> */}
           </div>
