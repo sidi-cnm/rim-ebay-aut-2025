@@ -1,0 +1,1 @@
+generer un logo du site a l'aide l'IA 

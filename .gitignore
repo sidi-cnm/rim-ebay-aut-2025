@@ -8,7 +8,7 @@ __cypress
 .pnp.js
 .yarn/install-state.gz
 # IA prompts
-prompts/*.md
+#prompts/*.md
 # testing
 /coverage
 
