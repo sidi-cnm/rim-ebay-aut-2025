@@ -1,0 +1,1 @@
+good names for files (like ui/**) and components, should be significant, for better DX and better maintenability
