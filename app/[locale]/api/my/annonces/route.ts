@@ -1,7 +1,9 @@
 // app/api/annonces/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../../../../lib/prisma";
 import { cookies } from "next/headers";
+import { getDb } from "../../../../../lib/mongodb"; // vérifie que le fichier s'appelle bien mongodb.ts
+import { ObjectId } from "mongodb";
+
 const SiteBaseUrl = process.env.SITE_BASE_URL || "";
 console.log("Site Base URL:", SiteBaseUrl);
 let baseApi = "fr/p/api/tursor";
@@ -18,88 +20,120 @@ function getUserFromHeaders(request: NextRequest) {
   };
 }
 
-
-// Définition des types pour la requête
 interface CreateAnnonceRequest {
   typeAnnonceId: string;
   subcategorieId: string;
   categorieId: string;
   lieuId: string;
-  userId: string;
+  userId?: string;
   title: string;
   description: string;
-  price: number;
-  contact: string;
-  haveImage: boolean;
-  firstImagePath: string;
-  images: { imagePath: string }[];
+  price?: number;
+  contact?: string;
+  haveImage?: boolean;
+  firstImagePath?: string | null;
+  images?: { imagePath: string }[];
   status: string;
 }
 
-// 1. Créer une annonce (POST)
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  // recuperer l'id de l'utilisateur depuis le token JWT ou la session
-  // recuprer le contacr de l'utilisateur depuis la base des donnnees
-    const userInheaders = getUserFromHeaders(request);
+  const userInheaders = getUserFromHeaders(request);
   console.log("User from headers:", userInheaders);
 
-  const userid = (await cookies()).get("user");
-  const userIdConverted = String(userid?.value || "");
-  let contact = ""
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userIdConverted,
-    },
-  }).catch((err) => {
-    console.error("Error fetching user:", err);
-    // Handle the error as needed, e.g., redirect or show an error message
-  });
-  console.log("User ID:", userIdConverted);
-  console.log("User:", user);
-  if (user) {
-    //contact = user.contact || "";
-    const contactObject = await prisma.contact.findFirst(
-      {where : {
-        userId:user.id
-      }}
-    )
-    if(contactObject){
-      contact = contactObject.contact ? contactObject.contact: ""
-    }
-  }
-
   try {
-    const data: CreateAnnonceRequest = await request.json();
+    const db = await getDb();
 
-    // Créer une nouvelle annonce dans la base de données
-    const newAnnonce = await prisma.annonce.create({
-      data: {
-        typeAnnonceId: data.typeAnnonceId,
-        subcategorieId: data.subcategorieId,
-        categorieId: data.categorieId,
-        lieuId: data.lieuId,
-        userId: userIdConverted,
-        //data.userId,
-        title: data.title,
-        description: data.description,
-        price: data.price,
-        contact, 
-        //data.contact,
-        haveImage: data.haveImage,
-        firstImagePath: data.firstImagePath,
+    // --- Récup user depuis cookie (⚠️ ici cookies() est async dans ton env) ---
+    const cookieStore = await cookies();                  // ← IMPORTANT: await
+    const userCookie = cookieStore.get("user");
+    const userIdStr = String(userCookie?.value ?? "");
+    if (!userIdStr) {
+      return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
+    }
 
-        status: data.status,
-        updatedAt: new Date(),
-        createdAt: new Date(),
-      },
+    // `_id` dans users est un ObjectId → conversion + lecture user
+    let userDoc = null;
+    try {
+      userDoc = await db.collection("users").findOne({ _id: new ObjectId(userIdStr) });
+    } catch {
+      return NextResponse.json({ error: "ID utilisateur invalide" }, { status: 400 });
+    }
+    if (!userDoc) {
+      return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
+    }
+
+    // --- Récup contact prioritaire (vérifié/actif), sinon le plus récent ---
+    let contact = "";
+    const contactDoc =
+      (await db.collection("contacts").findOne(
+        { userId: userIdStr, isVerified: true, isActive: true },
+        { projection: { contact: 1 } }
+      )) ||
+      (await db
+        .collection("contacts")
+        .find({ userId: userIdStr }, { projection: { contact: 1, createdAt: 1 } })
+        .sort({ createdAt: -1 })
+        .limit(1)
+        .next());
+
+    if (contactDoc?.contact) contact = contactDoc.contact;
+
+    // --- Lire & valider le body ---
+    const data = (await request.json()) as CreateAnnonceRequest;
+
+    const required: Array<keyof CreateAnnonceRequest> = [
+      "typeAnnonceId",
+      "subcategorieId",
+      "categorieId",
+      "lieuId",
+      "title",
+      "description",
+      "status",
+    ];
+    const missing = required.find((k) => {
+      const v = data[k];
+      return v === undefined || v === null || (typeof v === "string" && v.trim() === "");
     });
+    if (missing) {
+      return NextResponse.json({ error: `Champ requis manquant: ${missing}` }, { status: 400 });
+    }
 
-    return NextResponse.json(newAnnonce, { status: 201 });
-  } catch (error) {
-    console.error("Erreur lors de la création de l'annonce:", error); // Afficher l'erreur dans les logs
+    // --- Construire le document annonce (IDs en String, conforme à ton validator) ---
+    const now = new Date();
+    const annonceDoc = {
+      typeAnnonceId: String(data.typeAnnonceId),
+      subcategorieId: String(data.subcategorieId),
+      categorieId: String(data.categorieId),
+      lieuId: String(data.lieuId),
+      userId: userIdStr, // String
+      title: data.title,
+      description: data.description,
+      price: typeof data.price === "number" ? data.price : null,
+      contact: contact || data.contact || "",
+      haveImage: Boolean(data.haveImage ?? false),
+      firstImagePath: data.firstImagePath ?? null,
+      status: data.status,
+      isPublished: false,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    // --- Insert ---
+    const result = await db.collection("annonces").insertOne(annonceDoc);
+
+    // --- Réponse ---
     return NextResponse.json(
-      { error: "Error creating annonce", details: error },
-      { status: 500 },
+      { ...annonceDoc, id: result.insertedId.toString() },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Erreur lors de la création de l'annonce:", error);
+    return NextResponse.json(
+      {
+        error: "Error creating annonce",
+        details: process.env.NODE_ENV === "development" ? String(error) : undefined,
+      },
+      { status: 500 }
     );
   }
 }

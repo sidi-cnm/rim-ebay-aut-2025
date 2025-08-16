@@ -52,6 +52,20 @@ export default function FormSearchView({
   formTitle,
   searchButtonLabel,
 }: FormSearchViewProps) {
+
+// // Dans FormSearchView, juste au début du composant
+// console.log("FSV lang:", lang, {
+//   annonceTypeLabel,
+//   selectTypeLabel,
+//   selectCategoryLabel,
+//   selectSubCategoryLabel,
+//   formTitle,
+//   priceLabel,
+//   searchButtonLabel,
+// });
+
+
+
   return (
     <div className="w-full p-6">
       <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">

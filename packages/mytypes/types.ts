@@ -107,14 +107,14 @@ export interface Annonce {
   userId: string; // Identifiant de l'utilisateur
   title: string; // Titre de l'annonce
   description: string; // Description de l'annonce
-  price: number; // Prix de l'annonce
+  price?: number; // Prix de l'annonce
   contact: string; // Numéro de téléphone
 
-  haveImage: boolean; // Indique si l'annonce a une image
-  firstImagePath: string; // Chemin vers la première image liée à cette annonce
+  haveImage?: boolean; // Indique si l'annonce a une image
+  firstImagePath?: string; // Chemin vers la première image liée à cette annonce
   images?: Array<{ id: string; imagePath: string }>; // Liste d'objets contenant id et imagePath
 
   status: string; // Statut de l'annonce (ex. : actif, en attente, archivé)
-  updatedAt: Date | string; // Date de la dernière mise à jour de l'annonce
-  createdAt: Date | string; // Date de création de l'annonce,
+  updatedAt?: Date | string; // Date de la dernière mise à jour de l'annonce
+  createdAt?: Date | string; // Date de création de l'annonce,
 }

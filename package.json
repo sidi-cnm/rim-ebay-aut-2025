@@ -13,7 +13,8 @@
     "dev:test": "NODE_ENV=test next dev",
     "check-types": "tsc --noEmit",
     "lint": "next lint",
-    "seed": "node --loader ts-node/esm prisma/seed.ts"
+    "seed": "node --loader ts-node/esm prisma/seed.ts",
+    "mongo:init": "tsx script/initMongo.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -77,6 +78,7 @@
     "prisma": "^6.4.1",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.4",
     "typescript": "^5.9.2"
   },
   "packageManager": "pnpm@10.14.0"
