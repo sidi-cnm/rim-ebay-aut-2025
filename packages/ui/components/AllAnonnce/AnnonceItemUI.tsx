@@ -1,74 +1,100 @@
-import Image from "next/image";
-//import { Annonce } from "@repo/mytypes/types";
+"use client";
 
+import Link from "next/link";
 import { Annonce } from "../../../mytypes/types";
-const fallbackImageUrl = "/noimage.jpg";
+import { useI18n } from "../../../../locales/client"; // ⬅️ comme ton AddAnnonceUI
+
+const FALLBACK_IMG = "/noimage.jpg";
 
 interface AnnonceItemUIProps extends Annonce {
   imageServiceUrl?: string;
+  href?: string;
+  lang?: string; // tu gardes string si tu veux
 }
 
-export default function AnnonceItemUI({ imageServiceUrl = "https://picsum.photos", ...annonce }: AnnonceItemUIProps) {
-  const getImage = () => {
-    const imgUrl = `${imageServiceUrl}/${annonce.firstImagePath}`;
-    return (
-      // <Image
-      //   src={imgUrl}
-      //   alt={annonce.description}
-      //   fill
-      //   unoptimized
-      //   style={{ objectFit: "cover" }}
-      // />
-      <img src={imgUrl} alt="" />
-    );
-  };
-  const createdAt = new Date(annonce.createdAt);
+export default function AnnonceItemUI({
+  imageServiceUrl = "https://picsum.photos",
+  href = "#",
+  lang = "fr",
+  ...a
+}: AnnonceItemUIProps) {
+  const t = useI18n();                     // ⬅️ même hook que dans AddAnnonceUI
+  const dir = lang === "ar" ? "rtl" : "ltr";
 
-  const formatedDatePartOne = `${createdAt.getDay()}-${createdAt.getMonth()}-${createdAt.getFullYear()}`;
-  const formatedDatePartTwo = `${createdAt.getHours()} h : ${createdAt.getMinutes()} min`;
+  const imgUrl =
+    a.haveImage && a.firstImagePath
+      ? `${imageServiceUrl.replace(/\/$/, "")}/${a.firstImagePath.replace(/^\//, "")}`
+      : FALLBACK_IMG;
+
+  const created = a.createdAt ? new Date(a.createdAt) : null;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const humanDate =
+    created && !isNaN(created.getTime())
+      ? `${pad(created.getDate())}-${pad(created.getMonth() + 1)}-${created.getFullYear()}`
+      : "";
+
+  // libellés i18n
+  const publishedLabel = t("card.published");
+  const priceLabel = t("card.price");         
+  const currencyLabel = t("card.currency");   
+  const detailsLabel = t("card.details");   
 
   return (
     <article
       data-cy="annonce-item"
-      className="flex flex-col w-full bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow h-full sm:flex-row sm:max-w-lg sm:mx-auto mx-2"
+      dir={dir}
+      className={`group bg-white rounded-2xl shadow-md ring-1 ring-gray-200 overflow-hidden 
+                  h-full flex flex-col transition hover:shadow-lg hover:ring-gray-300 ${lang === "ar" ? "text-right" : ""}`}
     >
-      <div className="relative h-48 sm:h-auto w-full sm:w-1/2">
-        {annonce.haveImage ? (
-          getImage()
-        ) : (
-          // <Image
-          //   src={fallbackImageUrl}
-          //   alt={annonce.description}
-          //   fill
-          //   unoptimized
-          //   style={{ objectFit: "cover" }}
-          // />
-          <img src={fallbackImageUrl} alt="" />
-        )}
+      {/* Image */}
+      <div className="relative w-full aspect-[16/10] bg-gray-100">
+        <img
+          src={imgUrl}
+          alt={a.title ?? (lang === "ar" ? "صورة الإعلان" : "Image annonce")}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
       </div>
 
-      <div className="p-4 sm:p-6 flex flex-col flex-grow">
-        {/* <span className="inline-block bg-green-800 rounded-full px-5 w-fit py-1 text-xs sm:text-sm font-semibold text-white mt-1">
-          {annonce.typeAnnonceName} / {annonce.categorieName}
-        </span> */}
-        <h2 className="text-lg sm:text-xl mt-3 font-semibold mb-1">
-          {annonce.title}
+      {/* Contenu */}
+      <div className="p-4 md:p-5 flex flex-col gap-3 flex-1">
+        <h2 className="text-base md:text-lg font-semibold leading-tight line-clamp-1">
+          {a.title}
         </h2>
-        <p className="text-gray-600 text-sm sm:text-base mb-2">
-          {annonce.description}
-        </p>
 
-        <div className="border-t border-gray-300 my-2"></div>
-        <div className="flex justify-between items-center">
-          <span className="text-sm sm:text-base">PRIX</span>
-          <p className="text-base sm:text-lg text-green-800 font-bold">
-            {annonce.price} UMR
-          </p>
+        <p className="text-gray-600 text-sm line-clamp-2">{a.description}</p>
+
+        {humanDate && (
+          <div className="text-xs text-gray-400">
+            {publishedLabel} {humanDate}
+          </div>
+        )}
+
+        <div className="border-t border-gray-200" />
+
+        {/* Prix */}
+        <div className="flex items-center justify-between pt-2">
+          <span className="text-sm text-gray-500">{priceLabel}</span>
+          <span className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">
+            {a.price} <span className="text-sm font-semibold">{currencyLabel}</span>
+          </span>
         </div>
-        <div className="border-t border-gray-300 my-2"></div>
-        <button className="bg-orange-400 w-full hover:bg-orange-500 mt-4 py-2 rounded-xl text-white font-bold">
-          Details
-        </button>
+
+        {/* Bouton DÉTAILS */}
+        <div className="mt-4 w-full">
+          <Link
+            href={href}
+            className="flex w-full items-center justify-center
+                       px-6 py-3 rounded-lg
+                       bg-blue-800 text-white font-semibold text-base
+                       border border-blue-700
+                       shadow-md transition-transform
+                       hover:bg-blue-700 hover:scale-105 hover:shadow-lg
+                       focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            {detailsLabel}
+          </Link>
+        </div>
       </div>
     </article>
   );

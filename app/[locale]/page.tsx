@@ -1,21 +1,14 @@
 import ListAnnoncesUI from "./ui/ListAnnoncesUI";
 import { FormSearchUI } from "../../packages/ui/components/FormSearch/FormSearchUI";
-//"@repo/ui/FormSearchUI";
 import AnnoceTitle from "../../packages/ui/components/AnnoceTitle";
-//"@repo/ui/AnnoceTitle";
 import { getI18n } from "../../locales/server";
-
 import { LottieAnimation } from "../../packages/ui/components/LottieAnimation";
-//"@repo/ui/LottieAnimation";
-import prisma from "../../lib/prisma";
 import { Annonce } from "../../packages/mytypes/types";
-//"@repo/mytypes/types";
-let modeOptionsApi: "sqlite" | "tursor";
-modeOptionsApi = "tursor";
-//let modeOptionsApi = process.env.NEXT_PUBLIC_OPTIONS_API_MODE || "tursor";
-if (!process.env.NEXT_PUBLIC_OPTIONS_API_MODE) {
-  modeOptionsApi = "sqlite";
-}
+import { getDb } from "../../lib/mongodb"; // ⬅️ on utilise MongoDB
+
+// Config API options (inchangé)
+let modeOptionsApi: "sqlite" | "tursor" = "tursor";
+if (!process.env.NEXT_PUBLIC_OPTIONS_API_MODE) modeOptionsApi = "sqlite";
 if (
   process.env.NEXT_PUBLIC_OPTIONS_API_MODE &&
   process.env.NEXT_PUBLIC_OPTIONS_API_MODE !== "tursor"
@@ -23,131 +16,148 @@ if (
   modeOptionsApi = "sqlite";
 }
 
-// API endpoints based on mode
-const apiBase = modeOptionsApi === "sqlite" ? "/fr/p/api/sqlite" : "/fr/p/api/tursor";
+const apiBase =
+  modeOptionsApi === "sqlite" ? "/fr/p/api/sqlite" : "/fr/p/api/tursor";
 const typeAnnoncesEndpoint = `${apiBase}/options`;
 const categoriesEndpoint = `${apiBase}/options`;
 const subCategoriesEndpoint = `${apiBase}/options`;
 
-export default async function Home(props: {
-  params: Promise<{ locale: string }>;
-  searchParams?: Promise<{
+// ⬇️ params / searchParams sont des objets (pas des Promise)
+export default async function Home({
+  params,
+  searchParams,
+}: {
+  params: { locale: string };
+  searchParams?: {
     page?: string;
     typeAnnonceId?: string;
     categorieId?: string;
-    subCategorieId?: string;
+    subCategorieId?: string; // NB: en DB c'est "subcategorieId" (ie)
     price?: string;
-  }>;
+  };
 }) {
   const t = await getI18n();
-  const searchParams = await props.searchParams;
+
+  // 1) Pagination & filtres
   const currentPage = Number(searchParams?.page) || 1;
+  const itemsPerPage = 6;
+  const skip = (currentPage - 1) * itemsPerPage;
 
-  // Extract filter params from searchParams
-  const typeAnnonceId = searchParams?.typeAnnonceId;
-  const categorieId = searchParams?.categorieId;
-  const subCategorieId = searchParams?.subCategorieId;
-  const price = searchParams?.price;
+  // 2) Construire la requête Mongo (équivalent "where")
+  const query: Record<string, any> = { isPublished: false };
+  if (searchParams?.typeAnnonceId)
+    query.typeAnnonceId = searchParams.typeAnnonceId;
+  if (searchParams?.categorieId) query.categorieId = searchParams.categorieId;
+  if (searchParams?.subCategorieId)
+    query.subcategorieId = searchParams.subCategorieId; // ⚠️ orthographe exacte
+  if (searchParams?.price && !isNaN(Number(searchParams.price)))
+    query.price = Number(searchParams.price);
 
-  // Build the where clause for filtering
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where:any = {};
-  where.isPublished = true; // Assuming you want to filter only published annonces 
-  if (typeAnnonceId && typeAnnonceId !== "") where.typeAnnonceId = typeAnnonceId;
-  if (categorieId && categorieId !== "") where.categorieId = categorieId;
-  if (subCategorieId && subCategorieId !== "") where.subcategorieId = subCategorieId;
-  if (price && price !== "" && !isNaN(Number(price))) where.price = Number(price);
+  // 3) Lire depuis MongoDB
+  const db = await getDb();
+  const coll = db.collection("annonces");
 
-  const annoncesFromDB = await prisma.annonce.findMany({ where });
+  const [rows, totalCount] = await Promise.all([
+    coll
+      .find(query)
+      .sort({ updatedAt: -1 }) // optionnel
+      .skip(skip)
+      .limit(itemsPerPage)
+      .toArray(),
+    coll.countDocuments(query),
+  ]);
 
-  const annonces: Annonce[] = annoncesFromDB.map((annonce) => ({
-    id: annonce.id,
-    typeAnnonceId: annonce.typeAnnonceId,
-    typeAnnonceid: annonce.typeAnnonceId,
-     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    typeAnnonceName: (annonce as any).type_annonce?.name ?? "",
-     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    typeAnnonceNameAr: (annonce as any).type_annonce?.nameAr ?? "",
-    categorieId: annonce.categorieId,
-    categorieid: annonce.categorieId,
-     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    categorieName: (annonce as any).categorie?.name ?? "",
-     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    categorieNameAr: (annonce as any).categorie?.nameAr ?? "",
-    lieuId: annonce.lieuId,
-    lieuid: annonce.lieuId,
-    lieuStr: "",
-    lieuStrAr: "",
+  // 4) Mapping vers ton type Annonce
+  const annonces: Annonce[] = rows.map((a: any) => ({
+    id: String(a._id ?? a.id),
+    typeAnnonceId: a.typeAnnonceId,
+    typeAnnonceid: a.typeAnnonceId,
 
-    userId: annonce.userId,
-    userid: annonce.userId,
-    title: annonce.title,
-    description: annonce.description,
-    price: parseFloat(String(annonce.price)),
-    contact: annonce.contact,
+    typeAnnonceName: a.type_annonce?.name ?? "",
+    typeAnnonceNameAr: a.type_annonce?.nameAr ?? "",
 
-    haveImage: annonce.haveImage,
-    firstImagePath: String(annonce.firstImagePath),
-    images: (annonce as any).annonceImages ?? [],
+    categorieId: a.categorieId,
+    categorieid: a.categorieId,
+    categorieName: a.categorie?.name ?? "",
+    categorieNameAr: a.categorie?.nameAr ?? "",
 
-    status: annonce.status,
-    updatedAt: annonce.updatedAt,
-    createdAt: annonce.createdAt,
+    lieuId: a.lieuId,
+    lieuid: a.lieuId,
+    lieuStr: a.lieuStr ?? "",
+    lieuStrAr: a.lieuStrAr ?? "",
+
+    userId: a.userId,
+    userid: a.userId,
+    title: a.title,
+    description: a.description,
+    price: a.price != null ? Number(a.price) : undefined,
+    contact: a.contact,
+
+    haveImage: !!a.haveImage,
+    firstImagePath: a.firstImagePath ? String(a.firstImagePath) : "",
+    images: a.annonceImages ?? [],
+
+    status: a.status,
+    updatedAt: a.updatedAt ? new Date(a.updatedAt) : "",
+    createdAt: a.createdAt ? new Date(a.createdAt) : "",
   }));
 
-  const itemsPerPage = 6; // Define the number of items per page
+  console.log("annonces", annonces)
 
-  const totalPages = Math.ceil(annonces.length / itemsPerPage); // Calculate total pages based on your logic
+  // 5) Total pages basé sur le total Mongo (pas la longueur d'une page)
+  const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
 
+  // 6) Rendu UI (inchangé)
   return (
     <main className="min-h-screen bg-gray-100">
       {/* Mobile Filter Button/Modal */}
       <div className="block md:hidden w-full px-2 pt-4">
         <FormSearchUI
-          lang={(await props.params).locale}
+          lang={params.locale}
           typeAnnoncesEndpoint={typeAnnoncesEndpoint}
           categoriesEndpoint={categoriesEndpoint}
           subCategoriesEndpoint={subCategoriesEndpoint}
           mobile
-            //i18n keys
-             annonceTypeLabel={t("filter.type")}
-                //annonceTypeLabel="Type d'annonce"
-                selectTypeLabel="Sélectionner le type"
-                selectCategoryLabel="Sélectionner la catégorie"
-                selectSubCategoryLabel="Sélectionner la sous-catégorie"
-                formTitle="Rechercher une annonce"
-                priceLabel="Prix"
-                searchButtonLabel="Rechercher"
+          // i18n keys
+          annonceTypeLabel={t("filter.type")}
+          selectTypeLabel="Sélectionner le type"
+          selectCategoryLabel="Sélectionner la catégorie"
+          selectSubCategoryLabel="Sélectionner la sous-catégorie"
+          formTitle="Rechercher une annonce"
+          priceLabel="Prix"
+          searchButtonLabel="Rechercher"
         />
       </div>
+
       <div className="flex flex-col md:flex-row min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
         {/* Sidebar (only on md+) */}
         <div className="hidden md:block md:basis-1/5 md:w-1/5">
           <FormSearchUI
-            lang={(await props.params).locale}
+            lang={params.locale}
             typeAnnoncesEndpoint={typeAnnoncesEndpoint}
             categoriesEndpoint={categoriesEndpoint}
             subCategoriesEndpoint={subCategoriesEndpoint}
-              //i18n keys
-                annonceTypeLabel={t("filter.type")}
-                //"Type d'annonce"
-                selectTypeLabel="Sélectionner le type"
-                selectCategoryLabel="Sélectionner la catégorie"
-                selectSubCategoryLabel="Sélectionner la sous-catégorie"
-                formTitle="Rechercher une annonce"
-                priceLabel="Prix"
-                searchButtonLabel="Rechercher"
+            // i18n keys
+            annonceTypeLabel={t("filter.type")}
+            selectTypeLabel="Sélectionner le type"
+            selectCategoryLabel="Sélectionner la catégorie"
+            selectSubCategoryLabel="Sélectionner la sous-catégorie"
+            formTitle="Rechercher une annonce"
+            priceLabel="Prix"
+            searchButtonLabel="Rechercher"
           />
         </div>
+
         {/* Main Content */}
         <section className="flex-1 bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">
           <div className="mb-6">
             <AnnoceTitle title={t("nav.Annoce")} />
           </div>
-          {annonces ? (
+          {annonces?.length ? (
             <ListAnnoncesUI
               totalPages={totalPages}
               currentPage={currentPage}
+              lang={params.locale}
               annonces={annonces}
               imageServiceUrl="https://picsum.photos"
             />

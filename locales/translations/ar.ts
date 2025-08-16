@@ -147,16 +147,25 @@ export default {
   editAnnonce: {
     edit: "edit",
   },
-  prix: "السعر",
-  Annonces: "إعلاناتي",
-  Contact: "اتصال",
-  annonce: "إعلاني",
+  
+
+  card: {
+    published: "نُشِرَ في",
+    price: "السعر",
+    currency: "أوقية",
+    details: "تفاصيل",
+  },
   filter: {
-    title: "الفلاتر",
-    type: "نوع الإعلان",
-    category: "الفئة",
-    subcategory: "الفئة الفرعية",
+    title: "البحث عن إعلان",
+    annonceType: "نوع الإعلان",
+    selectType: "اختر النوع",
+    selectCategory: "اختر الفئة",
+    selectSubCategory: "اختر الفئة الفرعية",
     price: "السعر",
     search: "بحث",
-  },
+    close: "إغلاق",
+    filterBtn: "تصفية",
+    Annonces: "الإعلانات",
+    type: "النوع",
+  }
 } as const;

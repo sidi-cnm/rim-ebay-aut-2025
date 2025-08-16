@@ -107,9 +107,9 @@ function AnnonceItemUI({
           <div className="mt-5">
             <div className="border-t border-green-800  my-2"></div>
             <div className="flex justify-between">
-              <p className="font-bold">{t("prix")}</p>
+              <p className="font-bold">{t("filter.price")}</p>
               <p className="text-lg text-green-700 font-bold">
-                {annonce.price} MRU
+                {annonce.price} {t("card.currency")}
               </p>
             </div>
             <div className="border-t border-green-800  my-2"></div>
@@ -146,7 +146,7 @@ export function MyListAnnoncesUI({
     <>
       <div className="container mx-auto">
         <h2 className="text-2xl font-semibold mb-4 text-center">
-          {t("Annonces")}
+          {t("filter.Annonces")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {annonces.map((annonce) => (

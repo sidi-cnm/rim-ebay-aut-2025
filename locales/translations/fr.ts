@@ -12,6 +12,12 @@ export default {
     Recherche: "Recherche",
     Annoce: "Tous les anonnces",
   },
+  card: {
+    published: "publié le",
+    price: "Prix",
+    currency: "UMR",
+    details: "Détails",
+  },
   addAnnonce: {
     welcome: "Bienvenue",
     addNew: "Ajouter une annonce",
@@ -50,6 +56,19 @@ export default {
     prev: "Précédent",
     currentPage: "Page",
     of: "sur",
+  },
+  filter: {
+    title: "Rechercher une annonce",
+    annonceType: "Type d'annonce",
+    selectType: "Sélectionner le type",
+    selectCategory: "Sélectionner la catégorie",
+    selectSubCategory: "Sélectionner la sous-catégorie",
+    price: "Prix",
+    search: "Rechercher",
+    close: "Fermer",
+    filterBtn: "Filtrer",
+    Annonces: "Annonces",
+    type: "Type",
   },
   connexion: {
     title: "Connexion",
@@ -148,16 +167,5 @@ export default {
   editAnnonce: {
     edit: "edit",
   },
-  prix: "Prix",
-  Annonces: "Mes Annonces",
-  Contact: "contact",
-  annonce: "Mon annonce",
-  filter: {
-    title: "Filtres",
-    type: "Type d'annonce",
-    category: "Catégorie",
-    subcategory: "Sous-catégorie",
-    price: "Prix",
-    search: "Rechercher",
-  },
+  
 } as const;

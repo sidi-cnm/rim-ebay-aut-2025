@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import FormSearch from "./FormSearchdDynamicOptions";
 import { useRouter } from "next/navigation";
+import { useI18n } from "../../../../locales/client"; 
+import FormSearch from "./FormSearchdDynamicOptions";
 
 interface Filters {
   typeAnnonceId?: string;
@@ -13,53 +14,20 @@ interface Filters {
   description?: string;
 }
 
-type LabelKeys =
-  | "annonceTypeLabel"
-  | "selectTypeLabel"
-  | "selectCategoryLabel"
-  | "selectSubCategoryLabel"
-  | "formTitle"
-  | "priceLabel"
-  | "searchButtonLabel";
-
-type Labels = Record<LabelKeys, string>;
-
-const LABELS_BY_LANG: Record<string, Labels> = {
-  fr: {
-    annonceTypeLabel: "Type d'annonce",
-    selectTypeLabel: "Sélectionner le type",
-    selectCategoryLabel: "Sélectionner la catégorie",
-    selectSubCategoryLabel: "Sélectionner la sous-catégorie",
-    formTitle: "Rechercher une annonce",
-    priceLabel: "Prix",
-    searchButtonLabel: "Rechercher",
-  },
-  ar: {
-    annonceTypeLabel: "نوع الإعلان",
-    selectTypeLabel: "اختر النوع",
-    selectCategoryLabel: "اختر الفئة",
-    selectSubCategoryLabel: "اختر الفئة الفرعية",
-    formTitle: "البحث عن إعلان",
-    priceLabel: "السعر",
-    searchButtonLabel: "بحث",
-  },
-};
-
 interface InputProps {
   lang: string;
   typeAnnoncesEndpoint: string;
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
   mobile?: boolean;
-
-  // overrides optionnels (si tu veux remplacer un label spécifique)
-  annonceTypeLabel?: string;
-  selectTypeLabel?: string;
-  selectCategoryLabel?: string;
-  selectSubCategoryLabel?: string;
-  formTitle?: string;
-  priceLabel?: string;
-  searchButtonLabel?: string;
+   // ⬇⬇⬇ AJOUTER CES PROPS (idéalement optionnelles)
+   annonceTypeLabel?: string;
+   selectTypeLabel?: string;
+   selectCategoryLabel?: string;
+   selectSubCategoryLabel?: string;
+   formTitle?: string;
+   priceLabel?: string;
+   searchButtonLabel?: string;
 }
 
 export function FormSearchUI({
@@ -68,49 +36,13 @@ export function FormSearchUI({
   categoriesEndpoint,
   subCategoriesEndpoint,
   mobile = false,
-  // overrides (facultatifs)
-  annonceTypeLabel,
-  selectTypeLabel,
-  selectCategoryLabel,
-  selectSubCategoryLabel,
-  formTitle,
-  priceLabel,
-  searchButtonLabel,
 }: InputProps) {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
+  const t = useI18n();
 
-  // // 1) i18n: récup labels par langue + overrides
-  // const base = LABELS_BY_LANG[lang] ?? LABELS_BY_LANG.fr;
-  const langKey = (lang || "fr").split("-")[0]; // "ar-MR" -> "ar"
-  const base = LABELS_BY_LANG[langKey] ?? LABELS_BY_LANG.fr;
-  const isRTL = langKey === "ar";
+  const isRTL = lang.startsWith("ar");
 
-  console.log("FormSearchUI lang=", lang);
-  console.log("FormSearchUI base=", base);
-  console.log("FormSearchUI isRTL=", isRTL);
-  console.log("FormSearchUI labels=", {
-    annonceTypeLabel,
-    selectTypeLabel,
-    selectCategoryLabel,
-    selectSubCategoryLabel,
-    formTitle,
-    priceLabel,
-    searchButtonLabel,
-  });
-
-  
-  const labels: Labels = {
-    annonceTypeLabel: base.annonceTypeLabel,
-    selectTypeLabel: base.selectTypeLabel,
-    selectCategoryLabel:  base.selectCategoryLabel,
-    selectSubCategoryLabel:  base.selectSubCategoryLabel,
-    formTitle:  base.formTitle,
-    priceLabel: base.priceLabel,
-    searchButtonLabel:  base.searchButtonLabel,
-  };
-
-  // 2) submit → push query string
   const handleSearchSubmit = async (filters: Filters) => {
     const params = new URLSearchParams(
       Object.entries(filters).map(([k, v]) => [k, v?.toString() || ""])
@@ -132,7 +64,7 @@ export function FormSearchUI({
             className="flex items-center gap-2 bg-blue-800 text-white rounded-xl px-4 py-2 shadow hover:bg-blue-700"
           >
             <FontAwesomeIcon icon={faFilter} />
-            <span>{isRTL ? "تصفية" : "Filtrer"}</span>
+            <span>{t("filter.filterBtn")}</span>
           </button>
         </div>
 
@@ -142,7 +74,7 @@ export function FormSearchUI({
               <button
                 onClick={() => setModalOpen(false)}
                 className="absolute top-2 right-4 text-2xl text-gray-500 hover:text-red-600"
-                aria-label={isRTL ? "إغلاق" : "Fermer"}
+                aria-label={t("filter.close")}
               >
                 &times;
               </button>
@@ -153,16 +85,15 @@ export function FormSearchUI({
                 typeAnnoncesEndpoint={typeAnnoncesEndpoint}
                 categoriesEndpoint={categoriesEndpoint}
                 subCategoriesEndpoint={subCategoriesEndpoint}
-                // labels (on fournit tout, y compris alias attendus par FormSearch)
-                annonceTypeLabel={labels.annonceTypeLabel}
-                selectTypeLabel={labels.selectTypeLabel}
-                categoryLabel={labels.selectCategoryLabel}
-                selectCategoryLabel={labels.selectCategoryLabel}
-                subCategoryLabel={labels.selectSubCategoryLabel}
-                selectSubCategoryLabel={labels.selectSubCategoryLabel}
-                formTitle={labels.formTitle}
-                priceLabel={labels.priceLabel}
-                searchButtonLabel={labels.searchButtonLabel}
+                annonceTypeLabel={t("filter.annonceType")}
+                selectTypeLabel={t("filter.selectType")}
+                categoryLabel={t("filter.selectCategory")}
+                selectCategoryLabel={t("filter.selectCategory")}
+                subCategoryLabel={t("filter.selectSubCategory")}
+                selectSubCategoryLabel={t("filter.selectSubCategory")}
+                formTitle={t("filter.title")}
+                priceLabel={t("filter.price")}
+                searchButtonLabel={t("filter.search")}
               />
             </div>
           </div>
@@ -171,7 +102,7 @@ export function FormSearchUI({
     );
   }
 
-  // --- DESKTOP (sidebar) ---
+  // --- DESKTOP ---
   return (
     <aside
       className={`max-w-sm w-72 z-40 shadow-2xl ${sidebarPosition} ${roundedSide} flex flex-col items-center transition-transform duration-300 h-full bg-white rounded-2xl p-8 border border-gray-200`}
@@ -184,16 +115,15 @@ export function FormSearchUI({
           typeAnnoncesEndpoint={typeAnnoncesEndpoint}
           categoriesEndpoint={categoriesEndpoint}
           subCategoriesEndpoint={subCategoriesEndpoint}
-          // labels
-          annonceTypeLabel={labels.annonceTypeLabel}
-          selectTypeLabel={labels.selectTypeLabel}
-          categoryLabel={labels.selectCategoryLabel}
-          selectCategoryLabel={labels.selectCategoryLabel}
-          subCategoryLabel={labels.selectSubCategoryLabel}
-          selectSubCategoryLabel={labels.selectSubCategoryLabel}
-          formTitle={labels.formTitle}
-          priceLabel={labels.priceLabel}
-          searchButtonLabel={labels.searchButtonLabel}
+          annonceTypeLabel={t("filter.annonceType")}
+          selectTypeLabel={t("filter.selectType")}
+          categoryLabel={t("filter.selectCategory")}
+          selectCategoryLabel={t("filter.selectCategory")}
+          subCategoryLabel={t("filter.selectSubCategory")}
+          selectSubCategoryLabel={t("filter.selectSubCategory")}
+          formTitle={t("filter.title")}
+          priceLabel={t("filter.price")}
+          searchButtonLabel={t("filter.search")}
         />
       </div>
     </aside>

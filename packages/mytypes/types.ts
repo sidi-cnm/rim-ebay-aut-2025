@@ -116,5 +116,5 @@ export interface Annonce {
 
   status: string; // Statut de l'annonce (ex. : actif, en attente, archivé)
   updatedAt?: Date | string; // Date de la dernière mise à jour de l'annonce
-  createdAt?: Date | string; // Date de création de l'annonce,
+  createdAt?: Date | string | null; // Date de création de l'annonce,
 }
