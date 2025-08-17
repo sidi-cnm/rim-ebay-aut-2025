@@ -1,12 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";   // ⬅️ Toaster local
 import { useRouter } from "next/navigation";
-//import { Category, SubCategory } from "@repo/mytypes/types";
 import { Category, SubCategory } from "../../../mytypes/types";
- 
 import EditFormDisplay from "./EditFormDisplay";
+import { useI18n } from "../../../../locales/client";
 
 export interface EditFormProps {
   lang: string;
@@ -21,21 +20,6 @@ export interface EditFormProps {
   };
   onClose: () => void;
   onUpdate: () => void;
-  errorsFetchTypeAnnonces?: string;
-  errorsFetchCategories?: string;
-  errorsFetchSubCategories?: string;
-  notificationsUpdating?: string;
-  notificationsSuccess?: string;
-  notificationsError?: string;
-  // Translated strings
-  labelTypeAnnonce?: string;
-  labelCategory?: string;
-  labelSubCategory?: string;
-  labelDescription?: string;
-  labelPrice?: string;
-  labelUpdate?: string;
-  labelCancel?: string;
-  // API endpoints
   typeAnnoncesEndpoint: string;
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
@@ -49,181 +33,151 @@ const EditForm: React.FC<EditFormProps> = ({
   initialData,
   onUpdate,
   onClose,
-  errorsFetchTypeAnnonces = "Failed to fetch type annonces",
-  errorsFetchCategories = "Failed to fetch categories",
-  errorsFetchSubCategories = "Failed to fetch subcategories",
-  notificationsUpdating = "Updating...",
-  notificationsSuccess = "Update successful!",
-  notificationsError = "Update failed!",
-  // Default translated strings
-  labelTypeAnnonce = "Type Annonce",
-  labelCategory = "Category",
-  labelSubCategory = "Sub Category",
-  labelDescription = "Description",
-  labelPrice = "Price",
-  labelUpdate = "Update",
-  labelCancel = "Cancel",
-  // API endpoints
   typeAnnoncesEndpoint,
   categoriesEndpoint,
   subCategoriesEndpoint,
   updateAnnonceEndpoint,
 }) => {
-  //const t = useI18n();
+  const t = useI18n();
 
-  // baseApiOptions = "/fr/p/api/tursor";
-  // if (modeOptionsApi === "sqlite") {
-  //   baseApiOptions = "/fr1/p/api/sqlite";
-  // }
   const [typeAnnonces, setTypeAnnonces] = useState<any[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [filteredSubCategories, setFilteredSubCategories] = useState<
-    SubCategory[]
-  >([]);
-  const [selectedTypeId, setSelectedTypeId] = useState<string>(
-    initialData.typeAnnonceId,
-  );
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
-    initialData.categorieId,
-  );
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>(
-    initialData.subcategorieId,
-  );
+  const [filteredSubCategories, setFilteredSubCategories] = useState<SubCategory[]>([]);
+  const [selectedTypeId, setSelectedTypeId] = useState<string>(initialData.typeAnnonceId);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(initialData.categorieId);
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>(initialData.subcategorieId);
   const [description, setDescription] = useState(initialData.description);
   const [price, setPrice] = useState(initialData.price.toString());
+
+  // loader état
+  const [submitting, setSubmitting] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
-    const fetchTypeAnnonces = async () => {
+    (async () => {
       try {
-        const response = await axios.get(typeAnnoncesEndpoint);
-        setTypeAnnonces(response.data);
-      } catch (error) {
-        toast.error(errorsFetchTypeAnnonces);
+        const res = await axios.get(typeAnnoncesEndpoint);
+        setTypeAnnonces(res.data);
+      } catch {
+        toast.error(t("editForm.errors.fetchTypes"));
       }
-    };
-
-    fetchTypeAnnonces();
-  }, [typeAnnoncesEndpoint, errorsFetchTypeAnnonces]);
+    })();
+  }, [typeAnnoncesEndpoint, t]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      if (selectedTypeId) {
-        try {
-          const response = await axios.get(
-            `${categoriesEndpoint}?parentId=${selectedTypeId}`,
-          );
-          setCategories(response.data);
-        } catch (error) {
-          toast.error(errorsFetchCategories);
-        }
-      } else {
-        setCategories([]);
+    (async () => {
+      if (!selectedTypeId) return setCategories([]);
+      try {
+        const res = await axios.get(`${categoriesEndpoint}?parentId=${selectedTypeId}`);
+        setCategories(res.data);
+      } catch {
+        toast.error(t("editForm.errors.fetchCategories"));
       }
-    };
-
-    fetchCategories();
-  }, [selectedTypeId, categoriesEndpoint, errorsFetchCategories]);
+    })();
+  }, [selectedTypeId, categoriesEndpoint, t]);
 
   useEffect(() => {
-    const fetchSubCategories = async () => {
-      if (selectedCategoryId) {
-        try {
-          const response = await axios.get(
-            `${subCategoriesEndpoint}?parentId=${selectedCategoryId}`,
-          );
-          setFilteredSubCategories(response.data);
-        } catch (error) {
-          toast.error(errorsFetchSubCategories);
-        }
-      } else {
-        setFilteredSubCategories([]);
+    (async () => {
+      if (!selectedCategoryId) return setFilteredSubCategories([]);
+      try {
+        const res = await axios.get(`${subCategoriesEndpoint}?parentId=${selectedCategoryId}`);
+        setFilteredSubCategories(res.data);
+      } catch {
+        toast.error(t("editForm.errors.fetchSubCategories"));
       }
-    };
-
-    fetchSubCategories();
-  }, [selectedCategoryId, subCategoriesEndpoint, errorsFetchSubCategories]);
+    })();
+  }, [selectedCategoryId, subCategoriesEndpoint, t]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitting(true);
 
-    const loadingToast = toast.loading(notificationsUpdating);
-
+    const toastId = toast.loading(t("editForm.notifications.updating"));
     try {
       const annonceData = {
         typeAnnonceId: selectedTypeId,
         categorieId: selectedCategoryId,
         subcategorieId: selectedSubCategoryId,
-        lieuId: 1,
-        userId: userid,
         description,
         price: Number(price),
-        title: "Titre",
-        contact: "contact",
-        haveImage: false,
-        firstImagePath: "",
-        images: [],
-        status: "active",
       };
 
-      const response = await axios.put(
-        updateAnnonceEndpoint,
-        annonceData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (response.status !== 200) {
-        throw new Error("Erreur lors de la mise à jour de l'annonce");
-      }
-
-      toast.success(notificationsSuccess, {
-        id: loadingToast,
+      const res = await axios.put(updateAnnonceEndpoint, annonceData, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
       });
-      // router.push(`/my/details/${annonceId}?a=b`);
-      router.refresh();
-      onClose();
-      onUpdate();
-    } catch (error) {
-      toast.error(notificationsError, {
-        id: loadingToast,
-      });
-      console.error("Erreur:", error);
+
+      if (res.status !== 200) throw new Error("Update failed");
+
+      // succès
+      toast.success(t("editForm.notifications.success"), { id: toastId });
+      setSubmitting(false);   // ⬅️ enlève l’overlay avant de fermer
+      onClose();              // ⬅️ ferme la modale immédiatement
+      onUpdate();             // ⬅️ refetch (affichera le détail mis à jour)
+      router.refresh();       // ⬅️ rafraîchit la route
+    } catch (err: any) {
+      console.error("Error updating annonce:", err);
+      const apiMsg =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.message ||
+        t("editForm.notifications.error");
+
+      toast.error(apiMsg, { id: toastId });
+      setSubmitting(false);
     }
   };
 
   return (
-    <EditFormDisplay
-      typeAnnonces={typeAnnonces}
-      categories={categories}
-      filteredSubCategories={filteredSubCategories}
-      selectedTypeId={selectedTypeId}
-      setSelectedTypeId={setSelectedTypeId}
-      selectedCategoryId={selectedCategoryId}
-      setSelectedCategoryId={setSelectedCategoryId}
-      selectedSubCategoryId={selectedSubCategoryId}
-      setSelectedSubCategoryId={setSelectedSubCategoryId}
-      description={description}
-      setDescription={setDescription}
-      price={price}
-      setPrice={setPrice}
-      handleSubmit={handleSubmit}
-      onClose={onClose}
-      lang={lang}
-      editTitle={lang === "fr" ? "Modifier l'annonce" : "Edit the ad"}
-      cancelLabel={labelCancel}
-      updateLabel={labelUpdate}
-      annonceTypeLabel={labelTypeAnnonce}
-      categoryLabel={labelCategory}
-      selectCategoryLabel={labelCategory}
-      subCategoryLabel={labelSubCategory}
-      selectSubCategoryLabel={labelSubCategory}
-      descriptionLabel={labelDescription}
-      priceLabel={labelPrice}
-    />
+    <div className="relative">
+      {/* Toaster local à ce composant (pas besoin du layout) */}
+      <Toaster position="top-center" reverseOrder={false} />
+
+      <EditFormDisplay
+        typeAnnonces={typeAnnonces}
+        categories={categories}
+        filteredSubCategories={filteredSubCategories}
+        selectedTypeId={selectedTypeId}
+        setSelectedTypeId={setSelectedTypeId}
+        selectedCategoryId={selectedCategoryId}
+        setSelectedCategoryId={setSelectedCategoryId}
+        selectedSubCategoryId={selectedSubCategoryId}
+        setSelectedSubCategoryId={setSelectedSubCategoryId}
+        description={description}
+        setDescription={setDescription}
+        price={price}
+        setPrice={setPrice}
+        handleSubmit={handleSubmit}
+        onClose={onClose}
+        lang={lang}
+        /* i18n */
+        editTitle={t("editForm.title")}
+        annonceTypeLabel={t("editForm.type")}
+        categoryLabel={t("editForm.category")}
+        selectCategoryLabel={t("editForm.selectCategory")}
+        subCategoryLabel={t("editForm.subCategory")}
+        selectSubCategoryLabel={t("editForm.selectSubCategory")}
+        descriptionLabel={t("editForm.description")}
+        priceLabel={t("editForm.price")}
+        cancelLabel={t("editForm.cancel")}
+        updateLabel={submitting ? t("editForm.updating") : t("editForm.update")}
+        /* état submit */
+        submitting={submitting}
+      />
+
+      {/* Overlay loader pendant l’envoi */}
+      {submitting && (
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] grid place-items-center rounded-xl">
+          <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-lg shadow">
+            <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full" />
+            <span className="text-sm font-medium">
+              {t("editForm.notifications.updating")}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

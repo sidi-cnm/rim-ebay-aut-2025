@@ -5,6 +5,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Annonce } from "../../../../../packages/mytypes/types"
 //"@repo/mytypes/types";
+import { useI18n } from "../../../../../locales/client";
 
 const fallbackImageUrl = "/noimage.jpg";
 
@@ -63,6 +64,8 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
     </div>
   );
 
+   const t = useI18n();
+
   return (
     <article className="flex flex-col gap-4 bg-white shadow-lg rounded-xl p-4 w-full max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[50%] mx-auto my-6">
       <h2 className="text-2xl font-bold mb-4 text-blue-600 text-center">
@@ -96,7 +99,8 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
         </div>
 
         <h1 className="text-xl sm:text-2xl font-bold my-2">
-          {lang === "ar" ? "العنوان" : annonce?.title}
+         
+          {t("detail.description")}
         </h1>
 
         <p className="text-gray-600 text-sm sm:text-base mb-4">
@@ -108,7 +112,7 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-sm sm:text-base font-bold">{i18nPrix}</span>
             <p className="text-base sm:text-lg text-green-800 font-bold">
-              {annonce?.price} UMR / jour
+              {annonce?.price} {t("detail.perDay")}
             </p>
           </div>
           <div className="border-t border-green-800 my-2"></div>

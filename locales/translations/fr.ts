@@ -12,6 +12,19 @@ export default {
     Recherche: "Recherche",
     Annoce: "Tous les anonnces",
   },
+  detail: {
+    title: "Détails de l’annonce",
+    price: "PRIX",
+    perDay: "UMR / jour",
+    contact: "Contact",
+    disclaimer:
+      "Notre plateforme n'est pas responsable de ce produit ou service. Toutes les informations sont fournies par l'annonceur, et nous ne garantissons pas leur exactitude ou leur qualité. Veuillez effectuer vos propres vérifications avant de procéder à tout achat ou réservation.",
+    noImageAlt: "aucune image fournie",
+    timeSep: "|",
+    description:"Description",
+    published: "Publié le",
+    time: "Heure",
+  },
   card: {
     published: "publié le",
     price: "Prix",
@@ -119,6 +132,13 @@ export default {
     emailRequired: "",
     success: "",
   },
+  common: {
+    remove: "Retirer",
+    edit: "Éditer",
+    createdAt: "Créé le",
+    perDay: "/ jour",
+    noImageAlt: "Pas d'image"
+  },
   footer: {
     aboutUs: "À propos de nous",
     contact: "Contact",
@@ -166,6 +186,34 @@ export default {
   },
   editAnnonce: {
     edit: "edit",
+  },
+
+
+
+
+  editForm: {
+    title: "Modifier l'annonce",
+    type: "Type Annonce",
+    updating: "Mise à jour de l'annonce en cours...",
+    category: "Catégorie",
+    subCategory: "Sous-catégorie",
+    selectCategory: "Sélectionner la catégorie",
+    selectSubCategory: "Sélectionner la sous-catégorie",
+    description: "Description",
+    price: "Prix",
+    close: "Fermer",
+    update: "Mettre à jour",
+    cancel: "Annuler",
+    errors: {
+      fetchTypes: "Échec du chargement des types d'annonce",
+      fetchCategories: "Échec du chargement des catégories",
+      fetchSubCategories: "Échec du chargement des sous-catégories",
+    },
+    notifications: {
+      updating: "Mise à jour en cours…",
+      success: "Mise à jour réussie !",
+      error: "Échec de la mise à jour",
+    },
   },
   
 } as const;

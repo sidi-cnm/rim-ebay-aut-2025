@@ -1,76 +1,66 @@
+// app/[locale]/my/details/[id]/page.tsx
 import MyAnnonceDetailsUI from "./ui";
 import BackButton from "../../../../../packages/ui/components/Navigation";
-//"@repo/ui/Navigation";
-import { cookies } from "next/headers";
-import prisma from "../../../../../lib/prisma";
 import { getI18n } from "../../../../../locales/server";
- 
-      //`/${lang}/api/my/annonces/${id}`
-export default async function AnnonceDetail(props: {
-  params: Promise<{ locale: string; annonceId: string; id: string }>;
-}) { 
-  
-  const params = await props.params;
-  const userid = (await cookies()).get("user");
-  const userIdConverted = String(userid?.value || "");
-  let contact = ""
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userIdConverted,
-    },
-  }).catch((err) => {
-    console.error("Error fetching user:", err);
-    // Handle the error as needed, e.g., redirect or show an error message
-  });
-  console.log("User ID:", userIdConverted);
-  console.log("User:", user);
+import { getDb } from "../../../../../lib/mongodb";
+import { ObjectId } from "mongodb";
+import { getUserFromCookies } from "../../../../../utiles/getUserFomCookies";
 
-  let contactObject = null;
-  if (user) {
-    contactObject = await prisma.contact.findFirst({
-      where: { userId: userIdConverted },
+type PageParams = { locale: string; id: string };
+
+export default async function AnnonceDetail({ params }: { params: PageParams }) {
+  const t = await getI18n();
+
+  // user (cookies)
+  const user = await getUserFromCookies(); // { id, email, ... } ou null
+  const userId = user?.id ?? "";
+
+  const db = await getDb();
+
+  // contact de l'utilisateur (optionnel)
+  let contact = "Contact non trouvé";
+  if (userId) {
+    const contactDoc = await db.collection("contacts").findOne({
+      userId: ObjectId.isValid(userId) ? String(new ObjectId(userId)) : String(userId),
     });
-    if (contactObject && contactObject.contact) {
-      contact = contactObject.contact;
-    }
-    else {
-      contact = "Contact non trouvé";
-    }
+    if (contactDoc?.contact) contact = String(contactDoc.contact);
   }
 
-  let modeOptionsApi: "sqlite" | "tursor";
-  modeOptionsApi = "sqlite";
-  if (process.env.NEXT_PUBLIC_OPTIONS_API_MODE !== "sqlite") {
-    modeOptionsApi = "tursor";
-  }
-  let baseApiOptions = "/fr/p/api/tursor";
-  if (modeOptionsApi === "sqlite") {
-    baseApiOptions = "/fr/p/api/sqlite";
-  }
+  // L’API attend l’ID **de l’annonce** (== params.id), pas l’ID utilisateur !
+  const annonceDbId = params.id;
+
+  // Endpoints d’options (inchangé)
+  const modeOptionsApi =
+    process.env.NEXT_PUBLIC_OPTIONS_API_MODE === "tursor" ? "tursor" : "sqlite";
+  const baseApiOptions = modeOptionsApi === "sqlite" ? "/fr/p/api/sqlite" : "/fr/p/api/tursor";
   const typeAnnoncesEndpoint = `${baseApiOptions}/options`;
   const categoriesEndpoint = `${baseApiOptions}/options`;
   const subCategoriesEndpoint = `${baseApiOptions}/options`;
-  const updateAnnonceEndpoint = `/${params.locale}/api/annonces/${userIdConverted}`;
-  const t = await getI18n();
+
+  // URLs API (toujours préfixées par la locale et avec l’id de l’annonce)
+  const getAnnonceUrl = `/${params.locale}/api/my/annonces/${annonceDbId}`;
+  const updateAnnonceEndpoint = `/${params.locale}/api/my/annonces/${annonceDbId}`; // si tu as une route PUT séparée
+
   return (
     <div className="p-4 sm:p-6 md:p-9 overflow-hidden">
-      <div>
-        <BackButton />
-      </div>
+      <div><BackButton /></div>
+
       <MyAnnonceDetailsUI
-      i18nAnnonce={t("annonce")}
-        i18nContact={t("Contact")}
-        i18nPrix={t("prix")}
+        lang={params.locale}
+        // Affichage
+        i18nAnnonce={t("filter.Annonces")}
+        i18nContact={t("footer.contact")}
+        i18nPrix={t("filter.price")}
         i18nNotificationsCreating={t("notifications.creating")}
         i18nNotificationsErrorDelete={t("notifications.errordelete")}
         i18nNotificationsSuccessDelete={t("notifications.successdelete")}
-        lang={params.locale}
-        annonceId={contact}
+        // IDs + endpoints
+        annonceId={annonceDbId}               // <-- ID de l’annonce pour DELETE
+        retiveUrldetailsAnnonce={getAnnonceUrl} // <-- URL GET de l’annonce (avec locale)
         typeAnnoncesEndpoint={typeAnnoncesEndpoint}
         categoriesEndpoint={categoriesEndpoint}
         subCategoriesEndpoint={subCategoriesEndpoint}
         updateAnnonceEndpoint={updateAnnonceEndpoint}
-        retiveUrldetailsAnnonce={`${params.locale}/api/my/annonces/${userIdConverted}`}
       />
     </div>
   );

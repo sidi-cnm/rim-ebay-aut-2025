@@ -4,7 +4,7 @@ import AnnoceTitle from "../../packages/ui/components/AnnoceTitle";
 import { getI18n } from "../../locales/server";
 import { LottieAnimation } from "../../packages/ui/components/LottieAnimation";
 import { Annonce } from "../../packages/mytypes/types";
-import { getDb } from "../../lib/mongodb"; // ⬅️ on utilise MongoDB
+import { getDb } from "../../lib/mongodb";
 
 // Config API options (inchangé)
 let modeOptionsApi: "sqlite" | "tursor" = "tursor";
@@ -60,7 +60,7 @@ export default async function Home({
   const [rows, totalCount] = await Promise.all([
     coll
       .find(query)
-      .sort({ updatedAt: -1 }) // optionnel
+      .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(itemsPerPage)
       .toArray(),
@@ -102,12 +102,10 @@ export default async function Home({
     createdAt: a.createdAt ? new Date(a.createdAt) : "",
   }));
 
-  console.log("annonces", annonces)
-
-  // 5) Total pages basé sur le total Mongo (pas la longueur d'une page)
+  // 5) Total pages basé sur le total Mongo
   const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
 
-  // 6) Rendu UI (inchangé)
+  // 6) Rendu UI
   return (
     <main className="min-h-screen bg-gray-100">
       {/* Mobile Filter Button/Modal */}
@@ -129,30 +127,37 @@ export default async function Home({
         />
       </div>
 
-      <div className="flex flex-col md:flex-row min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
-        {/* Sidebar (only on md+) */}
-        <div className="hidden md:block md:basis-1/5 md:w-1/5">
-          <FormSearchUI
-            lang={params.locale}
-            typeAnnoncesEndpoint={typeAnnoncesEndpoint}
-            categoriesEndpoint={categoriesEndpoint}
-            subCategoriesEndpoint={subCategoriesEndpoint}
-            // i18n keys
-            annonceTypeLabel={t("filter.type")}
-            selectTypeLabel="Sélectionner le type"
-            selectCategoryLabel="Sélectionner la catégorie"
-            selectSubCategoryLabel="Sélectionner la sous-catégorie"
-            formTitle="Rechercher une annonce"
-            priceLabel="Prix"
-            searchButtonLabel="Rechercher"
-          />
-        </div>
+      {/* Wrapper principal */}
+      <div className="flex flex-col md:flex-row items-start min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
+        {/* Sidebar (desktop) */}
+        <aside className="hidden md:block w-80 xl:w-96 flex-shrink-0 self-start">
+          {/* Sticky + hauteur fixe (viewport) + scroll interne */}
+          <div className="sticky top-6 h-[calc(100vh-3rem)]">
+            <div className="h-full bg-white rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 overflow-y-auto">
+              <FormSearchUI
+                lang={params.locale}
+                typeAnnoncesEndpoint={typeAnnoncesEndpoint}
+                categoriesEndpoint={categoriesEndpoint}
+                subCategoriesEndpoint={subCategoriesEndpoint}
+                // i18n keys
+                annonceTypeLabel={t("filter.type")}
+                selectTypeLabel="Sélectionner le type"
+                selectCategoryLabel="Sélectionner la catégorie"
+                selectSubCategoryLabel="Sélectionner la sous-catégorie"
+                formTitle="Rechercher une annonce"
+                priceLabel="Prix"
+                searchButtonLabel="Rechercher"
+              />
+            </div>
+          </div>
+        </aside>
 
         {/* Main Content */}
         <section className="flex-1 bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">
           <div className="mb-6">
             <AnnoceTitle title={t("nav.Annoce")} />
           </div>
+
           {annonces?.length ? (
             <ListAnnoncesUI
               totalPages={totalPages}

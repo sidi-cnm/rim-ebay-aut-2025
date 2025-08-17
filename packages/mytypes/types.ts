@@ -99,7 +99,8 @@ export interface Annonce {
   typeAnnonce?: OptionsModel;
   categorieName?: string; // Nom de la catégorie (optionnel)
   categorieNameAr?: string; // Nom de la catégorie en arabe (optionnel)
-
+  subcategorieId?: string; // Identifiant de la sous-catégorie (optionnel)
+  
   lieuId: string; // Identifiant du lieu de l'annonce
   lieuStr?: string; // Lieu de l'annonce
   lieuStrAr?: string; // Lieu de l'annonce en arabe

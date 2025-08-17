@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { ObjectId } from "mongodb";
 import { getDb } from "../../../../../../lib/mongodb"; // ajuste si ton fichier s'appelle autrement
+import { getUserFromCookies } from "../../../../../../utiles/getUserFomCookies";
 
 function getUserFromHeaders(request: NextRequest) {
   return {
@@ -21,8 +22,12 @@ export async function GET(
     const db = await getDb();
 
     // user depuis cookie (Next 13/14: cookies() est async dans ce contexte)
-    const cookieStore = await cookies();
-    const userIdStr = String(cookieStore.get("user")?.value ?? "");
+    // const cookieStore = await cookies();
+    const userData = await getUserFromCookies();
+    console.log("User data from cookies api side :", userData);
+    const userId = userData?.id ?? ""; 
+    const userIdStr = String(userId ?? "");
+    console.log("User ID from cookies:", userIdStr);
     if (!userIdStr) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
@@ -64,8 +69,18 @@ export async function PUT(
   try {
     const db = await getDb();
 
-    const cookieStore = await cookies();
-    const userIdStr = String(cookieStore.get("user")?.value ?? "");
+    console.log("PUT params.id =", params.id);
+    const userData = await getUserFromCookies();
+    const userIdStr = String(userData?.id ?? "");
+    console.log("PUT cookie userId =", userIdStr);
+
+
+const only = await db.collection("annonces").findOne(
+  { _id: new ObjectId(params.id) },
+  { projection: { userId: 1 } }
+);
+console.log("Doc.userId in DB =", only?.userId, "type:", typeof only?.userId);
+
     if (!userIdStr) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
@@ -82,14 +97,8 @@ export async function PUT(
       typeAnnonceId?: string;
       categorieId?: string;
       subcategorieId?: string;
-      lieuId?: string;
-      title?: string;
       description?: string;
       price?: number | null;
-      contact?: string;
-      haveImage?: boolean;
-      firstImagePath?: string | null;
-      status?: string;
       // userId?: string; // ⚠️ ignoré pour sécurité (on ne change pas le propriétaire)
     };
 
@@ -100,15 +109,8 @@ export async function PUT(
     if (typeof data.typeAnnonceId === "string") update.typeAnnonceId = String(data.typeAnnonceId);
     if (typeof data.categorieId === "string") update.categorieId = String(data.categorieId);
     if (typeof data.subcategorieId === "string") update.subcategorieId = String(data.subcategorieId);
-    if (typeof data.lieuId === "string") update.lieuId = String(data.lieuId); // ← corrige le bug (ne pas mettre subcategorieId)
-    if (typeof data.title === "string") update.title = data.title;
     if (typeof data.description === "string") update.description = data.description;
     if (typeof data.price === "number" || data.price === null) update.price = data.price ?? null;
-    if (typeof data.contact === "string") update.contact = data.contact;
-    if (typeof data.haveImage === "boolean") update.haveImage = data.haveImage;
-    if (typeof data.firstImagePath === "string" || data.firstImagePath === null) update.firstImagePath = data.firstImagePath ?? null;
-    if (typeof data.status === "string") update.status = data.status;
-
     // findOneAndUpdate pour renvoyer le doc mis à jour
     const result = await db.collection("annonces").findOneAndUpdate(
       { _id: annonceId, userId: userIdStr }, // contrôle de propriété
@@ -116,11 +118,14 @@ export async function PUT(
       { returnDocument: "after" },
     );
 
-    if (!result?.value) {
+    console.log("PUT result:", result);
+    if (!result) {
       return NextResponse.json({ error: "Annonce introuvable ou non autorisée" }, { status: 404 });
     }
 
-    const updated = result?.value;
+    console.log("PUT updated annonce:", result.value);
+
+    const updated = result;
     return NextResponse.json(
       { ...updated, id: updated._id.toString(), _id: undefined },
       { status: 200 },
@@ -140,11 +145,9 @@ export async function DELETE(
     const db = await getDb();
 
     // tu peux garder cette lecture si tu en as besoin pour des logs
-    const userHdr = getUserFromHeaders(request);
-    console.log("User from headers:", userHdr);
-
-    const cookieStore = await cookies();
-    const userIdStr = String(cookieStore.get("user")?.value ?? "");
+   
+    const userData = await getUserFromCookies();
+    const userIdStr = String(userData?.id ?? "");
     if (!userIdStr) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }

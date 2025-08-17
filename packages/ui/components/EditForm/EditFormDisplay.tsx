@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 interface EditFormDisplayProps {
@@ -11,21 +12,30 @@ interface EditFormDisplayProps {
   priceLabel: string;
   cancelLabel: string;
   updateLabel: string;
+  submitting?: boolean;
+
   typeAnnonces: any[];
   categories: any[];
   filteredSubCategories: any[];
+
   selectedTypeId: string;
   setSelectedTypeId: (id: string) => void;
+
   selectedCategoryId: string;
   setSelectedCategoryId: (id: string) => void;
+
   selectedSubCategoryId: string;
   setSelectedSubCategoryId: (id: string) => void;
+
   description: string;
-  setDescription: (description: string) => void;
+  setDescription: (v: string) => void;
+
   price: string;
-  setPrice: (price: string) => void;
+  setPrice: (v: string) => void;
+
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onClose: () => void;
+
   lang: string;
 }
 
@@ -57,104 +67,141 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
   onClose,
   lang,
 }) => {
+  const isRTL = lang?.startsWith("ar");
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        <h2 className="text-xl font-bold mb-4">{editTitle}</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Type Annonce */}
-          <div className="mb-4">
-            <label className="block mb-1">{annonceTypeLabel}</label>
-            <select
-              value={selectedTypeId}
-              onChange={(e) => setSelectedTypeId(String(e.target.value))}
-              className="border rounded w-full p-2"
-            >
-              {typeAnnonces.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {lang === "ar" ? type.nameAr : type.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Catégorie */}
-          <div className="mb-4">
-            <label className="block mb-1">{categoryLabel}</label>
-            <select
-              value={selectedCategoryId || ""}
-              onChange={(e) => setSelectedCategoryId(String(e.target.value))}
-              disabled={!selectedTypeId}
-              className="border rounded w-full p-2"
-            >
-              <option value="">{selectCategoryLabel}</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Sous-catégorie */}
-          <div className="mb-4">
-            <label className="block mb-1">{subCategoryLabel}</label>
-            <select
-              value={selectedSubCategoryId || ""}
-              onChange={(e) => setSelectedSubCategoryId(String(e.target.value))}
-              disabled={!selectedCategoryId}
-              className="border rounded w-full p-2"
-            >
-              <option value="">{selectSubCategoryLabel}</option>
-              {filteredSubCategories.map((subCategory) => (
-                <option key={subCategory.id} value={subCategory.id}>
-                  {subCategory.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Description */}
-          <div className="mb-4">
-            <label className="block mb-1">{descriptionLabel}</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="border rounded w-full p-2"
-              rows={4}
-              required
-            />
-          </div>
-
-          {/* Prix */}
-          <div className="mb-4">
-            <label className="block mb-1">{priceLabel}</label>
-            <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="border rounded w-full p-2"
-              required
-            />
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="mr-2 bg-gray-300 p-2 rounded"
-            >
-              {cancelLabel}
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-500 p-2 rounded text-white"
-            >
-              {updateLabel}
-            </button>
-          </div>
-        </form>
+    <div
+    role="dialog"
+    aria-modal="true"
+    dir={isRTL ? "rtl" : "ltr"}
+    className="
+      w-full
+      max-w-[260px]       /* très compact sur mobile */
+      sm:max-w-[300px]    /* petit écran */
+      md:max-w-[360px]    /* desktop */
+      lg:max-w-[400px]    /* grand écran */
+      bg-white
+      rounded-lg
+      border border-gray-200
+      shadow-lg
+      p-3 sm:p-4
+      max-h-[80vh] overflow-y-auto
+    "
+  >
+  
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-base sm:text-lg md:text-xl font-semibold">
+          {editTitle}
+        </h2>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+          aria-label="Close"
+          title="Close"
+        >
+          &times;
+        </button>
       </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-4 px-3 text-sm md:text-base">
+        {/* Type annonce */}
+        <div>
+          <label className="block mb-1 font-medium">{annonceTypeLabel}</label>
+          <select
+            value={selectedTypeId}
+            onChange={(e) => setSelectedTypeId(String(e.target.value))}
+            className="border rounded w-full p-2"
+          >
+            <option value="">{annonceTypeLabel}</option>
+            {typeAnnonces?.map((t: any) => (
+              <option key={t.id} value={t.id}>
+                {isRTL ? t.nameAr ?? t.name : t.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Catégorie */}
+        <div>
+          <label className="block mb-1 font-medium">{categoryLabel}</label>
+          <select
+            value={selectedCategoryId}
+            onChange={(e) => setSelectedCategoryId(String(e.target.value))}
+            className="border rounded w-full p-2"
+            disabled={!selectedTypeId}
+          >
+            <option value="">{selectCategoryLabel}</option>
+            {categories?.map((c: any) => (
+              <option key={c.id} value={c.id}>
+                {isRTL ? c.nameAr ?? c.name : c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Sous-catégorie */}
+        <div>
+          <label className="block mb-1 font-medium">{subCategoryLabel}</label>
+          <select
+            value={selectedSubCategoryId}
+            onChange={(e) => setSelectedSubCategoryId(String(e.target.value))}
+            className="border rounded w-full p-2"
+            disabled={!selectedCategoryId}
+          >
+            <option value="">{selectSubCategoryLabel}</option>
+            {filteredSubCategories?.map((sc: any) => (
+              <option key={sc.id} value={sc.id}>
+                {isRTL ? sc.nameAr ?? sc.name : sc.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="block mb-1 font-medium">{descriptionLabel}</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="border rounded w-full p-2"
+            rows={4}
+            required
+          />
+        </div>
+
+        {/* Prix */}
+        <div>
+          <label className="block mb-1 font-medium">{priceLabel}</label>
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="border rounded w-full p-2"
+            min={0}
+            required
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
+          >
+            {cancelLabel}
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            {updateLabel}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

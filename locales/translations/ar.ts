@@ -155,6 +155,20 @@ export default {
     currency: "أوقية",
     details: "تفاصيل",
   },
+
+  detail: {
+    title: "تفاصيل الإعلان",
+    price: "السعر",
+    perDay: "أوقية / اليوم",
+    contact: "اتصال",
+    disclaimer:
+      "منصتنا غير مسؤولة عن هذا المنتج أو الخدمة. جميع المعلومات مقدمة من المعلن، ولا نضمن دقتها أو جودتها. يرجى إجراء تحققك الخاص قبل أي عملية شراء أو حجز.",
+    noImageAlt: "لا توجد صورة",
+    timeSep: "|",
+    description: "الوصف",
+    published: "نُشِرَ في",
+    time: "الوقت",
+  },
   filter: {
     title: "البحث عن إعلان",
     annonceType: "نوع الإعلان",
@@ -167,5 +181,30 @@ export default {
     filterBtn: "تصفية",
     Annonces: "الإعلانات",
     type: "النوع",
-  }
+  },
+
+  editForm: {
+    title: "تعديل الإعلان",
+    type: "نوع الإعلان",
+    category: "الفئة",
+    updating: "جاري التحديث…",
+    subCategory: "الفئة الفرعية",
+    selectCategory: "اختر الفئة",
+    selectSubCategory: "اختر الفئة الفرعية",
+    description: "الوصف",
+    price: "السعر",
+    update: "تحديث",
+    cancel: "إلغاء",
+    close: "إغلاق",
+    errors: {
+      fetchTypes: "فشل تحميل أنواع الإعلانات",
+      fetchCategories: "فشل تحميل الفئات",
+      fetchSubCategories: "فشل تحميل الفئات الفرعية",
+    },
+    notifications: {
+      updating: "جاري التحديث…",
+      success: "تم التحديث بنجاح!",
+      error: "فشل التحديث",
+    },
+  },
 } as const;

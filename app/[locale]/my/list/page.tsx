@@ -22,8 +22,10 @@ export default async function Home({
 }) {
   // 1) Récupérer l’utilisateur (pour filtrer par userId)
   const userData = await getUserFromCookies();
+  console.log("userData from cookies::::", userData);
   const userId = userData?.id ?? ""; // si vide => retournera 0 résultat
 
+  console.log("userData" , userData)
   // 2) Lire les filtres/pagination dans l’URL
   const currentPage = Number(searchParams?.page) || 1;
   const typeAnnonceId = searchParams?.typeAnnonceId;
