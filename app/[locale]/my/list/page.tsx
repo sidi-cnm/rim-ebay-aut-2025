@@ -35,6 +35,7 @@ export default async function Home({
 
   // 3) Construire la requête Mongo (équivalent where Prisma)
   const query: Record<string, any> = {};
+  query.status = "active";
   if (userId) query.userId = userId;
   if (typeAnnonceId) query.typeAnnonceId = typeAnnonceId;
   if (categorieId) query.categorieId = categorieId;
@@ -102,16 +103,20 @@ export default async function Home({
   return (
     <main className="min-h-screen bg-gray-100">
       {/* Filtres Mobile */}
-      <div className="block md:hidden w-full px-2 pt-4">
+    <div className="md:hidden pt-4 flex justify-center">
+      {/* 👇 forcer une largeur max + centrer */}
+      <div style={{ maxWidth: 340, width: "90%" }}>
         <FormSearchUI
           lang={params.locale}
-          // si tu as refait l’API options sur Mongo, mets /fr/p/api/mongo/options
           typeAnnoncesEndpoint="/fr/p/api/sqlite/options"
           categoriesEndpoint="/fr/p/api/sqlite/options"
           subCategoriesEndpoint="/fr/p/api/sqlite/options"
           mobile
         />
       </div>
+    </div>
+
+
 
       <div className="flex flex-col md:flex-row min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
         {/* Sidebar Desktop */}

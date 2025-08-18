@@ -40,7 +40,7 @@ export default function AddAnnonceUI({
   const [submitStatus, setSubmitStatus] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const DataInsideNavigation = useSearchParams();
-  const [currentDepth, setCurrentDepth] = useState(0);
+  const [submitting, setSubmitting] = useState(false); // ⬅️ loader état
 
   useEffect(() => {
     const fetchTypeAnnonces = async () => {
@@ -139,6 +139,7 @@ export default function AddAnnonceUI({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitting(true)
 
     const loadingToast = toast.loading(t("notifications.creating"));
 
@@ -208,6 +209,9 @@ export default function AddAnnonceUI({
         id: loadingToast,
       });
       console.error("Erreur:", error);
+    }
+    finally {
+      setSubmitting(false); // ⬅️ stop loader (si on reste sur la page)
     }
   };
 
@@ -332,12 +336,45 @@ export default function AddAnnonceUI({
               id="submit"
               className="bg-blue-900 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded focus:outline-none focus:shadow-outline transition-all duration-300"
             >
-              {t("addAnnonce.submitButton")}
+
+              {submitting ? (
+                    <div className="loader"></div>
+            ) : (
+              <span>{t("addAnnonce.submitButton")}</span>
+            
+                  
+              )}
             </button>
             {submitStatus && <p>{submitStatus}</p>}
           </div>
         </form>
       </div>
+
+
+
+
+
+      {/* CSS for the loader */}
+      <style jsx>{`
+        .loader {
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid #3498db;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          animation: spin 1s linear infinite;
+          margin: auto;
+        }
+
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </main>
   );
 }

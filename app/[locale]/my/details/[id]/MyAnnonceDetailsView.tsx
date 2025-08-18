@@ -6,6 +6,8 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Annonce } from "../../../../../packages/mytypes/types"
 //"@repo/mytypes/types";
 import { useI18n } from "../../../../../locales/client";
+import Lottie from "react-lottie";
+import { LottieAnimation } from "../../../../../packages/ui/components/LottieAnimation";
 
 const fallbackImageUrl = "/noimage.jpg";
 
@@ -19,6 +21,9 @@ interface MyAnnonceDetailsViewProps {
   handleDelte: () => void;
   handleEdit: () => void;
   setEditModalOpen: (isOpen: boolean) => void;
+
+  isDeleting?: boolean;              // ✅ nouveau
+  deletingText?: string;             // ✅ no
 }
 
 const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
@@ -33,6 +38,8 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
   handleDelte,
   handleEdit,
   //setEditModalOpen,
+  isDeleting = false,
+  deletingText = "...",
 }) => {
   const d = new Date(annonce?.createdAt || "");
   const getImage = (imagePath: string, imageDescription: string = "") => {
@@ -134,9 +141,17 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
         <div className="flex flex-col sm:flex-row justify-between mt-4 gap-2">
           <button
             onClick={handleDelte}
+            disabled={isDeleting}
             className="bg-red-500 w-full sm:w-44 h-10 hover:bg-red-600 rounded-lg text-white font-bold"
           >
-            {lang === "ar" ? "سحب" : "Retirer"}
+            {isDeleting ? (
+                    <div className="loader"></div>
+            ) : (
+              <span>{isDeleting ? deletingText : t("detail.delete")}</span>
+            
+               
+          )}
+            
           </button>
           <button
             data-cy="edit-button"
@@ -147,6 +162,29 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
           </button>
         </div>
       </div>
+
+
+      {/* CSS for the loader */}
+      <style jsx>{`
+        .loader {
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid #3498db;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          animation: spin 1s linear infinite;
+          margin: auto;
+        }
+
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </article>
   );
 };

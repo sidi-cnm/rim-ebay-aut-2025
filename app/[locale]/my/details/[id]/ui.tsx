@@ -47,6 +47,7 @@ export default function MyAnnonceDetailsCompo({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false); 
   const [initialData, setInitialData] = useState({
     typeAnnonceId: "",
     categorieId: "",
@@ -93,6 +94,7 @@ export default function MyAnnonceDetailsCompo({
 
   const handleDelte = async () => {
     const loadingToast = toast.loading(i18nNotificationsCreating);
+    setDeleting(true);                                // démarre loader
     try {
       const res = await fetch(`/${lang}/api/my/annonces/${annonceId}`, {
         method: "DELETE",
@@ -105,6 +107,7 @@ export default function MyAnnonceDetailsCompo({
     } catch (error) {
       toast.error(i18nNotificationsErrorDelete, { id: loadingToast });
       console.error("Erreur:", error);
+      setDeleting(false); 
     }
   };
 
@@ -147,6 +150,7 @@ export default function MyAnnonceDetailsCompo({
               i18nPrix={i18nPrix}
               getImageUrl={getImageUrl}
               handleDelte={handleDelte}
+              isDeleting={deleting}
               handleEdit={handleEdit}
               setEditModalOpen={setEditModalOpen}
             />

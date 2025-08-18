@@ -161,6 +161,7 @@ export default {
     price: "السعر",
     perDay: "أوقية / اليوم",
     contact: "اتصال",
+    delete: "حذف",
     disclaimer:
       "منصتنا غير مسؤولة عن هذا المنتج أو الخدمة. جميع المعلومات مقدمة من المعلن، ولا نضمن دقتها أو جودتها. يرجى إجراء تحققك الخاص قبل أي عملية شراء أو حجز.",
     noImageAlt: "لا توجد صورة",
@@ -196,6 +197,7 @@ export default {
     update: "تحديث",
     cancel: "إلغاء",
     close: "إغلاق",
+
     errors: {
       fetchTypes: "فشل تحميل أنواع الإعلانات",
       fetchCategories: "فشل تحميل الفئات",
@@ -204,6 +206,7 @@ export default {
     notifications: {
       updating: "جاري التحديث…",
       success: "تم التحديث بنجاح!",
+      deleting: "جاري الحذف…",
       error: "فشل التحديث",
     },
   },

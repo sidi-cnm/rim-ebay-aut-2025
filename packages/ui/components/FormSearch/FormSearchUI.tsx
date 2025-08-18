@@ -68,36 +68,51 @@ export function FormSearchUI({
           </button>
         </div>
 
-        {modalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-md mx-2 relative">
-              <button
-                onClick={() => setModalOpen(false)}
-                className="absolute top-2 right-4 text-2xl text-gray-500 hover:text-red-600"
-                aria-label={t("filter.close")}
-              >
-                &times;
-              </button>
+       
 
-              <FormSearch
-                lang={lang}
-                onSubmit={handleSearchSubmit}
-                typeAnnoncesEndpoint={typeAnnoncesEndpoint}
-                categoriesEndpoint={categoriesEndpoint}
-                subCategoriesEndpoint={subCategoriesEndpoint}
-                annonceTypeLabel={t("filter.annonceType")}
-                selectTypeLabel={t("filter.selectType")}
-                categoryLabel={t("filter.selectCategory")}
-                selectCategoryLabel={t("filter.selectCategory")}
-                subCategoryLabel={t("filter.selectSubCategory")}
-                selectSubCategoryLabel={t("filter.selectSubCategory")}
-                formTitle={t("filter.title")}
-                priceLabel={t("filter.price")}
-                searchButtonLabel={t("filter.search")}
-              />
-            </div>
+        {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div
+            className="
+              relative bg-white rounded-2xl
+              p-13
+              w-[95vw] max-w-[380px]   
+              max-h-[70vh] overflow-y-auto   
+              shadow-2xl shadow-gray-700/50
+              my-6   /* <-- ajoute marge haut/bas */
+            "
+          >
+            <button
+              onClick={() => setModalOpen(false)}
+              className="absolute top-2 right-3 text-2xl text-gray-500 hover:text-red-600"
+              aria-label={t('filter.close')}
+            >
+              &times;
+            </button>
+
+            <FormSearch
+              lang={lang}
+              onSubmit={handleSearchSubmit}
+              typeAnnoncesEndpoint={typeAnnoncesEndpoint}
+              categoriesEndpoint={categoriesEndpoint}
+              subCategoriesEndpoint={subCategoriesEndpoint}
+              annonceTypeLabel={t("filter.annonceType")}
+              selectTypeLabel={t("filter.selectType")}
+              categoryLabel={t("filter.selectCategory")}
+              selectCategoryLabel={t("filter.selectCategory")}
+              subCategoryLabel={t("filter.selectSubCategory")}
+              selectSubCategoryLabel={t("filter.selectSubCategory")}
+              formTitle={t("filter.title")}
+              priceLabel={t("filter.price")}
+              searchButtonLabel={t("filter.search")}
+            />
           </div>
-        )}
+  </div>
+)}
+
+
+
+
       </>
     );
   }

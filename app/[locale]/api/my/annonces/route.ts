@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getDb } from "../../../../../lib/mongodb"; // vérifie que le fichier s'appelle bien mongodb.ts
 import { ObjectId } from "mongodb";
+import { getUserFromCookies } from "../../../../../utiles/getUserFomCookies";
+
 
 const SiteBaseUrl = process.env.SITE_BASE_URL || "";
 console.log("Site Base URL:", SiteBaseUrl);
@@ -44,9 +46,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const db = await getDb();
 
     // --- Récup user depuis cookie (⚠️ ici cookies() est async dans ton env) ---
-    const cookieStore = await cookies();                  // ← IMPORTANT: await
-    const userCookie = cookieStore.get("user");
-    const userIdStr = String(userCookie?.value ?? "");
+      
+    const userData = await getUserFromCookies();               // ← IMPORTANT: await
+   
+    const userIdStr = String(userData?.id ?? "");
     if (!userIdStr) {
       return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
     }
