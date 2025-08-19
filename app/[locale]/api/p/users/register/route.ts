@@ -3,7 +3,8 @@ import bcrypt from "bcrypt";
 import crypto from "node:crypto";
 import { getDb } from "../../../../../../lib/mongodb"; // ← utilise ta connexion existante
 import { Roles } from "../../../../../../DATA/roles";
-import { sendVerificationEmailLocal } from "../../../../../../lib/mailer";
+// import { sendVerificationEmailLocal } from "../../../../../../lib/mailer";
+import { sendVerificationEmail } from "../../../../../../lib/mailer";
 
 export async function POST(request: NextRequest) {
   try {
@@ -64,7 +65,11 @@ export async function POST(request: NextRequest) {
     });
 
     // 8) Email de vérification
-    await sendVerificationEmailLocal(email, verifyToken);
+    const mailResult = await sendVerificationEmail(email, verifyToken);
+
+    if (!mailResult.ok) {
+      console.error("Email send failed (register):::", mailResult.error)
+    }
 
     // 9) Réponse (ne pas renvoyer le hash/tokens)
     return NextResponse.json(
@@ -76,6 +81,7 @@ export async function POST(request: NextRequest) {
           roleName: userDoc.roleName,
           emailVerified: userDoc.emailVerified,
         },
+        mailStatus: mailResult, 
       },
       { status: 201 }
     );

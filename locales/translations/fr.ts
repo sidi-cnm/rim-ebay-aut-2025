@@ -86,8 +86,10 @@ export default {
   },
   connexion: {
     title: "Connexion",
+    forgotLink: "Mot de passe oublié?",
     email: "Adresse e-mail",
     password: "Mot de passe",
+    registerLink: "s'inscrire",
     loginButton: "Se connecter",
     forgotPassword: "Mot de passe oublié?",
     noAccount: "Vous n'avez pas de compte?",

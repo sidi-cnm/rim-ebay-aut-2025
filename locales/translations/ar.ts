@@ -53,9 +53,11 @@ export default {
   connexion: {
     title: "تسجيل الدخول",
     email: "البريد الإلكتروني",
+    forgotLink: "نسيت كلمة المرور؟",
     password: "كلمة المرور",
     loginButton: "تسجيل الدخول",
     forgotPassword: "نسيت كلمة المرور؟",
+    registerLink: "إنشاء حساب",
     noAccount: "لا تملك حسابًا؟",
     createAccount: "إنشاء حساب",
     invalidCredentials: "بيانات اعتماد غير صحيحة",

@@ -1,141 +1,123 @@
-
-
 // app/api/verify-email/route.ts
 import { NextResponse } from "next/server";
-import prisma from "../../../../../lib/prisma";
-
-import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import { ObjectId } from "mongodb";
+import { getDb } from "../../../../../lib/mongodb";
 
 export async function GET(request: Request) {
-
   const url = new URL(request.url);
   const tokenFromEmail = url.searchParams.get("token");
+
   if (!tokenFromEmail) {
     return NextResponse.json({ error: "Token manquant" }, { status: 400 });
   }
 
   try {
+    const db = await getDb();
+    const users = db.collection("users");
+    const sessions = db.collection("userSessions"); // ← nom de collection pour les sessions
 
-    // Utiliser une transaction pour s'assurer que toutes les opérations sont effectuées
-    //const result = 
-    await prisma.$transaction(async (tx: any) => {
-      // Rechercher l'utilisateur
-      const user = await tx.user.findFirst({
-        where: {
-          verifyToken: tokenFromEmail,
-        },
-      });
-      console.log("User found:", user);
+    // 1) Trouver l’utilisateur par le token (et optionnellement vérifier l’expiration)
+    const now = new Date();
+    const user = await users.findOne({
+      verifyToken: tokenFromEmail,
+      // Si tu gères une date d’expiration lors du register, décommente la ligne suivante :
+      // verifyTokenExpires: { $gt: now },
+    });
 
-      if (!user) {
-        throw new Error("Email ou mot de passe incorrect");
-      }
+    if (!user) {
+      return NextResponse.json(
+        { error: "Token invalide ou expiré" },
+        { status: 401 }
+      );
+    }
 
-      await tx.user.update({
-        where: { id: user.id },
-        data: {
+    // 2) Activer l’utilisateur + nettoyer le token de vérification
+    await users.updateOne(
+      { _id: new ObjectId(user._id) },
+      {
+        $set: {
           isActive: true,
           emailVerified: true,
+          lastLogin: now,
         },
-      });
-
-      // Vérifier le mot de passe avec bcrypt
-
-      // Marquer les sessions existantes comme expirées
-      await tx.userSession.updateMany({
-        where: {
-          userId: user.id,
-          isExpired: false,
+        $unset: {
+          verifyToken: "",          // on supprime le token (optionnel mais recommandé)
+          verifyTokenExpires: "",   // idem
         },
-        data: {
-          isExpired: true,
-        },
-      });
-
-      const sessionToken = uuidv4(); // Génère un UUID unique
-      // Créer un nouveau token
-      let token: string;
-      if (typeof process.env.JWT_SECRET === "string") {
-        token = jwt.sign(
-          {
-            id: user.id,
-            email: user.email,
-            roleName: user.roleName,
-            roleId: user.roleId,
-            sessionToken: sessionToken, // Ajout de l'UUID
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: "1d" },
-        );
-      } else {
-        throw new Error("JWT_SECRET environment variable is not defined");
       }
+    );
 
-      // Créer une nouvelle session
-      const newSession = await tx.userSession.create({
-        data: {
-          userId: user.id,
-          token: token,
-          isExpired: false,
-          lastAccessed: new Date(),
-        },
-      });
+    const userIdStr = user._id.toString();
 
-      // Mettre à jour le lastLogin de l'utilisateur
-      const updatedUser = await tx.user.update({
-        where: { id: user.id },
-        data: { lastLogin: new Date() },
-      });
+    // 3) Invalider les anciennes sessions actives
+    await sessions.updateMany(
+      { userId: userIdStr, isExpired: false },
+      { $set: { isExpired: true } }
+    );
 
-      // Définir le cookie
-      (await cookies()).set({
-        name: "jwt",
-        value: token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 60 * 60 * 24, // 1 jour
-      });
+    // 4) Créer un nouveau JWT + session
+    const sessionToken = uuidv4();
+    if (typeof process.env.JWT_SECRET !== "string") {
+      throw new Error("JWT_SECRET non défini dans l'environnement");
+    }
 
-      const userid = user.id.toString();
+    const jwtToken = jwt.sign(
+      {
+        id: userIdStr,
+        email: user.email,
+        roleName: user.roleName,
+        roleId: user.roleId,
+        sessionToken, // l’UUID qu’on loge aussi en DB si tu veux
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
-      (await cookies()).set({
-        name: "user",
-        value: userid,
-      });
-
-      return {
-        user: updatedUser,
-        session: newSession,
-      };
+    const insertedSession = await sessions.insertOne({
+      userId: userIdStr,     // on stocke en String (cohérent avec tes autres collections)
+      token: jwtToken,
+      isExpired: false,
+      lastAccessed: now,
+      createdAt: now,
+      sessionToken,          // l’UUID si tu veux le retrouver vite
     });
-    // puis rediriger vers la page de connexion ou une autre page
-    return NextResponse.redirect(new URL("/ar/my/add", request.url));
 
-    // // Préparer la réponse
-    // const { password: _, ...userWithoutPassword } = result.user;
+    // 5) Poser les cookies
+    const cookieStore = await cookies();
 
-    // return NextResponse.json({
-    //   message: "Connexion réussie1",
-    //   user: userWithoutPassword,
-    //   sessionId: result.session.id,
-    //   token: result.session.token, // Optionnel, selon vos besoins
-    // });
+    cookieStore.set({
+      name: "jwt",
+      value: jwtToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24, // 1 jour
+      path: "/",
+    });
+
+    cookieStore.set({
+      name: "user",
+      value: userIdStr,
+      httpOnly: false,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24,
+      path: "/",
+    });
+
+    // 6) Redirection finale
+    return NextResponse.redirect(new URL("/ar", request.url));
   } catch (error: any) {
-    console.error("Erreur détaillée:", error);
+    console.error("Erreur vérification email:", error);
     return NextResponse.json(
       {
-        error: error.message || "Erreur lors de la connexion",
+        error: error?.message || "Erreur lors de la vérification",
         details:
-          process.env.NODE_ENV === "development" ? error.toString() : undefined,
+          process.env.NODE_ENV === "development" ? String(error) : undefined,
       },
-      { status: error.message?.includes("incorrect") ? 401 : 500 },
+      { status: 500 }
     );
   }
 }
-
-
-
-

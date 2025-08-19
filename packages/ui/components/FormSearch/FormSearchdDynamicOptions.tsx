@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-// import { useI18n } from "../../../apps/rim-ebay/locales/client";
- 
+import FormSearchView from "./FormSearchView";
 
 interface Filters {
   typeAnnonceId?: string;
@@ -11,25 +10,24 @@ interface Filters {
   description?: string;
 }
 
-import FormSearchView from "./FormSearchView";
-
 interface FormSearchProps {
   lang?: string;
-  onSubmit: (filters: Filters) => void; 
-  categoryLabel?: string;
-  subCategoryLabel?: string;  
-  // API endpoints
+  onSubmit: (filters: Filters) => void;
   typeAnnoncesEndpoint: string;
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
-  //i18n keys
+  // i18n
   annonceTypeLabel: string;
   selectTypeLabel: string;
   selectCategoryLabel: string;
   selectSubCategoryLabel: string;
   formTitle: string;
-  priceLabel:string;
+  priceLabel: string;
   searchButtonLabel: string;
+  // piloté par le parent
+  loading?: boolean;
+  categoryLabel: string;           // ⬅️ AJOUTER
+  subCategoryLabel: string;  
 }
 
 export default function FormSearch({
@@ -38,99 +36,84 @@ export default function FormSearch({
   typeAnnoncesEndpoint,
   categoriesEndpoint,
   subCategoriesEndpoint,
-   //i18n keys
   annonceTypeLabel,
   selectTypeLabel,
   selectCategoryLabel,
   selectSubCategoryLabel,
   formTitle,
   priceLabel,
-  searchButtonLabel
+  searchButtonLabel,
+  loading = false,
 }: FormSearchProps) {
   const [typeAnnonces, setTypeAnnonces] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]); // ✅ Toujours un tableau
+  const [categories, setCategories] = useState<any[]>([]);
   const [subCategories, setSubCategories] = useState<any[]>([]);
 
   const [selectedTypeId, setSelectedTypeId] = useState<string>("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [selectedSubCategoryId, setSelectedSubCategoryId] =
-    useState<string>("");
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>("");
   const [price, setPrice] = useState<number>();
- 
-  // 🔹 Charger les types d'annonces au chargement
+
+  // types
   useEffect(() => {
     fetch(typeAnnoncesEndpoint)
       .then((res) => res.json())
       .then((data) => setTypeAnnonces(data))
-      .catch((error) => console.error("Error fetching typeAnnonces:", error));
+      .catch((err) => console.error("Error fetching typeAnnonces:", err));
   }, [typeAnnoncesEndpoint]);
 
+  // categories
   useEffect(() => {
-    if (selectedTypeId !== undefined) {
-      console.log(`Fetching categories for typeAnnonceId: ${selectedTypeId}`);
+    if (selectedTypeId) {
       fetch(`${categoriesEndpoint}?parentId=${selectedTypeId}`)
         .then((res) => res.json())
         .then((data) => {
           setCategories(data);
           setSubCategories([]);
         })
-        .catch((error) => console.error("Error fetching categories:", error));
+        .catch((err) => console.error("Error fetching categories:", err));
     } else {
       setCategories([]);
       setSubCategories([]);
     }
   }, [selectedTypeId, categoriesEndpoint]);
 
+  // subcategories
   useEffect(() => {
-    if (selectedCategoryId !== undefined) {
-      console.log(
-        `Fetching subcategories for categoryId: ${selectedCategoryId}`,
-      );
+    if (selectedCategoryId) {
       fetch(`${subCategoriesEndpoint}?parentId=${selectedCategoryId}`)
         .then((res) => res.json())
         .then((data) => setSubCategories(data))
-        .catch((error) =>
-          console.error("Error fetching subcategories:", error),
-        );
+        .catch((err) => console.error("Error fetching subcategories:", err));
     } else {
       setSubCategories([]);
     }
   }, [selectedCategoryId, subCategoriesEndpoint]);
 
-  const handleTypeChange = (value: string) => {
-    console.log("Nouvelle valeur sélectionnée pour Type d'annonce:", value);
-    setSelectedTypeId(value);
-    setSelectedCategoryId(""); // Réinitialisation de la catégorie
-    setSubCategories([]); // Réinitialisation des sous-catégories
+  const handleTypeChange = (val: string) => {
+    setSelectedTypeId(val);
+    setSelectedCategoryId("");
+    setSelectedSubCategoryId("");
+    setSubCategories([]);
   };
 
-  const handleCategoryChange = (value: string) => {
-    console.log("Changement de catégorie:", value); // DEBUG
-    setSelectedCategoryId(value);
+  const handleCategoryChange = (val: string) => {
+    setSelectedCategoryId(val);
+    setSelectedSubCategoryId("");
   };
 
-  const handlePriceChange = (value: string) => {
-    const newValue = value ? Number(value) : undefined;
-    console.log("Changement de prix:", newValue);
-    setPrice(newValue);
+  const handlePriceChange = (v: string) => {
+    setPrice(v ? Number(v) : undefined);
   };
 
+  // ⚠️ le parent gère loading + navigation
   const handleSearch = () => {
     const filters: Filters = {};
-    console.log("Recherche avec les filtres suivants:", {
-      selectedTypeId,
-      selectedCategoryId,
-      selectedSubCategoryId,
-      price
-    }); // DEBUG
-
-    if (selectedTypeId) filters.typeAnnonceId = selectedTypeId.toString();
-    if (selectedCategoryId) filters.categorieId = selectedCategoryId.toString();
-    if (selectedSubCategoryId)
-      filters.subCategorieId = selectedSubCategoryId.toString();
-    if (price !== undefined) filters.price = price.toString(); // ✅ Conversion en string
-
-    onSubmit(filters);
+    if (selectedTypeId) filters.typeAnnonceId = selectedTypeId;
+    if (selectedCategoryId) filters.categorieId = selectedCategoryId;
+    if (selectedSubCategoryId) filters.subCategorieId = selectedSubCategoryId;
+    if (price !== undefined) filters.price = String(price);
+    return onSubmit(filters); // (peut être async côté parent)
   };
 
   return (
@@ -142,30 +125,22 @@ export default function FormSearch({
       selectedTypeId={selectedTypeId}
       selectedCategoryId={selectedCategoryId}
       selectedSubCategoryId={selectedSubCategoryId}
-      price={price !== undefined ? price.toString() : ""}
-      onSearch={handleSearch}
+      price={price !== undefined ? String(price) : ""}
       onTypeChange={handleTypeChange}
       onCategoryChange={handleCategoryChange}
       onSubCategoryChange={setSelectedSubCategoryId}
       onPriceChange={handlePriceChange}
+      onSearch={handleSearch}
       annonceTypeLabel={annonceTypeLabel}
-      // ="filter.type"
       selectTypeLabel={selectTypeLabel}
-      //="filter.type"
       categoryLabel={selectCategoryLabel}
-      //"filter.category"
       selectCategoryLabel={selectCategoryLabel}
-     // "filter.category"
       subCategoryLabel={selectSubCategoryLabel}
-      //"filter.subcategory"
       selectSubCategoryLabel={selectSubCategoryLabel}
-      //"filter.subcategory"
       formTitle={formTitle}
-      //"filter.title"
       priceLabel={priceLabel}
-      //"filter.price"
       searchButtonLabel={searchButtonLabel}
-      //="filter.search"
+      loading={loading} // ✅ prop reçue du parent
     />
   );
 }

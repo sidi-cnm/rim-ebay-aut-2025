@@ -1,4 +1,18 @@
-import { OptionsModel } from "./prisma-client";
+// import { OptionsModel } from "./prisma-client";
+
+
+export interface OptionsModel {
+  id :string ;
+  nameAr    :string;
+  priority  :number;
+  depth     :number;
+  tag      : string;
+  createdAt : Date;
+  // parentID   String? @db.ObjectId
+  parentID : string;
+
+}
+
 
 // Interface pour la table Users
 export interface User {

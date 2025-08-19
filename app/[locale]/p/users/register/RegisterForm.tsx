@@ -85,6 +85,7 @@ export default function RegisterForm({ lang = "ar" }) {
         contact,
         password,
       });
+      console.log("mailStatus:", response.data.mailStatus)
 
       // Enregistrement réussi
       setSubmitStatus(t("register.success"));

@@ -187,20 +187,27 @@ export default function ConnexionForm({ lang = "ar" }) {
             )}
           </div>
         </form>
-        <div
-          id="register"
-          onClick={handleNavigate}
-          className="cursor-pointer text-gray-400 font-medium"
-        >
-          s'inscrire
+        
+        <div className="mt-4 flex justify-between text-sm">
+          <div
+            id="register"
+            onClick={handleNavigate}
+            className="text-blue-600 font-medium cursor-pointer hover:text-blue-700 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-colors duration-200"
+          >
+            {t("connexion.registerLink")}
+          </div>
+          
+          <div
+            id="forget-password"
+            onClick={handleNavigateToForgetPassword}
+            className="text-blue-600 font-medium cursor-pointer hover:text-blue-700 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-colors duration-200"
+          >
+            {t("connexion.forgotLink")}
+          </div>
         </div>
-         <div
-          id="forget-password"
-          onClick={handleNavigateToForgetPassword }
-          className="cursor-pointer text-gray-400 font-medium"
-        >
-          oublie mot de passe ?
-        </div>
+
+
+
       </div>
 
       {/* CSS for the loader */}

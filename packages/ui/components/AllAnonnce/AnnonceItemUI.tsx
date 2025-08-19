@@ -1,15 +1,16 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Annonce } from "../../../mytypes/types";
-import { useI18n } from "../../../../locales/client"; // ⬅️ comme ton AddAnnonceUI
+import { useI18n } from "../../../../locales/client";
 
 const FALLBACK_IMG = "/noimage.jpg";
 
 interface AnnonceItemUIProps extends Annonce {
   imageServiceUrl?: string;
   href?: string;
-  lang?: string; // tu gardes string si tu veux
+  lang?: string;
 }
 
 export default function AnnonceItemUI({
@@ -18,8 +19,10 @@ export default function AnnonceItemUI({
   lang = "fr",
   ...a
 }: AnnonceItemUIProps) {
-  const t = useI18n();                     // ⬅️ même hook que dans AddAnnonceUI
+  const t = useI18n();
   const dir = lang === "ar" ? "rtl" : "ltr";
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const imgUrl =
     a.haveImage && a.firstImagePath
@@ -33,11 +36,11 @@ export default function AnnonceItemUI({
       ? `${pad(created.getDate())}-${pad(created.getMonth() + 1)}-${created.getFullYear()}`
       : "";
 
-  // libellés i18n
-  const publishedLabel = t("card.published");
-  const priceLabel = t("card.price");         
-  const currencyLabel = t("card.currency");   
-  const detailsLabel = t("card.details");   
+  const goToDetails = () => {
+    if (loading) return;
+    setLoading(true);
+    router.push(href);
+  };
 
   return (
     <article
@@ -66,7 +69,7 @@ export default function AnnonceItemUI({
 
         {humanDate && (
           <div className="text-xs text-gray-400">
-            {publishedLabel} {humanDate}
+            {t("card.published")} {humanDate}
           </div>
         )}
 
@@ -74,26 +77,41 @@ export default function AnnonceItemUI({
 
         {/* Prix */}
         <div className="flex items-center justify-between pt-2">
-          <span className="text-sm text-gray-500">{priceLabel}</span>
+          <span className="text-sm text-gray-500">{t("card.price")}</span>
           <span className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">
-            {a.price} <span className="text-sm font-semibold">{currencyLabel}</span>
+            {a.price} <span className="text-sm font-semibold">{t("card.currency")}</span>
           </span>
         </div>
 
-        {/* Bouton DÉTAILS */}
+        {/* Bouton DÉTAILS avec loader */}
         <div className="mt-4 w-full">
-          <Link
-            href={href}
-            className="flex w-full items-center justify-center
+          <button
+            onClick={goToDetails}
+            disabled={loading}
+            className="relative flex w-full items-center justify-center
                        px-6 py-3 rounded-lg
                        bg-blue-800 text-white font-semibold text-base
                        border border-blue-700
                        shadow-md transition-transform
                        hover:bg-blue-700 hover:scale-105 hover:shadow-lg
-                       focus:outline-none focus:ring-2 focus:ring-blue-400"
+                       focus:outline-none focus:ring-2 focus:ring-blue-400
+                       disabled:opacity-70 disabled:cursor-not-allowed"
+            aria-busy={loading}
+            aria-live="polite"
           >
-            {detailsLabel}
-          </Link>
+            {/* spinner Tailwind */}
+            {loading && (
+               <span
+               aria-hidden="true"
+               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                          inline-block h-5 w-5 rounded-full
+                          border-2 border-white/40 border-t-white animate-spin"
+             />
+            )}
+            <span className={loading ? "opacity-0" : "opacity-100"}>
+              {t("card.details")}
+            </span>
+          </button>
         </div>
       </div>
     </article>
