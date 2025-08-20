@@ -3,5 +3,5 @@
 ```bash
 pnpm install
 pnpm approve-builds
-pnpm prisma generate
+# pnpm prisma generate
 ```

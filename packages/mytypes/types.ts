@@ -1,4 +1,3 @@
-// import { OptionsModel } from "./prisma-client";
 
 
 export interface OptionsModel {

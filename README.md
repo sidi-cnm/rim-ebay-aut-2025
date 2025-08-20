@@ -41,7 +41,6 @@ rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'localhost:27017' }] })
 ```bash
 pnpm install
 pnpm approve-builds
-npx prisma db push  # Créer les tables
 ```
 
 ## Scripts utiles

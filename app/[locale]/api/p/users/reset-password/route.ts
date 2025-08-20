@@ -1,33 +1,70 @@
-import { NextResponse } from 'next/server';
+// app/[locale]/api/p/users/reset-password/route.ts
+import { NextResponse } from "next/server";
+import { getDb } from "../../../../../../lib/mongodb";
+import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
-//import bcrypt from 'bcryptjs';
-import prisma from '../../../../../../lib/prisma';
-//import { prisma } from '@/lib/prisma';
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { token, password } = await request.json();
-    // Trouver la demande de réinitialisation correspondante
-    const resetRequest = await prisma.passwordReset.findFirst({ where: { token } });
+    const { token, password } = await req.json();
 
-    if (!resetRequest || resetRequest.expiresAt < new Date()) {
-      return NextResponse.json({ error: 'Token invalide ou expiré.' }, { status: 400 });
+    if (!token || !password) {
+      return NextResponse.json(
+        { error: "Token et nouveau mot de passe requis." },
+        { status: 400 }
+      );
     }
 
-    // Hasher le nouveau mot de passe
-    const hashedPassword =  await bcrypt.hash(password, 10); 
-    // Mettre à jour le mot de passe de l'utilisateur
-    await prisma.user.update({
-      where: { id: resetRequest.userId },
-      data: { password: hashedPassword },
-    });
+    const db = await getDb();
 
-    // Supprimer la demande de réinitialisation pour éviter réutilisation
-    await prisma.passwordReset.delete({ where: { id: resetRequest.id } });
+    // 1) Retrouver la demande de reset via le token
+    const reset = await db.collection("password_resets").findOne({ token });
+    if (!reset) {
+      return NextResponse.json(
+        { error: "Token invalide." },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ message: 'Mot de passe réinitialisé avec succès.' }, { status: 200 });
+    // 2) Vérifier l’expiration
+    if (reset.expiresAt && reset.expiresAt < new Date()) {
+      return NextResponse.json(
+        { error: "Token expiré." },
+        { status: 400 }
+      );
+    }
+
+    // 3) Hasher le nouveau mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 4) Mettre à jour le mot de passe de l'utilisateur
+    //    Dans ton schéma, userId est stocké comme string de l'ObjectId
+    const userFilter = { _id: new ObjectId(String(reset.userId)) };
+
+    const updateRes = await db.collection("users").updateOne(
+      userFilter,
+      { $set: { password: hashedPassword, updatedAt: new Date() } }
+    );
+
+    if (updateRes.matchedCount === 0) {
+      return NextResponse.json(
+        { error: "Utilisateur introuvable." },
+        { status: 404 }
+      );
+    }
+
+    // 5) Supprimer la demande de reset (évite la réutilisation)
+    await db.collection("password_resets").deleteOne({ _id: reset._id });
+
+    return NextResponse.json(
+      { message: "Mot de passe réinitialisé avec succès." },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('Reset-password error:', error);
-    return NextResponse.json({ error: 'Une erreur est survenue.' }, { status: 500 });
+    console.error("Reset-password error:", error);
+    return NextResponse.json(
+      { error: "Une erreur est survenue." },
+      { status: 500 }
+    );
   }
 }

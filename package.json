@@ -4,8 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "generate": "pnpx prisma generate",
-    "generate2": "pnpx prisma generate --schema=./packages/mytypes/prisma/schema.prisma",
     "build:only": "next build",
     "build": "next build",
     "start": "next start",
@@ -13,9 +11,7 @@
     "dev:test": "NODE_ENV=test next dev",
     "check-types": "tsc --noEmit",
     "lint": "next lint",
-    "seed": "node --loader ts-node/esm prisma/seed.ts",
     "mongo:init": "tsx -r dotenv/config script/initMongo.ts"
-    
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -25,7 +21,6 @@
     "@heroicons/react": "^2.2.0",
     "@libsql/client": "^0.15.9",
     "@next/bundle-analyzer": "15.3.3",
-    "@prisma/client": "^6.4.1",
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/lowdb": "^1.0.15",
@@ -77,7 +72,6 @@
     "eslint-config-next": "15.3.3",
     "next-router-mock": "^0.9.13",
     "postcss": "^8",
-    "prisma": "^6.4.1",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.4",
