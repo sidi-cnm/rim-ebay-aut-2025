@@ -14,7 +14,8 @@
     "check-types": "tsc --noEmit",
     "lint": "next lint",
     "seed": "node --loader ts-node/esm prisma/seed.ts",
-    "mongo:init": "tsx script/initMongo.ts"
+    "mongo:init": "tsx -r dotenv/config script/initMongo.ts"
+    
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
