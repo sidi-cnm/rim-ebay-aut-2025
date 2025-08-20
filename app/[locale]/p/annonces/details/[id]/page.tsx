@@ -1,17 +1,20 @@
+// app/[locale]/p/annonces/details/[id]/page.tsx
 import BackButton from "../../../../../../packages/ui/components/Navigation";
 import AnnonceDetailCompo from "../../../../../../packages/ui/components/All_AnnonceDetaille/AnnonceDetailUI";
 import { Annonce } from "../../../../../../packages/mytypes/types";
-
 import { getDb } from "../../../../../../lib/mongodb";
 import { ObjectId } from "mongodb";
+
+type PageParams = { id: string; locale: string };
 
 export default async function AnnonceDetail({
   params,
 }: {
-  params: { id: string; locale?: string };
+  params: Promise<PageParams>; // 👈 Promesse
 }) {
+  const { id, locale } = await params;      // 👈 await
+
   const db = await getDb();
-  const id = params.id;
   const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { id: id as any };
   const doc = await db.collection("annonces").findOne(query);
 
@@ -55,9 +58,8 @@ export default async function AnnonceDetail({
       <div className="md:ml-32 lg:ml-44">
         <BackButton />
       </div>
-
       <AnnonceDetailCompo
-        lang={params.locale || "fr"}              
+        lang={locale || "fr"}                 // 👈 utilise la locale extraite
         annonceId={String(formattedAnnonce.id)}
         annonce={formattedAnnonce}
         imageServiceUrl="https://picsum.photos"

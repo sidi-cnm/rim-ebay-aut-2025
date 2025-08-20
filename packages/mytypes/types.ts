@@ -4,6 +4,7 @@
 export interface OptionsModel {
   id :string ;
   nameAr    :string;
+  name      :string;
   priority  :number;
   depth     :number;
   tag      : string;

@@ -6,8 +6,6 @@ import { ObjectId } from "mongodb";
 import { getUserFromCookies } from "../../../../../utiles/getUserFomCookies";
 
 
-const SiteBaseUrl = process.env.SITE_BASE_URL || "";
-console.log("Site Base URL:", SiteBaseUrl);
 let baseApi = "fr/p/api/tursor";
 if (process.env.NEXT_PUBLIC_OPTIONS_API_MODE === "sqlite") {
   baseApi = "fr/p/api/sqlite";
