@@ -41,6 +41,7 @@ export default function AddAnnonceUI({
   const [categories, setCategories] = useState<Category[]>([]);
   const DataInsideNavigation = useSearchParams();
   const [submitting, setSubmitting] = useState(false); // ⬅️ loader état
+  console.log("relavieUrlOptionsModel : ", relavieUrlOptionsModel);
 
   useEffect(() => {
     const fetchTypeAnnonces = async () => {
@@ -56,6 +57,7 @@ export default function AddAnnonceUI({
         toast.error(t("errors.fetchTypeAnnonces"));
       }
     };
+
 
     fetchTypeAnnonces();
   }, [lang, t]);

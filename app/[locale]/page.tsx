@@ -27,6 +27,9 @@ export default async function Home({
 
   const t = await getI18n();
 
+  let apiBase = process.env.NEXT_PUBLIC_OPTIONS_API_MODE
+  console.log("apiBase : "  , apiBase)
+
   // 1) Pagination & filtres
   const currentPage = Number(sp.page) || 1;
   const itemsPerPage = 6;
@@ -86,9 +89,9 @@ export default async function Home({
       <div className="block md:hidden w-full px-2 pt-4">
         <FormSearchUI
           lang={locale}
-          typeAnnoncesEndpoint="/fr/p/api/sqlite/options"
-          categoriesEndpoint="/fr/p/api/sqlite/options"
-          subCategoriesEndpoint="/fr/p/api/sqlite/options"
+          typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
+          categoriesEndpoint={`/fr/p/api/${apiBase}/options`}
+          subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
           mobile
           annonceTypeLabel={t("filter.type")}
           selectTypeLabel="Sélectionner le type"
@@ -107,9 +110,9 @@ export default async function Home({
             <div className="h-full bg-white rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 overflow-y-auto">
               <FormSearchUI
                 lang={locale}
-                typeAnnoncesEndpoint="/fr/p/api/sqlite/options"
-                categoriesEndpoint="/fr/p/api/sqlite/options"
-                subCategoriesEndpoint="/fr/p/api/sqlite/options"
+                typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
+                categoriesEndpoint={`/fr/p/api/${apiBase}/options`}
+                subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
                 annonceTypeLabel={t("filter.type")}
                 selectTypeLabel="Sélectionner le type"
                 selectCategoryLabel="Sélectionner la catégorie"
@@ -143,3 +146,5 @@ export default async function Home({
     </main>
   );
 }
+
+

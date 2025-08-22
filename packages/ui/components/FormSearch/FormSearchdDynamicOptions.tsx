@@ -54,6 +54,10 @@ export default function FormSearch({
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>("");
   const [price, setPrice] = useState<number>();
 
+  console.log("typeAnnoncesEndpoint : " , typeAnnoncesEndpoint)
+  console.log("categoriesEndpoint : " , categoriesEndpoint)
+  console.log("subCategoriesEndpoint : " , subCategoriesEndpoint)
+
   // types
   useEffect(() => {
     fetch(typeAnnoncesEndpoint)

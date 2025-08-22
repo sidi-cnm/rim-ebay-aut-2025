@@ -3,6 +3,11 @@ import { MongoClient, Db } from "mongodb";
 const uri = process.env.DATABASE_URL;
 if (!uri) throw new Error("Please add MONGODB_URI or DATABASE_URL to your .env");
 
+const options = {
+  serverSelectionTimeoutMS: 5000,
+  connectTimeoutMS: 8000,
+};
+
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
@@ -15,7 +20,7 @@ if (process.env.NODE_ENV === "development") {
   }
   clientPromise = globalForMongo._mongoClientPromise;
 } else {
-  client = new MongoClient(uri);
+  client = new MongoClient(uri,options);
   clientPromise = client.connect();
 }
 
