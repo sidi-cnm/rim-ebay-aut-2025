@@ -84,6 +84,7 @@ export default async function Home({
   }));
 
   const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
+  let apiBase = process.env.NEXT_PUBLIC_OPTIONS_API_MODE
 
   // 6) UI
   return (
@@ -93,9 +94,9 @@ export default async function Home({
         <div style={{ maxWidth: 340, width: "90%" }}>
           <FormSearchUI
             lang={locale}                                 // <-- utilise locale
-            typeAnnoncesEndpoint="/fr/p/api/sqlite/options"
-            categoriesEndpoint="/fr/p/api/sqlite/options"
-            subCategoriesEndpoint="/fr/p/api/sqlite/options"
+            typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
+            categoriesEndpoint={`/fr/p/api/${apiBase}/options`}
+            subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
             mobile
           />
         </div>
@@ -106,9 +107,9 @@ export default async function Home({
         <div className="hidden md:block md:basis-1/5 md:w-1/5">
           <FormSearchUI
             lang={locale}
-            typeAnnoncesEndpoint="/fr/p/api/sqlite/options"
-            categoriesEndpoint="/fr/p/api/sqlite/options"
-            subCategoriesEndpoint="/fr/p/api/sqlite/options"
+            typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
+            categoriesEndpoint={`/fr/p/api/${apiBase}/options`}
+            subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
           />
         </div>
 
