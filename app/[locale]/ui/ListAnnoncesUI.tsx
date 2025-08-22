@@ -31,7 +31,7 @@ export default function ListAnnoncesUI({
                 {...a}
                 lang={lang}
                 imageServiceUrl={imageServiceUrl}
-                href={`/p/annonces/details/${a.id}`} // le lien est DANS la carte
+                href={`${lang}/p/annonces/details/${a.id}`} // le lien est DANS la carte
               />
             ))}
           </div>

@@ -36,6 +36,8 @@ export default function AnnonceItemUI({
       ? `${pad(created.getDate())}-${pad(created.getMonth() + 1)}-${created.getFullYear()}`
       : "";
 
+  console.log(href, "href");    
+
   const goToDetails = () => {
     if (loading) return;
     setLoading(true);
