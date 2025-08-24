@@ -10,9 +10,9 @@ type PageParams = { id: string; locale: string };
 export default async function AnnonceDetail({
   params,
 }: {
-  params: Promise<PageParams>; // 👈 Promesse
+  params: Promise<PageParams>;
 }) {
-  const { id, locale } = await params;      // 👈 await
+  const { id, locale } = await params;
 
   const db = await getDb();
   const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { id: id as any };
@@ -42,12 +42,8 @@ export default async function AnnonceDetail({
     contact: contactDoc?.contact ?? "",
     haveImage: !!doc.haveImage,
     firstImagePath: doc.firstImagePath ? String(doc.firstImagePath) : "",
-    images: Array.isArray(doc.annonceImages)
-      ? doc.annonceImages.map((img: any) => ({
-          id: String(img._id ?? img.id ?? ""),
-          imagePath: String(img.imagePath ?? ""),
-        }))
-      : [],
+    // on laisse images vide : le client va appeler /fr/api/images/:id pour les charger toutes
+    images: [],
     status: doc.status ?? "",
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : new Date(),
     createdAt: doc.createdAt ? new Date(doc.createdAt) : new Date(),
@@ -59,10 +55,9 @@ export default async function AnnonceDetail({
         <BackButton />
       </div>
       <AnnonceDetailCompo
-        lang={locale || "fr"}                 // 👈 utilise la locale extraite
+        lang={locale || "fr"}
         annonceId={String(formattedAnnonce.id)}
         annonce={formattedAnnonce}
-        imageServiceUrl="https://picsum.photos"
       />
     </div>
   );

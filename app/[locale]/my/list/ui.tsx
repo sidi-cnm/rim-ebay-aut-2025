@@ -67,7 +67,7 @@ function AnnonceItemUI({
   const t = useI18n();
 
   const getImage = () => {
-    const imgUrl = `${imageServiceUrl}/${annonce.firstImagePath}`;
+    const imgUrl = `${annonce.firstImagePath}`;
     return (
       <>
         <Image

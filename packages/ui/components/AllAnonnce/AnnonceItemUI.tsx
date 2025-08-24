@@ -26,7 +26,7 @@ export default function AnnonceItemUI({
 
   const imgUrl =
     a.haveImage && a.firstImagePath
-      ? `${imageServiceUrl.replace(/\/$/, "")}/${a.firstImagePath.replace(/^\//, "")}`
+      ? `${a.firstImagePath}`
       : FALLBACK_IMG;
 
   const created = a.createdAt ? new Date(a.createdAt) : null;
@@ -52,7 +52,8 @@ export default function AnnonceItemUI({
                   h-full flex flex-col transition hover:shadow-lg hover:ring-gray-300 ${lang === "ar" ? "text-right" : ""}`}
     >
       {/* Image */}
-      <div className="relative w-full aspect-[16/10] bg-gray-100">
+      {/* Image */}
+      <div className="relative w-full h-48 md:h-56 lg:h-64 bg-gray-100">
         <img
           src={imgUrl}
           alt={a.title ?? (lang === "ar" ? "صورة الإعلان" : "Image annonce")}
@@ -60,6 +61,8 @@ export default function AnnonceItemUI({
           loading="lazy"
         />
       </div>
+
+
 
       {/* Contenu */}
       <div className="p-4 md:p-5 flex flex-col gap-3 flex-1">

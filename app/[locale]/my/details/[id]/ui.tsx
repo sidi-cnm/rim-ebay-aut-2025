@@ -1,4 +1,3 @@
-// app/[locale]/my/details/[id]/myannonce.tsx
 "use client";
 
 import { Annonce } from "../../../../../packages/mytypes/types";
@@ -9,6 +8,10 @@ import { useRouter } from "next/navigation";
 import EditForm from "../../../../../packages/ui/components/EditForm/EditForm";
 import { LottieAnimation } from "../../../../../packages/ui/components/LottieAnimation";
 import MyAnnonceDetailsView from "./MyAnnonceDetailsView";
+
+type ImgDoc = { imagePath: string };
+type ImageItem = { id: string; imagePath: string };
+type ImagesArray = ImageItem[];
 
 export default function MyAnnonceDetailsCompo({
   lang = "ar",
@@ -39,15 +42,20 @@ export default function MyAnnonceDetailsCompo({
   subCategoriesEndpoint: string;
   updateAnnonceEndpoint: string;
 }) {
-  const hostServerForImages = "https://picsum.photos";
-  const getImageUrl = (imagePath: string) => `${hostServerForImages}/${imagePath}`;
+  // retourne l’URL telle quelle (Blob public)
+  const getImageUrl = (imagePath: string) => imagePath;
+
+  const normalizeImages = (arr?: ImgDoc[]): ImagesArray => {
+    if (!Array.isArray(arr) || arr.length === 0) return [];
+    return arr.map((im, i) => ({ id: String(i), imagePath: String(im.imagePath || "") }));
+  };
 
   const router = useRouter();
   const [annonces, setAnnonce] = useState<Annonce | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false); 
+  const [deleting, setDeleting] = useState(false);
   const [initialData, setInitialData] = useState({
     typeAnnonceId: "",
     categorieId: "",
@@ -59,19 +67,38 @@ export default function MyAnnonceDetailsCompo({
   const fetchAnnonce = async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        retiveUrldetailsAnnonce.startsWith("/")
-          ? retiveUrldetailsAnnonce
-          : `/${retiveUrldetailsAnnonce}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      // 1) annonce
+      const url = retiveUrldetailsAnnonce.startsWith("/")
+        ? retiveUrldetailsAnnonce
+        : `/${retiveUrldetailsAnnonce}`;
+      const res = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
       if (!res.ok) throw new Error(`Erreur réseau (${res.status})`);
       const data = await res.json();
-      setAnnonce(data);
+
+      // 2) images de l'annonce
+      const imgRes = await fetch(`/${lang}/api/images/${data?.id ?? annonceId}`, { cache: "no-store" });
+      let imgs: { haveImage?: boolean; firstImagePath?: string | null; images?: ImgDoc[] } = {};
+      if (imgRes.ok) imgs = await imgRes.json().catch(() => ({}));
+
+      // 3) normalisation + fallback
+      const normalized = normalizeImages(imgs.images);
+      const mergedImages: ImagesArray =
+        normalized.length === 0 && imgs.firstImagePath
+          ? [{ id: "0", imagePath: String(imgs.firstImagePath) }]
+          : normalized;
+
+      // 4) merge final dans l’état attendu par la View
+      setAnnonce({
+        ...data,
+        haveImage: (imgs.haveImage ?? data.haveImage ?? false) || mergedImages.length > 0,
+        firstImagePath: imgs.firstImagePath ?? data.firstImagePath ?? "",
+        images: mergedImages.length > 0 ? mergedImages : (data.images ?? []),
+      });
+
       setInitialData({
         typeAnnonceId: data?.typeAnnonceId ?? "",
         categorieId: data?.categorieId ?? "",
@@ -79,6 +106,7 @@ export default function MyAnnonceDetailsCompo({
         description: data?.description ?? "",
         price: Number(data?.price ?? 0),
       });
+
       setError(null);
     } catch (err) {
       console.error(err);
@@ -94,7 +122,7 @@ export default function MyAnnonceDetailsCompo({
 
   const handleDelte = async () => {
     const loadingToast = toast.loading(i18nNotificationsCreating);
-    setDeleting(true);                                // démarre loader
+    setDeleting(true);
     try {
       const res = await fetch(`/${lang}/api/my/annonces/${annonceId}`, {
         method: "DELETE",
@@ -107,13 +135,13 @@ export default function MyAnnonceDetailsCompo({
     } catch (error) {
       toast.error(i18nNotificationsErrorDelete, { id: loadingToast });
       console.error("Erreur:", error);
-      setDeleting(false); 
+      setDeleting(false);
     }
   };
 
   const handleUpdate = () => {
     fetchAnnonce();
-    setEditModalOpen(false); // Ferme la modal après la mise à jour
+    setEditModalOpen(false);
   };
 
   const handleEdit = () => {
@@ -121,17 +149,13 @@ export default function MyAnnonceDetailsCompo({
       setInitialData({
         typeAnnonceId: annonces.typeAnnonce?.id ?? annonces.typeAnnonceId ?? "",
         categorieId: annonces.categorie?.id ?? annonces.categorieId ?? "",
-        subcategorieId: String(
-          annonces.subcategorie?.id ?? annonces?.subcategorieId ?? ""
-        ),
+        subcategorieId: String(annonces.subcategorie?.id ?? annonces?.subcategorieId ?? ""),
         description: annonces.description ?? "",
         price: Number(annonces.price ?? 0),
       });
     }
     setEditModalOpen(true);
   };
-
-  
 
   const isRTL = lang.startsWith("ar");
 
@@ -159,37 +183,23 @@ export default function MyAnnonceDetailsCompo({
       </div>
 
       {isEditModalOpen && (
-  <div
-    className="
-      fixed inset-0 z-[9999] grid place-items-center
-      bg-black/60 backdrop-blur-sm p-4
-      overflow-y-auto
-    " >
-    <div
-      className="
-        w-[92vw] max-w-[380px]           /* mobile: compact */
-        sm:max-w-[440px]                 /* small tablets */
-        md:max-w-[520px]                 /* desktop moyen */
-        lg:max-w-[560px]                 /* grand écran */
-      "
-    >
-      <EditForm
-        lang={lang}
-        userid={""}
-        annonceId={annonceId}
-        initialData={initialData}
-        onClose={() => setEditModalOpen(false)}
-        onUpdate={handleUpdate}
-        typeAnnoncesEndpoint={typeAnnoncesEndpoint}
-        categoriesEndpoint={categoriesEndpoint}
-        subCategoriesEndpoint={subCategoriesEndpoint}
-        updateAnnonceEndpoint={updateAnnonceEndpoint}
-      />
-    </div>
-  </div>
-)}
-
-
+        <div className="fixed inset-0 z-[9999] grid place-items-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="w-[92vw] max-w-[380px] sm:max-w-[440px] md:max-w-[520px] lg:max-w-[560px]">
+            <EditForm
+              lang={lang}
+              userid={""}
+              annonceId={annonceId}
+              initialData={initialData}
+              onClose={() => setEditModalOpen(false)}
+              onUpdate={handleUpdate}
+              typeAnnoncesEndpoint={typeAnnoncesEndpoint}
+              categoriesEndpoint={categoriesEndpoint}
+              subCategoriesEndpoint={subCategoriesEndpoint}
+              updateAnnonceEndpoint={updateAnnonceEndpoint}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

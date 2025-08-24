@@ -1,13 +1,9 @@
-//"use client";
-//import React from "react";
+// "use client";
 import Image from "next/image";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Annonce } from "../../../../../packages/mytypes/types"
-//"@repo/mytypes/types";
+import { Annonce } from "../../../../../packages/mytypes/types";
 import { useI18n } from "../../../../../locales/client";
-import Lottie from "react-lottie";
-import { LottieAnimation } from "../../../../../packages/ui/components/LottieAnimation";
 
 const fallbackImageUrl = "/noimage.jpg";
 
@@ -21,99 +17,74 @@ interface MyAnnonceDetailsViewProps {
   handleDelte: () => void;
   handleEdit: () => void;
   setEditModalOpen: (isOpen: boolean) => void;
-
-  isDeleting?: boolean;              // ✅ nouveau
-  deletingText?: string;             // ✅ no
+  isDeleting?: boolean;
+  deletingText?: string;
 }
 
 const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
   lang,
   annonce,
-  //t,
   i18nAnnonce,
   i18nContact,
   i18nPrix,
-  //
   getImageUrl,
   handleDelte,
   handleEdit,
-  //setEditModalOpen,
   isDeleting = false,
   deletingText = "...",
 }) => {
-  const d = new Date(annonce?.createdAt || "");
-  const getImage = (imagePath: string, imageDescription: string = "") => {
-    const imgUrl = getImageUrl(imagePath);
-    return (
-      <div className="relative h-40 sm:h-60 w-full">
-        <Image
-          src={imgUrl}
-          alt={imageDescription}
-          fill
-          unoptimized
-          style={{ objectFit: "cover" }}
-          className="rounded-lg"
-        />
-      </div>
-    );
-  };
+  const d = annonce?.createdAt ? new Date(annonce.createdAt as any) : new Date();
+  const t = useI18n();
 
-  const NoImage = () => (
-    <div className="relative h-40 sm:h-60 w-full">
-      <Image
-        src={fallbackImageUrl}
-        alt="no image uploaded by user"
-        fill
-        unoptimized
-        style={{ objectFit: "cover" }}
-        className="rounded-lg"
-      />
+  const ImageBox: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
+    <div className="relative w-full h-64 sm:h-80 lg:h-[500px] overflow-hidden rounded-xl bg-gray-50">
+      <Image src={src} alt={alt} fill unoptimized className="object-cover" priority={false} />
     </div>
   );
 
-   const t = useI18n();
-
   return (
     <article className="flex flex-col gap-4 bg-white shadow-lg rounded-xl p-4 w-full max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[50%] mx-auto my-6">
-      <h2 className="text-2xl font-bold mb-4 text-blue-600 text-center">
-        {i18nAnnonce}
-      </h2>
-      <div className="space-y-2 h-40 sm:h-60 w-full">
-        {annonce?.haveImage ? (
+      <h2 className="text-2xl font-bold mb-2 text-blue-600 text-center">{i18nAnnonce}</h2>
+
+      {/* 👇 Forcer LTR pour éviter le bug du carrousel en RTL */}
+      <div className="w-full overflow-hidden rounded-xl" dir="ltr">
+        {annonce?.haveImage && Array.isArray(annonce.images) && annonce.images.length > 0 ? (
           <Carousel
             className="rounded-xl"
             infiniteLoop
             autoPlay
             showThumbs={false}
+            showStatus={false}
+            dynamicHeight={false}
+            swipeable
+            emulateTouch
+            key={`my-carousel-${lang}-${annonce.images.length}`}
           >
-            {annonce?.images?.map((item, index) => (
-              <div className="h-40 sm:h-60" key={index}>
-                {getImage(item.imagePath)}
+            {annonce.images.map((item, idx) => (
+              <div className="w-full" key={item.id ?? idx}>
+                <ImageBox src={getImageUrl(item.imagePath)} alt={annonce?.title || "image"} />
               </div>
             ))}
           </Carousel>
         ) : (
-          <NoImage />
+          <ImageBox src={annonce?.firstImagePath || fallbackImageUrl} alt="no image uploaded by user" />
         )}
       </div>
 
-      <div className="p-4">
+      <div className="mt-2" />
+
+      <div className="p-0">
         <div className="flex justify-between items-center">
           <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-700">
-            {d.getDate()}-{d.getMonth() + 1}-{d.getFullYear()} | {d.getHours()}h
-            : {d.getMinutes()}min |
+            {d.getDate()}-{d.getMonth() + 1}-{d.getFullYear()} | {d.getHours()}h : {d.getMinutes()}min |
           </span>
         </div>
 
-        <h1 className="text-xl sm:text-2xl font-bold my-2">
-         
-          {t("detail.description")}
-        </h1>
+        <h1 className="text-xl sm:text-2xl font-bold my-2">{t("detail.description")}</h1>
 
-        <p className="text-gray-600 text-sm sm:text-base mb-4">
-          {annonce?.description}
-        </p>
+        <p className="text-gray-600 text-sm sm:text-base mb-4">{annonce?.description}</p>
 
+        {/* Prix */}
         <div className="hover:bg-gray-100 rounded-md p-0">
           <div className="border-t border-green-800 my-2"></div>
           <div className="flex justify-between items-center">
@@ -125,15 +96,12 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
           <div className="border-t border-green-800 my-2"></div>
         </div>
 
+        {/* Contact */}
         <div className="hover:bg-gray-100 rounded-md p-0 mt-2">
           <div className="border-t border-green-800 my-2"></div>
           <div className="flex justify-between items-center">
-            <h2 className="text-lg font-bold text-gray-800 mb-1">
-              {i18nContact}
-            </h2>
-            <p className="text-md font-semibold text-blue-600">
-              {parseInt(String(annonce?.contact)) }
-            </p>
+            <h2 className="text-lg font-bold text-gray-800 mb-1">{i18nContact}</h2>
+            <p className="text-md font-semibold text-blue-600">{parseInt(String(annonce?.contact || 0))}</p>
           </div>
           <div className="border-t border-green-800 my-2"></div>
         </div>
@@ -144,14 +112,7 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
             disabled={isDeleting}
             className="bg-red-500 w-full sm:w-44 h-10 hover:bg-red-600 rounded-lg text-white font-bold"
           >
-            {isDeleting ? (
-                    <div className="loader"></div>
-            ) : (
-              <span>{isDeleting ? deletingText : t("detail.delete")}</span>
-            
-               
-          )}
-            
+            {isDeleting ? <div className="loader"></div> : <span>{t("detail.delete")}</span>}
           </button>
           <button
             data-cy="edit-button"
@@ -163,8 +124,16 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
         </div>
       </div>
 
+      <style jsx global>{`
+        /* évite un fond blanc qui masque après hydration */
+        .carousel .slide {
+          background: transparent !important;
+        }
+        .carousel .control-dots {
+          bottom: 8px;
+        }
+      `}</style>
 
-      {/* CSS for the loader */}
       <style jsx>{`
         .loader {
           border: 4px solid #f3f3f3;
@@ -175,14 +144,9 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
           animation: spin 1s linear infinite;
           margin: auto;
         }
-
         @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
       `}</style>
     </article>

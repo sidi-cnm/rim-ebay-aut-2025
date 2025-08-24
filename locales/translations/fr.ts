@@ -34,6 +34,12 @@ export default {
   },
   addAnnonce: {
     welcome: "Bienvenue",
+    upload:"upload",
+    step:{
+      photos:"images",
+      info:"info"
+    },
+    dropOrClick:"clik",
     addNew: "Ajouter une annonce",
     mockedData:
       "Les données ne sont pas encore stockées dans la base de données mocked.",
@@ -83,6 +89,9 @@ export default {
     filterBtn: "Filtrer",
     Annonces: "Annonces",
     type: "Type",
+  },
+  step:{
+    photos:"image"
   },
   connexion: {
     title: "Connexion",
@@ -138,6 +147,8 @@ export default {
   common: {
     remove: "Retirer",
     edit: "Éditer",
+    back:"retoure",
+    finish:"fini",
     createdAt: "Créé le",
     perDay: "/ jour",
     noImageAlt: "Pas d'image"
