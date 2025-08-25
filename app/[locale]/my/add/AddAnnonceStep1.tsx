@@ -31,6 +31,8 @@ export default function AddAnnonceStep1({
   const [price, setPrice] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  console.log("relavieUrlOptionsModel : ", relavieUrlOptionsModel);
+
   useEffect(() => {
     const fetchTypes = async () => {
       try {

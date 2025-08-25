@@ -229,6 +229,51 @@ export default {
       error: "Échec de la mise à jour",
       deleting: "Suppression en cours…",
     },
+
   },
+
+  wizard: {
+    title: "Étapes de validation de l’annonce",
+    subtitle: "Suivez ces étapes pour compléter et publier votre annonce.",
+    steps: {
+      details: "Détails",
+      photos: "Photos",
+      place: "Lieu"
+    }
+  },
+
+  step2: {
+    pickImages: "Choisir des images",
+    dragHere: "Glissez & déposez vos images ici",
+    makeMain: "Principale",
+    delete: "Suppr.",
+    later: "Plus tard",
+    upload: "Envoyer les images",
+    uploading: "Envoi...",
+    needOne: "Ajoute au moins une image",
+    toast: {
+      uploading: "Téléversement...",
+      success: "Images envoyées",
+      error: "Échec de l’upload"
+    }
+  },
+
+  step3: {
+    title: "Choisir le lieu",
+    wilaya: "Wilaya",
+    wilayaPlaceholder: "Sélectionnez une wilaya",
+    moughataa: "Moughataa",
+    moughataaPlaceholder: "Sélectionnez une moughataa",
+    hint: "Vous pourrez le modifier plus tard depuis les détails de l’annonce.",
+    save: "Enregistrer et aller à la liste",
+    saving: "Enregistrement...",
+    toasts: {
+      loadWilayasError: "Impossible de charger les wilayas",
+      loadMoughataasError: "Impossible de charger les moughataa",
+      needBoth: "Choisissez la wilaya et la moughataa",
+      saved: "Lieu enregistré",
+      saveError: "Échec de l’enregistrement"
+    }
+  }
   
 } as const;

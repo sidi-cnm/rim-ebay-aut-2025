@@ -212,4 +212,49 @@ export default {
       error: "فشل التحديث",
     },
   },
+
+
+  wizard: {
+    title: "خطوات تأكيد ونشر الإعلان",
+    subtitle: "اتبع هذه الخطوات لإكمال إعلانك ونشره.",
+    steps: {
+      details: "المعلومات",
+      photos: "الصور",
+      place: "المكان"
+    }
+  },
+
+  step2: {
+    pickImages: "اختيار الصور",
+    dragHere: "اسحب وافلت الصور هنا",
+    makeMain: "رئيسية",
+    delete: "حذف",
+    later: "لاحقًا",
+    upload: "رفع الصور",
+    uploading: "جارٍ الرفع...",
+    needOne: "أضف صورة واحدة على الأقل",
+    toast: {
+      uploading: "جاري التحميل...",
+      success: "تم رفع الصور بنجاح",
+      error: "فشل رفع الصور"
+    }
+  },
+
+  step3: {
+    title: "اختيار المكان",
+    wilaya: "الولاية",
+    wilayaPlaceholder: "اختر الولاية",
+    moughataa: "المقاطعة",
+    moughataaPlaceholder: "اختر المقاطعة",
+    hint: "يمكنك تعديلها لاحقًا من تفاصيل الإعلان.",
+    save: "حفظ والانتقال إلى قائمتي",
+    saving: "جاري الحفظ...",
+    toasts: {
+      loadWilayasError: "تعذر تحميل الولايات",
+      loadMoughataasError: "تعذر تحميل المقاطعات",
+      needBoth: "اختر الولاية والمقاطعة",
+      saved: "تم حفظ المكان",
+      saveError: "فشل الحفظ"
+    }
+  }
 } as const;

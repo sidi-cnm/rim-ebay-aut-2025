@@ -1,23 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
+
+import { NextResponse } from "next/server";
 import { turso } from "../tursoClient";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_req: Request, ctx: any) {
   try {
-    const { id } = await params;
-    const body = await request.json();
-    if (!id) {
-      return new NextResponse("Champs obligatoires manquants", { status: 400 });
+    const idRaw = ctx?.params?.id;
+    const id = Number.isFinite(Number(idRaw)) ? Number(idRaw) : NaN;
+    if (!Number.isFinite(id)) {
+      return NextResponse.json({ ok: false, error: "id invalide" }, { status: 400 });
     }
 
-    const result = await turso.execute("SELECT * FROM options WHERE id = ?", [
-      id,
-    ]);
-    const option = result.rows[0] || null;
-    return NextResponse.json(option, { status: 200 });
+    const res = await turso.execute({
+      sql: "SELECT id, name, nameAr, priority, tag, depth, parentID FROM options WHERE id = ?",
+      args: [id],
+    });
+
+    const option = res.rows?.[0] ?? null;
+    if (!option) {
+      return NextResponse.json({ ok: false, error: "Option introuvable" }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true, data: option }, { status: 200 });
   } catch (error) {
-    return new NextResponse("Erreur serveur", { status: 500 });
+    console.error("lieu by id GET error:", error);
+    return NextResponse.json({ ok: false, error: "Erreur serveur" }, { status: 500 });
   }
 }
