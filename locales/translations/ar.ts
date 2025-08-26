@@ -256,5 +256,17 @@ export default {
       saved: "تم حفظ المكان",
       saveError: "فشل الحفظ"
     }
-  }
+  },
+
+
+  common: {
+    remove: "إزالة",
+    edit: "تعديل",
+    back:"عودة",
+    next:"التالي",
+    finish:"إنهاء",
+    createdAt: " تم الإنشاء في",
+    perDay: " أوقية / اليوم",
+    noImageAlt: "لا توجد صورة",
+  },
 } as const;

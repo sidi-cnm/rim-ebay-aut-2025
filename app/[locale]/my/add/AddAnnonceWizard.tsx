@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect ,useMemo, useState } from "react";
+import React, { useRef, useEffect, useMemo, useState } from "react";
 import AddAnnonceStep1 from "./AddAnnonceStep1";
 import AddAnnonceStep2 from "./AddAnnonceStep2";
 import AddAnnonceStep3 from "./AddAnnonceStep3";
@@ -9,7 +9,25 @@ import { useI18n } from "../../../../locales/client";
 type Props = {
   lang?: string;
   relavieUrlOptionsModel: string;
-  relavieUrlAnnonce: string;
+  relavieUrlAnnonce: string; // POST final ici
+};
+
+type Draft = {
+  // step 1
+  typeAnnonceId?: string;
+  categorieId?: string;
+  subcategorieId?: string;
+  title?: string;
+  description?: string;
+  price?: number | null;
+
+  // step 2
+  images?: File[];
+  mainIndex?: number; // index de l'image principale
+
+  // step 3
+  lieuId?: string;        // wilaya
+  moughataaId?: string;   // moughataa
 };
 
 export default function AddAnnonceWizard({
@@ -19,10 +37,11 @@ export default function AddAnnonceWizard({
 }: Props) {
   const t = useI18n();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [annonceId, setAnnonceId] = useState<string | null>(null);
   const wizardRef = useRef<HTMLDivElement | null>(null);
-
   const isRTL = useMemo(() => lang?.startsWith("ar"), [lang]);
+
+  // 🧠 Draft partagé entre étapes
+  const [draft, setDraft] = useState<Draft>({});
 
   const steps = [
     { key: 1, label: t("wizard.steps.details") },
@@ -32,25 +51,33 @@ export default function AddAnnonceWizard({
   const visualSteps = isRTL ? [...steps].reverse() : steps;
 
   useEffect(() => {
-    if (wizardRef.current) {
-      wizardRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, [step])
+    wizardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [step]);
 
-
-  const handleCreated = (id: string) => {
-    setAnnonceId(id);
+  // callbacks de progression
+  const onStep1Next = (payload: {
+    typeAnnonceId: string;
+    categorieId: string;
+    subcategorieId: string;
+    title: string;
+    description: string;
+    price: number | null;
+  }) => {
+    setDraft((d) => ({ ...d, ...payload }));
     setStep(2);
   };
 
+  const onStep2Next = (payload: { images: File[]; mainIndex: number }) => {
+    setDraft((d) => ({ ...d, ...payload }));
+    console.log("Draft after Step 2:", { ...draft, ...payload }); // debug
+    setStep(3);
+  };
+
+  const onStep3Back = () => setStep(2);
+  const onStep2Back = () => setStep(1);
+
   return (
-    <main
-      className="min-h-screen bg-gray-50"
-      dir={isRTL ? "rtl" : "ltr"}
-    >
+    <main className="min-h-screen bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
       {/* ------------ Stepper ------------ */}
       <div className="mx-auto max-w-5xl px-4 pt-6" dir={isRTL ? "rtl" : "ltr"}>
         <div className="bg-white border border-gray-200 shadow-sm rounded-2xl">
@@ -60,23 +87,13 @@ export default function AddAnnonceWizard({
             </h2>
             <p className="text-sm text-gray-500 mt-1">{t("wizard.subtitle")}</p>
           </div>
-
-          {/* zone scrollable en mobile pour éviter tout débordement */}
-          <div
-            className={[
-              "p-4 w-full",
-              // en mobile: centré visuellement ; en desktop: à droite pour RTL, centré pour LTR
-              isRTL ? "md:flex md:justify-end" : "md:flex md:justify-center",
-            ].join(" ")}
-          >
+          <div className={["p-4 w-full", isRTL ? "md:flex md:justify-end" : "md:flex md:justify-center"].join(" ")}>
             <div className="w-full overflow-x-auto">
               <ol
                 className={[
                   "flex items-center",
                   isRTL ? "flex-row-reverse justify-end pr-2" : "flex-row",
-                  // petits espaces en mobile, plus grands ensuite
                   "gap-2 sm:gap-3 md:gap-5",
-                  // empêche la casse sur 2 lignes et permet le scroll si nécessaire
                   "whitespace-nowrap min-w-max mx-auto",
                 ].join(" ")}
                 aria-label={t("wizard.title")}
@@ -85,13 +102,8 @@ export default function AddAnnonceWizard({
                   const isCurrent = step === s.key;
                   const isCompleted = step > s.key;
                   const isLast = idx === visualSteps.length - 1;
-
                   return (
-                    <li
-                      key={s.key}
-                      className={`flex items-center ${isRTL ? "flex-row-reverse" : ""}`}
-                    >
-                      {/* pastille + label */}
+                    <li key={s.key} className={`flex items-center ${isRTL ? "flex-row-reverse" : ""}`}>
                       <div
                         className={[
                           "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium",
@@ -102,26 +114,16 @@ export default function AddAnnonceWizard({
                             : "bg-gray-200 text-gray-700",
                         ].join(" ")}
                       >
-                         
                         <span className={isRTL ? "text-right" : "text-left"}>{s.label}</span>
                       </div>
-
-                      {/* connecteur : court en mobile, long en md+ */}
-                     
-
                       {!isLast && (
                         <div
                           className={[
                             "h-[2px]",
-                            // couleur de fond selon l'état
-                            isCompleted
-                              ? "bg-blue-900"
-                              : isCurrent
-                              ? "bg-blue-300"
-                              : "bg-gray-200",
+                            isCompleted ? "bg-blue-900" : isCurrent ? "bg-blue-300" : "bg-gray-200",
                             isRTL ? "ml-2 sm:ml-3 md:ml-4" : "mr-2 sm:mr-3 md:mr-4",
                           ].join(" ")}
-                          style={{ width: "2.5rem" }} // court en mobile
+                          style={{ width: "2.5rem" }}
                           aria-hidden="true"
                         />
                       )}
@@ -134,38 +136,44 @@ export default function AddAnnonceWizard({
         </div>
       </div>
 
-
-
       {/* ------------ Contenu des étapes ------------ */}
       <div className="mx-auto w-full max-w-screen-lg px-3 sm:px-4 py-4">
         {step === 1 && (
           <AddAnnonceStep1
             lang={lang}
             relavieUrlOptionsModel={relavieUrlOptionsModel}
-            relavieUrlAnnonce={relavieUrlAnnonce}
-            onCreated={handleCreated}
+            // ⚠️ plus d'appel POST ici : on remonte juste les valeurs
+            onNext={onStep1Next}
+            // si tu veux préremplir quand on revient en arrière
+            initial={{
+              typeAnnonceId: draft.typeAnnonceId ?? "",
+              categorieId: draft.categorieId ?? "",
+              subcategorieId: draft.subcategorieId ?? "",
+              description: draft.description ?? "",
+              price: draft.price ?? undefined,
+            }}
           />
         )}
 
-        {step === 2 && annonceId && (
+        {step === 2 && (
           <AddAnnonceStep2
             lang={lang}
-            annonceId={annonceId}
-            relavieUrlAnnonce={relavieUrlAnnonce}
-            onBack={() => setStep(1)}
-            onFinish={() => setStep(3)}
+            onBack={onStep2Back}
+            onNext={onStep2Next}
+            initial={{ images: draft.images, mainIndex: draft.mainIndex ?? 0 }}
           />
         )}
 
-        {step === 3 && annonceId && (
+        {step === 3 && (
           <AddAnnonceStep3
             lang={lang}
-            annonceId={annonceId}
             lieuxApiBase={`/${lang}/p/api/tursor/lieux`}
-            updateAnnonceEndpoint={`/${lang}/api/my/annonces/${annonceId}`}
-            onBack={() => setStep(2)}
+            // endpoint de création final (multipart)
+            createAnnonceEndpoint={`${relavieUrlAnnonce}`}
+            onBack={onStep3Back}
+            // on passe le draft complet pour le POST final
+            draft={draft}
           />
-          
         )}
       </div>
     </main>

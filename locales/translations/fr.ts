@@ -148,6 +148,7 @@ export default {
     remove: "Retirer",
     edit: "Éditer",
     back:"retoure",
+    next:"suivant",
     finish:"fini",
     createdAt: "Créé le",
     perDay: "/ jour",

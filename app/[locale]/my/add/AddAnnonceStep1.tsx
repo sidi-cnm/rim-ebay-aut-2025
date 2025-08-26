@@ -1,4 +1,3 @@
-// app/[locale]/my/add/AddAnnonceStep1.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { useI18n } from "../../../../locales/client";
@@ -9,32 +8,42 @@ import { Category, SubCategory, TypeAnnonce } from "../../../../packages/mytypes
 type Props = {
   lang?: string;
   relavieUrlOptionsModel: string;
-  relavieUrlAnnonce: string;
-  onCreated: (annonceId: string) => void;
+  onNext: (payload: {
+    typeAnnonceId: string;
+    categorieId: string;
+    subcategorieId: string;
+    title: string;
+    description: string;
+    price: number | null;
+  }) => void;
+  initial?: {
+    typeAnnonceId?: string;
+    categorieId?: string;
+    subcategorieId?: string;
+    description?: string;
+    price?: number | null | undefined;
+  };
 };
 
 export default function AddAnnonceStep1({
   lang = "ar",
   relavieUrlOptionsModel,
-  relavieUrlAnnonce,
-  onCreated,
+  onNext,
+  initial,
 }: Props) {
   const t = useI18n();
 
   const [typeAnnonces, setTypeAnnonces] = useState<TypeAnnonce[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [filteredSubCategories, setFilteredSubCategories] = useState<SubCategory[]>([]);
-  const [selectedTypeId, setSelectedTypeId] = useState<string>("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  console.log("relavieUrlOptionsModel : ", relavieUrlOptionsModel);
+  const [selectedTypeId, setSelectedTypeId] = useState<string>(initial?.typeAnnonceId ?? "");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(initial?.categorieId ?? "");
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>(initial?.subcategorieId ?? "");
+  const [description, setDescription] = useState(initial?.description ?? "");
+  const [price, setPrice] = useState<string>(initial?.price != null ? String(initial.price) : "");
 
   useEffect(() => {
-    const fetchTypes = async () => {
+    (async () => {
       try {
         const res = await fetch(`${relavieUrlOptionsModel}/options`);
         if (!res.ok) throw new Error();
@@ -42,12 +51,11 @@ export default function AddAnnonceStep1({
       } catch {
         toast.error(t("errors.fetchTypeAnnonces"));
       }
-    };
-    fetchTypes();
+    })();
   }, [relavieUrlOptionsModel, t]);
 
   useEffect(() => {
-    const fetchCats = async () => {
+    (async () => {
       if (!selectedTypeId) { setCategories([]); return; }
       try {
         const res = await axios.get(`${relavieUrlOptionsModel}/options?parentId=${encodeURIComponent(selectedTypeId)}`);
@@ -55,12 +63,11 @@ export default function AddAnnonceStep1({
       } catch {
         toast.error(t("errors.fetchCategories"));
       }
-    };
-    fetchCats();
+    })();
   }, [selectedTypeId, relavieUrlOptionsModel, t]);
 
   useEffect(() => {
-    const fetchSubs = async () => {
+    (async () => {
       if (!selectedCategoryId) { setFilteredSubCategories([]); return; }
       try {
         const res = await axios.get(`${relavieUrlOptionsModel}/options?parentId=${encodeURIComponent(selectedCategoryId)}`);
@@ -68,54 +75,24 @@ export default function AddAnnonceStep1({
       } catch {
         toast.error(t("errors.fetchSubCategories"));
       }
-    };
-    fetchSubs();
+    })();
   }, [selectedCategoryId, relavieUrlOptionsModel, t]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTypeId || !selectedCategoryId || !selectedSubCategoryId) {
+    if (!selectedTypeId || !selectedCategoryId || !selectedSubCategoryId || !description.trim() || !price) {
       toast.error(t("errors.requiredFields"));
       return;
     }
-    setSubmitting(true);
-    const loading = toast.loading(t("notifications.creating"));
-
-    try {
-      const annonceData = {
-        typeAnnonceId: selectedTypeId,
-        categorieId: selectedCategoryId,
-        subcategorieId: selectedSubCategoryId,
-        lieuId: selectedSubCategoryId,
-        title: description.substring(0, 50),
-        description,
-        price: Number(price),
-        haveImage: false,
-        firstImagePath: "",
-        images: [],
-        status: "active",
-      };
-
-      const res = await fetch(`${relavieUrlAnnonce}`, {
-        method: "POST",
-        body: JSON.stringify(annonceData),
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.message || "Create failed");
-      }
-      const data = await res.json().catch(() => ({}));
-      const createdId = String(data?.id ?? data?._id ?? data?.annonceId ?? "");
-      if (!createdId) throw new Error("No id returned by API");
-
-      toast.success(t("notifications.success"), { id: loading });
-      onCreated(createdId); // ⬅️ on passe à l’étape 2
-    } catch (e: any) {
-      toast.error(e?.message || t("notifications.error"), { id: loading });
-    } finally {
-      setSubmitting(false);
-    }
+    const title = description.substring(0, 50);
+    onNext({
+      typeAnnonceId: selectedTypeId,
+      categorieId: selectedCategoryId,
+      subcategorieId: selectedSubCategoryId,
+      title,
+      description,
+      price: price === "" ? null : Number(price),
+    });
   };
 
   return (
@@ -125,7 +102,8 @@ export default function AddAnnonceStep1({
         {t("addAnnonce.addNew")}
       </h2>
 
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg p-6 space-y-5">
+      <form onSubmit={handleNext} className="bg-white shadow-lg rounded-lg p-6 space-y-5">
+        {/* ... mêmes champs qu’avant ... */}
         {/* Type */}
         <div>
           <label className="block text-sm font-medium mb-1">
@@ -210,17 +188,12 @@ export default function AddAnnonceStep1({
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             min={0}
-            required
           />
         </div>
 
-        {/* CTA */}
         <div className="flex justify-end">
-          <button
-            type="submit"
-            className="inline-flex items-center rounded bg-blue-900 px-5 py-2 font-semibold text-white hover:bg-blue-700"
-          >
-            {submitting ? t("notifications.creating") : t("addAnnonce.submitButton")}
+          <button type="submit" className="inline-flex items-center rounded bg-blue-900 px-5 py-2 font-semibold text-white hover:bg-blue-700">
+            {t("common.next")}
           </button>
         </div>
       </form>

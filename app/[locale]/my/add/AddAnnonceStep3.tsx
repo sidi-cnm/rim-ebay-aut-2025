@@ -9,20 +9,29 @@ type Lieu = { id: number; name: string; nameAr: string };
 
 type Props = {
   lang?: string;
-  annonceId: string;
-  lieuxApiBase: string;
-  updateAnnonceEndpoint: string;
+  lieuxApiBase: string;             // `/${lang}/p/api/tursor/lieux`
+  createAnnonceEndpoint: string;    // `/${lang}/api/annonces`
   onBack: () => void;
-  onFinish?: () => void;
+  draft: {
+    typeAnnonceId?: string;
+    categorieId?: string;
+    subcategorieId?: string;
+    title?: string;
+    description?: string;
+    price?: number | null;
+    images?: File[];
+    mainIndex?: number;
+    lieuId?: string;
+    moughataaId?: string;
+  };
 };
 
 export default function AddAnnonceStep3({
   lang = "fr",
-  annonceId,
   lieuxApiBase,
-  updateAnnonceEndpoint,
+  createAnnonceEndpoint,
   onBack,
-  onFinish,
+  draft,
 }: Props) {
   const t = useI18n();
   const router = useRouter();
@@ -30,13 +39,17 @@ export default function AddAnnonceStep3({
 
   const [wilayas, setWilayas] = useState<Lieu[]>([]);
   const [moughataas, setMoughataas] = useState<Lieu[]>([]);
-  const [selectedWilayaId, setSelectedWilayaId] = useState<number | "">("");
-  const [selectedMoughataaId, setSelectedMoughataaId] = useState<number | "">("");
+  const [selectedWilayaId, setSelectedWilayaId] = useState<number | "">(
+    draft.lieuId ? Number(draft.lieuId) : ""
+  );
+  const [selectedMoughataaId, setSelectedMoughataaId] = useState<number | "">(
+    draft.moughataaId ? Number(draft.moughataaId) : ""
+  );
   const [loadingWilayas, setLoadingWilayas] = useState(false);
   const [loadingMoughataas, setLoadingMoughataas] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Wilayas
+  // Charger wilayas
   useEffect(() => {
     let ignore = false;
     (async () => {
@@ -57,12 +70,10 @@ export default function AddAnnonceStep3({
         setLoadingWilayas(false);
       }
     })();
-    return () => {
-      ignore = true;
-    };
+    return () => { ignore = true; };
   }, [lieuxApiBase, t]);
 
-  // Moughataas
+  // Charger moughataas quand wilaya change
   useEffect(() => {
     if (selectedWilayaId === "" || selectedWilayaId == null) {
       setMoughataas([]);
@@ -73,10 +84,7 @@ export default function AddAnnonceStep3({
     (async () => {
       try {
         setLoadingMoughataas(true);
-        const res = await fetch(
-          `${lieuxApiBase}?parentId=${selectedWilayaId}&tag=moughataa`,
-          { cache: "no-store" }
-        );
+        const res = await fetch(`${lieuxApiBase}?parentId=${selectedWilayaId}&tag=moughataa`, { cache: "no-store" });
         const data = await res.json().catch(() => ({}));
         if (ignore) return;
         if (!res.ok || data?.ok === false) {
@@ -95,66 +103,74 @@ export default function AddAnnonceStep3({
         setLoadingMoughataas(false);
       }
     })();
-    return () => {
-      ignore = true;
-    };
+    return () => { ignore = true; };
   }, [selectedWilayaId, lieuxApiBase, t]);
 
+  // 🚀 POST unique (multipart)
   const handleSave = async () => {
     if (!selectedWilayaId || !selectedMoughataaId) {
       toast.error(t("step3.toasts.needBoth"));
       return;
     }
-    const wilaya = wilayas.find((w) => w.id === Number(selectedWilayaId));
-    const moughataa = moughataas.find((m) => m.id === Number(selectedMoughataaId));
-    if (!wilaya || !moughataa) {
-      toast.error(t("step3.toasts.needBoth"));
+    // validation minimale du draft
+    if (!draft.typeAnnonceId || !draft.categorieId || !draft.subcategorieId || !draft.description) {
+      toast.error(t("errors.requiredFields"));
       return;
     }
 
     setSaving(true);
     const loading = toast.loading(t("step3.saving"));
     try {
-      const payload = {
-        wilayaId: String(wilaya.id),
-        wilayaStr: wilaya.name,
-        wilayaStrAr: wilaya.nameAr,
-        moughataaId: String(moughataa.id),
-        moughataaStr: moughataa.name,
-        moughataaStrAr: moughataa.nameAr,
-      };
+      const fd = new FormData();
+      // step1
+      fd.append("typeAnnonceId", String(draft.typeAnnonceId));
+      fd.append("categorieId", String(draft.categorieId));
+      fd.append("subcategorieId", String(draft.subcategorieId));
+      fd.append("title", String(draft.title ?? (draft.description ?? "").slice(0, 50)));
+      fd.append("description", String(draft.description ?? ""));
+      if (draft.price != null) fd.append("price", String(draft.price));
 
-      const res = await fetch(updateAnnonceEndpoint, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+      // step3 (lieu)
+      fd.append("lieuId", String(selectedWilayaId));       // wilaya
+      fd.append("moughataaId", String(selectedMoughataaId));
+
+      // step2 (images)
+      const files = draft.images ?? [];
+      files.forEach((file) => fd.append("files", file));
+      fd.append("mainIndex", String(Math.max(0, draft.mainIndex ?? 0)));
+
+      // flags par défaut
+      fd.append("status", "active");
+      fd.append("haveImage", String(files.length > 0));
+
+      const res = await fetch(createAnnonceEndpoint, {
+        method: "POST",
+        body: fd, // multipart/form-data
         credentials: "include",
-        body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("update failed");
+
+      const data = await res.json().catch(() => ({} as any));
+      if (!res.ok) throw new Error(data?.error || "Create failed");
 
       toast.success(t("step3.toasts.saved"), { id: loading });
       router.push(`/${lang}/my/list`);
       router.refresh();
-      onFinish?.();
-    } catch {
-      toast.error(t("step3.toasts.saveError"), { id: loading });
+    } catch (e: any) {
+      toast.error(e?.message || t("step3.toasts.saveError"), { id: loading });
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div
-      className="mx-auto w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-3xl"
-      dir={isRTL ? "rtl" : "ltr"}
-    >
+    <div className="mx-auto w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-3xl" dir={isRTL ? "rtl" : "ltr"}>
       <Toaster position="bottom-right" />
       <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4 text-gray-800">
         {t("step3.title")}
       </h2>
 
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-3 sm:p-4">
-        {/* WILAYA */}
+        {/* Wilaya */}
         <div className="mb-3">
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
             {t("step3.wilaya")}
@@ -174,16 +190,14 @@ export default function AddAnnonceStep3({
           </select>
         </div>
 
-        {/* MOUGHATAA */}
+        {/* Moughataa */}
         <div className="mb-2">
           <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
             {t("step3.moughataa")}
           </label>
           <select
             value={selectedMoughataaId}
-            onChange={(e) =>
-              setSelectedMoughataaId(e.target.value ? Number(e.target.value) : "")
-            }
+            onChange={(e) => setSelectedMoughataaId(e.target.value ? Number(e.target.value) : "")}
             disabled={loadingMoughataas || selectedWilayaId === ""}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
@@ -196,19 +210,12 @@ export default function AddAnnonceStep3({
           </select>
         </div>
 
-        <p className="text-[11px] sm:text-xs text-gray-500 mb-3 sm:mb-4">
-          {t("step3.hint")}
-        </p>
+        <p className="text-[11px] sm:text-xs text-gray-500 mb-3 sm:mb-4">{t("step3.hint")}</p>
 
         <div className="mt-2 sm:mt-4 flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-full sm:w-auto rounded border px-4 py-2 text-sm sm:text-base hover:bg-gray-50"
-          >
+          <button type="button" onClick={onBack} className="w-full sm:w-auto rounded border px-4 py-2 text-sm sm:text-base hover:bg-gray-50">
             {isRTL ? "رجوع" : "Retour"}
           </button>
-
           <button
             type="button"
             disabled={saving}

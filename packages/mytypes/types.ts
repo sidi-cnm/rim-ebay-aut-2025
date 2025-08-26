@@ -115,9 +115,12 @@ export interface Annonce {
   categorieNameAr?: string; // Nom de la catégorie en arabe (optionnel)
   subcategorieId?: string; // Identifiant de la sous-catégorie (optionnel)
   
-  lieuId: string; // Identifiant du lieu de l'annonce
+  // lieuId: string; // Identifiant du lieu de l'annonce
   lieuStr?: string; // Lieu de l'annonce
   lieuStrAr?: string; // Lieu de l'annonce en arabe
+
+  lieuId?: string | null;        // wilaya
+  moughataaId?: string | null;
 
   userId: string; // Identifiant de l'utilisateur
   title: string; // Titre de l'annonce
