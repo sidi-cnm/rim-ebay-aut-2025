@@ -25,9 +25,7 @@ export default function AnnonceItemUI({
   const [loading, setLoading] = useState(false);
 
   const imgUrl =
-    a.haveImage && a.firstImagePath
-      ? `${a.firstImagePath}`
-      : FALLBACK_IMG;
+    a.haveImage && a.firstImagePath ? `${a.firstImagePath}` : FALLBACK_IMG;
 
   const created = a.createdAt ? new Date(a.createdAt) : null;
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -36,22 +34,24 @@ export default function AnnonceItemUI({
       ? `${pad(created.getDate())}-${pad(created.getMonth() + 1)}-${created.getFullYear()}`
       : "";
 
-  console.log(href, "href");    
-
   const goToDetails = () => {
     if (loading) return;
     setLoading(true);
     router.push(href);
   };
 
+  // alignement du badge selon la langue
+  const selfAlign = lang === "ar" ? "self-end" : "self-start";
+
   return (
     <article
       data-cy="annonce-item"
       dir={dir}
       className={`group bg-white rounded-2xl shadow-md ring-1 ring-gray-200 overflow-hidden 
-                  h-full flex flex-col transition hover:shadow-lg hover:ring-gray-300 ${lang === "ar" ? "text-right" : ""}`}
+                  h-full flex flex-col transition hover:shadow-lg hover:ring-gray-300 ${
+                    lang === "ar" ? "text-right" : ""
+                  }`}
     >
-      {/* Image */}
       {/* Image */}
       <div className="relative w-full h-48 md:h-56 lg:h-64 bg-gray-100">
         <img
@@ -62,15 +62,23 @@ export default function AnnonceItemUI({
         />
       </div>
 
-
-
       {/* Contenu */}
-      <div className="p-4 md:p-5 flex flex-col gap-3 flex-1">
+      {/* items-start empêche les enfants de s'étirer en largeur */}
+      <div className="p-4 md:p-5 flex flex-col items-start gap-3 flex-1">
+        {/* Badge classification */}
+        <span
+          className={`inline-block w-fit max-w-full ${selfAlign}
+                      bg-blue-800 rounded-full px-3 py-1
+                      text-sm font-semibold text-white mt-2
+                      break-words`}
+          title={lang === "fr" ? a.classificationFr : a.classificationAr}
+        >
+          {lang === "fr" ? a.classificationFr : a.classificationAr}
+        </span>
+
         <h2 className="text-base md:text-lg font-semibold leading-tight line-clamp-1">
           {a.title}
         </h2>
-
-        <p className="text-gray-600 text-sm line-clamp-2">{a.description}</p>
 
         {humanDate && (
           <div className="text-xs text-gray-400">
@@ -81,14 +89,14 @@ export default function AnnonceItemUI({
         <div className="border-t border-gray-200" />
 
         {/* Prix */}
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-2 w-full">
           <span className="text-sm text-gray-500">{t("card.price")}</span>
           <span className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">
             {a.price} <span className="text-sm font-semibold">{t("card.currency")}</span>
           </span>
         </div>
 
-        {/* Bouton DÉTAILS avec loader */}
+        {/* Bouton DÉTAILS */}
         <div className="mt-4 w-full">
           <button
             onClick={goToDetails}
@@ -104,14 +112,13 @@ export default function AnnonceItemUI({
             aria-busy={loading}
             aria-live="polite"
           >
-            {/* spinner Tailwind */}
             {loading && (
-               <span
-               aria-hidden="true"
-               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-                          inline-block h-5 w-5 rounded-full
-                          border-2 border-white/40 border-t-white animate-spin"
-             />
+              <span
+                aria-hidden="true"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                           inline-block h-5 w-5 rounded-full
+                           border-2 border-white/40 border-t-white animate-spin"
+              />
             )}
             <span className={loading ? "opacity-0" : "opacity-100"}>
               {t("card.details")}

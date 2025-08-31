@@ -126,7 +126,7 @@ async function sendWithLocal(to: string, subject: string, html: string) {
 /** Public: email de vérification */
 export async function sendVerificationEmail(to: string, token: string) {
   const baseUrl = getBaseUrl();
-  const url = `${baseUrl}/fr/api/mail/verify?token=${token}`;
+  const url = `${baseUrl}/ar/api/mail/verify?token=${token}`;
   const subject = "Confirme ton email";
   const html = `<p>Pour valider ton compte, clique <a href="${url}">ici</a>.</p>`;
 

@@ -64,6 +64,8 @@ export default async function Home({
     categorieid: a.categorieId,
     categorieName: a.categorie?.name ?? "",
     categorieNameAr: a.categorie?.nameAr ?? "",
+    classificationAr: a.classificationAr ?? "",
+    classificationFr: a.classificationFr ?? "",
     lieuId: a.lieuId,
     lieuid: a.lieuId,
     lieuStr: a.lieuStr ?? "",
@@ -109,8 +111,9 @@ export default async function Home({
         />
       </div>
 
-      {/* Desktop */}
-      <div className="flex flex-col md:flex-row items-start min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
+      {/* Desktop + Mobile wrapper */}
+      <div className="flex flex-col md:flex-row items-center md:items-start min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
+        {/* Sidebar Desktop */}
         <aside className="hidden md:block w-80 xl:w-96 flex-shrink-0 self-start">
           <div className="sticky top-6 h-[calc(100vh-3rem)]">
             <div className="h-full bg-white rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 overflow-y-auto">
@@ -133,7 +136,8 @@ export default async function Home({
           </div>
         </aside>
 
-        <section className="flex-1 bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">
+        {/* Section annonces */}
+        <section className="w-full max-w-[720px] md:max-w-none md:flex-1 mx-auto bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">
           <div className="mb-6">
             <AnnoceTitle title={t("nav.Annoce")} />
           </div>
