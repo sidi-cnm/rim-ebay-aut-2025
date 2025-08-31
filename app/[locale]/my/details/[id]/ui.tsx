@@ -62,7 +62,13 @@ export default function MyAnnonceDetailsCompo({
     subcategorieId: "",
     description: "",
     price: 0,
+    moughataaId: "",
+    wilayaId: "",
   });
+
+  const onEditImages = () => {
+    router.push(`/${lang}/my/details/${annonceId}/images`);
+  }
 
   const fetchAnnonce = async () => {
     setLoading(true);
@@ -99,12 +105,16 @@ export default function MyAnnonceDetailsCompo({
         images: mergedImages.length > 0 ? mergedImages : (data.images ?? []),
       });
 
+      console.log("Annonce fetched:", { ...data, images: mergedImages });
+
       setInitialData({
         typeAnnonceId: data?.typeAnnonceId ?? "",
         categorieId: data?.categorieId ?? "",
         subcategorieId: data?.subcategorieId ?? "",
         description: data?.description ?? "",
         price: Number(data?.price ?? 0),
+        moughataaId: data?.moughataaId ?? "",
+        wilayaId: data?.lieuId ?? "",
       });
 
       setError(null);
@@ -151,6 +161,8 @@ export default function MyAnnonceDetailsCompo({
         categorieId: annonces.categorie?.id ?? annonces.categorieId ?? "",
         subcategorieId: String(annonces.subcategorie?.id ?? annonces?.subcategorieId ?? ""),
         description: annonces.description ?? "",
+        wilayaId: annonces.lieuId ?? "",
+        moughataaId: annonces.moughataaId ?? "",
         price: Number(annonces.price ?? 0),
       });
     }
@@ -163,7 +175,7 @@ export default function MyAnnonceDetailsCompo({
     <>
       <div className={`md:flex md:items-start gap-6 ${isRTL ? "md:flex-row-reverse" : ""}`}>
         <div className="flex-1 min-w-0">
-          {loading ? (
+          {loading && !isEditModalOpen ?  (
             <LottieAnimation />
           ) : (
             <MyAnnonceDetailsView
@@ -190,6 +202,7 @@ export default function MyAnnonceDetailsCompo({
               userid={""}
               annonceId={annonceId}
               initialData={initialData}
+              onEditImages={onEditImages}
               onClose={() => setEditModalOpen(false)}
               onUpdate={handleUpdate}
               typeAnnoncesEndpoint={typeAnnoncesEndpoint}

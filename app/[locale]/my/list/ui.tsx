@@ -117,8 +117,8 @@ function AnnonceItemUI({
 
           <span className="inline-block bg-green-800 rounded-full px-3 py-1 text-sm font-semibold text-white mt-2">
             {lang === "ar"
-              ? annonce?.categorie?.nameAr
-              : annonce?.categorie?.name}
+              ? annonce?.classificationAr
+              : annonce?.classificationFr}
           </span>
         </div>
       </article>
@@ -139,7 +139,8 @@ export function MyListAnnoncesUI({
   annonces: Annonce[];
   imageServiceUrl?: string;
 }) {
- // console.log("annonces:::::", annonces);
+
+ console.log("annonces::::: classfier", annonces);
   const t = useI18n();
 
   return (

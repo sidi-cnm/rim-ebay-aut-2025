@@ -13,36 +13,39 @@ type Search = {
   categorieId?: string;
   subCategorieId?: string; // en DB: subcategorieId
   price?: string;
+  // 👇 nouveaux filtres
+  wilayaId?: string;       // en DB: lieuId (wilaya)
+  moughataaId?: string;    // en DB: moughataaId
 };
 
 export default async function Home({
   params,
   searchParams,
 }: {
-  params: Promise<Params>;             // 👈 Promesses
-  searchParams?: Promise<Search>;      // 👈 Promesses
+  params: Promise<Params>;
+  searchParams?: Promise<Search>;
 }) {
-  const { locale } = await params;     // 👈 await
-  const sp = (await searchParams) ?? {}; // 👈 await + fallback
+  const { locale } = await params;
+  const sp = (await searchParams) ?? {};
 
   const t = await getI18n();
 
-  let apiBase = process.env.NEXT_PUBLIC_OPTIONS_API_MODE
-  console.log("apiBase : "  , apiBase)
-
-  // 1) Pagination & filtres
   const currentPage = Number(sp.page) || 1;
   const itemsPerPage = 6;
   const skip = (currentPage - 1) * itemsPerPage;
 
-  // 2) Query Mongo
+  // ----- Query Mongo -----
   const query: Record<string, any> = { isPublished: false };
-  if (sp.typeAnnonceId) query.typeAnnonceId = sp.typeAnnonceId;
-  if (sp.categorieId) query.categorieId = sp.categorieId;
-  if (sp.subCategorieId) query.subcategorieId = sp.subCategorieId;
+
+  if (sp.typeAnnonceId)   query.typeAnnonceId   = sp.typeAnnonceId;
+  if (sp.categorieId)     query.categorieId     = sp.categorieId;
+  if (sp.subCategorieId)  query.subcategorieId  = sp.subCategorieId;
   if (sp.price && !isNaN(Number(sp.price))) query.price = Number(sp.price);
 
-  // 3) Lecture Mongo
+  // 👇 nouveaux filtres
+  if (sp.wilayaId)       query.lieuId       = sp.wilayaId;      // wilaya
+  if (sp.moughataaId)    query.moughataaId  = sp.moughataaId;   // moughataa
+
   const db = await getDb();
   const coll = db.collection("annonces");
 
@@ -51,7 +54,6 @@ export default async function Home({
     coll.countDocuments(query),
   ]);
 
-  // 4) Mapping
   const annonces: Annonce[] = rows.map((a: any) => ({
     id: String(a._id ?? a.id),
     typeAnnonceId: a.typeAnnonceId,
@@ -76,30 +78,34 @@ export default async function Home({
     firstImagePath: a.firstImagePath ? String(a.firstImagePath) : "",
     images: a.annonceImages ?? [],
     status: a.status,
-    updatedAt: a.updatedAt ? new Date(a.updatedAt) : undefined,  // 👈 évite les strings vides
+    updatedAt: a.updatedAt ? new Date(a.updatedAt) : undefined,
     createdAt: a.createdAt ? new Date(a.createdAt) : undefined,
   }));
 
   const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
 
-  // 5) UI
+  // Endpoint lieux (wilaya/moughataa)
+  const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
+
   return (
     <main className="min-h-screen bg-gray-100">
       {/* Mobile */}
       <div className="block md:hidden w-full px-2 pt-4">
         <FormSearchUI
           lang={locale}
-          typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
-          categoriesEndpoint={`/fr/p/api/${apiBase}/options`}
-          subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
-          mobile
+          typeAnnoncesEndpoint={`/${locale}/p/api/tursor/options`}
+          categoriesEndpoint={`/${locale}/p/api/tursor/options`}
+          subCategoriesEndpoint={`/${locale}/p/api/tursor/options`}
+          // 👇 nouveaux props
+          lieuxEndpoint={lieuxEndpoint}
           annonceTypeLabel={t("filter.type")}
-          selectTypeLabel="Sélectionner le type"
-          selectCategoryLabel="Sélectionner la catégorie"
-          selectSubCategoryLabel="Sélectionner la sous-catégorie"
-          formTitle="Rechercher une annonce"
-          priceLabel="Prix"
-          searchButtonLabel="Rechercher"
+          selectTypeLabel={t("filter.selectType")}
+          selectCategoryLabel={t("filter.selectCategory")}
+          selectSubCategoryLabel={t("filter.selectSubCategory")}
+          formTitle={t("filter.title")}
+          priceLabel={t("filter.price")}
+          searchButtonLabel={t("filter.search")}
+          mobile
         />
       </div>
 
@@ -110,16 +116,18 @@ export default async function Home({
             <div className="h-full bg-white rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 overflow-y-auto">
               <FormSearchUI
                 lang={locale}
-                typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
-                categoriesEndpoint={`/fr/p/api/${apiBase}/options`}
-                subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
+                typeAnnoncesEndpoint={`/${locale}/p/api/tursor/options`}
+                categoriesEndpoint={`/${locale}/p/api/tursor/options`}
+                subCategoriesEndpoint={`/${locale}/p/api/tursor/options`}
+                // 👇 nouveaux props
+                lieuxEndpoint={lieuxEndpoint}
                 annonceTypeLabel={t("filter.type")}
-                selectTypeLabel="Sélectionner le type"
-                selectCategoryLabel="Sélectionner la catégorie"
-                selectSubCategoryLabel="Sélectionner la sous-catégorie"
-                formTitle="Rechercher une annonce"
-                priceLabel="Prix"
-                searchButtonLabel="Rechercher"
+                selectTypeLabel={t("filter.selectType")}
+                selectCategoryLabel={t("filter.selectCategory")}
+                selectSubCategoryLabel={t("filter.selectSubCategory")}
+                formTitle={t("filter.title")}
+                priceLabel={t("filter.price")}
+                searchButtonLabel={t("filter.search")}
               />
             </div>
           </div>
@@ -146,5 +154,3 @@ export default async function Home({
     </main>
   );
 }
-
-

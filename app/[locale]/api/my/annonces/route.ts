@@ -160,8 +160,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const description    = String(form.get("description") ?? "");
       const priceStr       = form.get("price");
       const price          = priceStr != null && String(priceStr) !== "" ? Number(priceStr) : null;
+      const directNegotiation =  String(form.get("directNegotiation"));
+      const classificationFr = form.get("classificationFr") ? String(form.get("classificationFr")) : null;
+      const classificationAr = form.get("classificationAr") ? String(form.get("classificationAr")) : null;
 
-      
+
+      console.log("directNegotiation:::::::::::::::3", directNegotiation);
+
+     
       // -------- Localisation (Step 3) --------
       const lieuId         = String(form.get("lieuId") ?? "");        // wilaya
       const moughataaId    = String(form.get("moughataaId") ?? "");   // moughataa
@@ -190,12 +196,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       const contact = await getUserContact(db, userIdStr);
 
-      // -------- Création annonce (UN SEUL insert) --------
+     
       const annonceDoc: any = {
         typeAnnonceId,
         categorieId,
         subcategorieId,
         userId: userIdStr,
+        classificationFr,
+        classificationAr,
         title,
         description,
         price,
@@ -205,6 +213,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         contact,
         moughataaId: moughataaId || null,
         haveImage: false,
+        directNegotiation,
         firstImagePath: '',
         createdAt: now,
         updatedAt: now,

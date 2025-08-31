@@ -31,7 +31,11 @@
 
 // app/[locale]/my/add/page.tsx
 import AddAnnonceWizard from "./AddAnnonceWizard";
-import { cookies } from "next/headers";
+import { getUserFromCookies } from "../../../../utiles/getUserFomCookies";
+import { getDb } from "../../../../lib/mongodb";
+import { ObjectId } from "mongodb";
+
+
 
 const relavieUrlAnnonce = "/fr/api/my/annonces";
 let relavieUrlOptionsModel = "/fr/p/api/tursor";
@@ -44,11 +48,30 @@ export default async function AddAnnonce(props: {
 }) {
   const params = await props.params;
 
+  console.log("Locale from params:", params);
+  let isSamsar;
+
+  const user = await getUserFromCookies();
+  const db = await getDb();
+
+  if(user){
+    console.log("user from cookie:", user.id);
+    const userIndb= await db.collection("users").findOne({_id: new ObjectId(user.id)});
+    console.log("userIndb check:", userIndb);
+    if(userIndb){
+      console.log("userIndb:", userIndb);
+      isSamsar = userIndb.samsar;
+    }
+  }
+
+
+
   return (
     <AddAnnonceWizard
       lang={params.locale}
       relavieUrlOptionsModel={relavieUrlOptionsModel}
       relavieUrlAnnonce={relavieUrlAnnonce}
+      isSamsar={isSamsar}
     />
   );
 }

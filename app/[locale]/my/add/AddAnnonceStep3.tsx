@@ -23,6 +23,9 @@ type Props = {
     mainIndex?: number;
     lieuId?: string;
     moughataaId?: string;
+    directNegotiation?: boolean | null;
+    classificationFr?: string;
+    classificationAr?: string;
   };
 };
 
@@ -117,6 +120,7 @@ export default function AddAnnonceStep3({
       toast.error(t("errors.requiredFields"));
       return;
     }
+    console.log("draft avec classfier", draft);
 
     setSaving(true);
     const loading = toast.loading(t("step3.saving"));
@@ -128,7 +132,10 @@ export default function AddAnnonceStep3({
       fd.append("subcategorieId", String(draft.subcategorieId));
       fd.append("title", String(draft.title ?? (draft.description ?? "").slice(0, 50)));
       fd.append("description", String(draft.description ?? ""));
+      fd.append("directNegotiation", String(draft.directNegotiation));
       if (draft.price != null) fd.append("price", String(draft.price));
+      if (draft.classificationFr) fd.append("classificationFr", String(draft.classificationFr));
+      if (draft.classificationAr) fd.append("classificationAr", String(draft.classificationAr));
 
       // step3 (lieu)
       fd.append("lieuId", String(selectedWilayaId));       // wilaya

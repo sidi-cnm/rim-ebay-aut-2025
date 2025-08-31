@@ -1,3 +1,4 @@
+// packages/ui/components/FormSearch/FormSearchdDynamicOptions.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import FormSearchView from "./FormSearchView";
@@ -8,6 +9,8 @@ interface Filters {
   subCategorieId?: string;
   price?: string;
   description?: string;
+  wilayaId?: string;
+  moughataaId?: string;
 }
 
 interface FormSearchProps {
@@ -16,6 +19,14 @@ interface FormSearchProps {
   typeAnnoncesEndpoint: string;
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
+
+  // 👇 nouveaux
+  lieuxEndpoint: string;
+  wilayaLabel: string;
+  selectWilayaLabel: string;
+  moughataaLabel: string;
+  selectMoughataaLabel: string;
+
   // i18n
   annonceTypeLabel: string;
   selectTypeLabel: string;
@@ -24,10 +35,10 @@ interface FormSearchProps {
   formTitle: string;
   priceLabel: string;
   searchButtonLabel: string;
-  // piloté par le parent
+
   loading?: boolean;
-  categoryLabel: string;           // ⬅️ AJOUTER
-  subCategoryLabel: string;  
+  categoryLabel: string;
+  subCategoryLabel: string;
 }
 
 export default function FormSearch({
@@ -36,6 +47,11 @@ export default function FormSearch({
   typeAnnoncesEndpoint,
   categoriesEndpoint,
   subCategoriesEndpoint,
+  lieuxEndpoint,
+  wilayaLabel,
+  selectWilayaLabel,
+  moughataaLabel,
+  selectMoughataaLabel,
   annonceTypeLabel,
   selectTypeLabel,
   selectCategoryLabel,
@@ -44,6 +60,8 @@ export default function FormSearch({
   priceLabel,
   searchButtonLabel,
   loading = false,
+  categoryLabel,
+  subCategoryLabel,
 }: FormSearchProps) {
   const [typeAnnonces, setTypeAnnonces] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -54,9 +72,11 @@ export default function FormSearch({
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>("");
   const [price, setPrice] = useState<number>();
 
-  console.log("typeAnnoncesEndpoint : " , typeAnnoncesEndpoint)
-  console.log("categoriesEndpoint : " , categoriesEndpoint)
-  console.log("subCategoriesEndpoint : " , subCategoriesEndpoint)
+  // 👇 nouveaux états
+  const [wilayas, setWilayas] = useState<any[]>([]);
+  const [moughataas, setMoughataas] = useState<any[]>([]);
+  const [selectedWilayaId, setSelectedWilayaId] = useState<string>("");
+  const [selectedMoughataaId, setSelectedMoughataaId] = useState<string>("");
 
   // types
   useEffect(() => {
@@ -74,11 +94,15 @@ export default function FormSearch({
         .then((data) => {
           setCategories(data);
           setSubCategories([]);
+          setSelectedCategoryId("");
+          setSelectedSubCategoryId("");
         })
         .catch((err) => console.error("Error fetching categories:", err));
     } else {
       setCategories([]);
       setSubCategories([]);
+      setSelectedCategoryId("");
+      setSelectedSubCategoryId("");
     }
   }, [selectedTypeId, categoriesEndpoint]);
 
@@ -91,33 +115,60 @@ export default function FormSearch({
         .catch((err) => console.error("Error fetching subcategories:", err));
     } else {
       setSubCategories([]);
+      setSelectedSubCategoryId("");
     }
   }, [selectedCategoryId, subCategoriesEndpoint]);
 
+  // 👇 wilayas
+  useEffect(() => {
+    fetch(`${lieuxEndpoint}?tag=wilaya`)
+      .then((res) => res.json())
+      .then((data) => setWilayas(Array.isArray(data?.data) ? data.data : data))
+      .catch((err) => console.error("Error fetching wilayas:", err));
+  }, [lieuxEndpoint]);
+
+  // 👇 moughataas quand wilaya sélectionnée
+  useEffect(() => {
+    if (!selectedWilayaId) {
+      setMoughataas([]);
+      setSelectedMoughataaId("");
+      return;
+    }
+    fetch(`${lieuxEndpoint}?parentId=${encodeURIComponent(selectedWilayaId)}&tag=moughataa`)
+      .then((res) => res.json())
+      .then((data) => {
+        setMoughataas(Array.isArray(data?.data) ? data.data : data);
+        setSelectedMoughataaId("");
+      })
+      .catch((err) => {
+        console.error("Error fetching moughataas:", err);
+        setMoughataas([]);
+        setSelectedMoughataaId("");
+      });
+  }, [selectedWilayaId, lieuxEndpoint]);
+
   const handleTypeChange = (val: string) => {
     setSelectedTypeId(val);
-    setSelectedCategoryId("");
-    setSelectedSubCategoryId("");
-    setSubCategories([]);
   };
-
   const handleCategoryChange = (val: string) => {
     setSelectedCategoryId(val);
-    setSelectedSubCategoryId("");
   };
-
   const handlePriceChange = (v: string) => {
     setPrice(v ? Number(v) : undefined);
   };
 
-  // ⚠️ le parent gère loading + navigation
   const handleSearch = () => {
     const filters: Filters = {};
-    if (selectedTypeId) filters.typeAnnonceId = selectedTypeId;
-    if (selectedCategoryId) filters.categorieId = selectedCategoryId;
+    if (selectedTypeId)        filters.typeAnnonceId = selectedTypeId;
+    if (selectedCategoryId)    filters.categorieId = selectedCategoryId;
     if (selectedSubCategoryId) filters.subCategorieId = selectedSubCategoryId;
-    if (price !== undefined) filters.price = String(price);
-    return onSubmit(filters); // (peut être async côté parent)
+    if (price !== undefined)   filters.price = String(price);
+
+    // 👇 nouveaux
+    if (selectedWilayaId)      filters.wilayaId = selectedWilayaId;         // en DB: lieuId
+    if (selectedMoughataaId)   filters.moughataaId = selectedMoughataaId;   // en DB: moughataaId
+
+    return onSubmit(filters);
   };
 
   return (
@@ -130,11 +181,22 @@ export default function FormSearch({
       selectedCategoryId={selectedCategoryId}
       selectedSubCategoryId={selectedSubCategoryId}
       price={price !== undefined ? String(price) : ""}
+
+      // 👇 nouveaux jeux de données / sélections
+      wilayas={wilayas}
+      moughataas={moughataas}
+      selectedWilayaId={selectedWilayaId}
+      selectedMoughataaId={selectedMoughataaId}
+      onWilayaChange={setSelectedWilayaId}
+      onMoughataaChange={setSelectedMoughataaId}
+
       onTypeChange={handleTypeChange}
       onCategoryChange={handleCategoryChange}
       onSubCategoryChange={setSelectedSubCategoryId}
       onPriceChange={handlePriceChange}
       onSearch={handleSearch}
+
+      // labels existants
       annonceTypeLabel={annonceTypeLabel}
       selectTypeLabel={selectTypeLabel}
       categoryLabel={selectCategoryLabel}
@@ -144,7 +206,14 @@ export default function FormSearch({
       formTitle={formTitle}
       priceLabel={priceLabel}
       searchButtonLabel={searchButtonLabel}
-      loading={loading} // ✅ prop reçue du parent
+
+      // 👇 labels nouveaux
+      wilayaLabel={wilayaLabel}
+      selectWilayaLabel={selectWilayaLabel}
+      moughataaLabel={moughataaLabel}
+      selectMoughataaLabel={selectMoughataaLabel}
+
+      loading={loading}
     />
   );
 }

@@ -71,6 +71,8 @@ export default async function Home({
     lieuStrAr: a.lieuStrAr ?? "",
     userId: a.userId,
     userid: a.userId,
+    classificationFr: a.classificationFr ?? "",
+    classificationAr: a.classificationAr ?? "",
     title: a.title,
     description: a.description,
     price: a.price != null ? Number(a.price) : undefined,
@@ -85,6 +87,7 @@ export default async function Home({
 
   const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
   let apiBase = process.env.NEXT_PUBLIC_OPTIONS_API_MODE
+  const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
 
   // 6) UI
   return (
@@ -95,6 +98,7 @@ export default async function Home({
           <FormSearchUI
             lang={locale}                                 // <-- utilise locale
             typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
+            lieuxEndpoint={lieuxEndpoint}
             categoriesEndpoint={`/fr/p/api/${apiBase}/options`}
             subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
             mobile
@@ -108,6 +112,7 @@ export default async function Home({
           <FormSearchUI
             lang={locale}
             typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
+            lieuxEndpoint={lieuxEndpoint}
             categoriesEndpoint={`/fr/p/api/${apiBase}/options`}
             subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
           />
@@ -125,7 +130,7 @@ export default async function Home({
             />
           ) : (
             <div className="flex justify-center items-center">
-              <div>Veuillez vous connecter pour voir vos annonces.</div>
+              <div>Aucun Annouce pour le moment .</div>
             </div>
           )}
         </section>

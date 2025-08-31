@@ -14,6 +14,12 @@ export default {
   },
   addAnnonce: {
     welcome: "أهلاً بك",
+    positionLegend: "موقعك بالنسبة للعقار",
+    directQ: "تفاوض مباشر",
+    needDirectChoice: "يجب عليك اختيار خيار",
+    owner: "مالك",
+    broker: "سمسار",
+    other: "آخر",
     addNew: "إضافة إعلان",
     mockedData: "البيانات ليست مخزنة في قاعدة البيانات mocked بعد.",
     annonceType: "نوع الإعلان",
@@ -21,7 +27,6 @@ export default {
     location: "إيجار",
     sale: "بيع",
     service: "خدمة",
-    other: "آخر",
     category: "الفئة",
     categories: {
       immobilier: "العقارات",
@@ -80,6 +85,9 @@ export default {
   },
   register: {
     title: "إنشاء حساب",
+    userTypeLabel: "نوع المستخدم",
+    samsar: "سمسار",
+    particulier: "فرد",
     firstName: "الاسم الأول",
     lastName: "الاسم الأخير",
     email: "البريد الإلكتروني",
@@ -174,6 +182,10 @@ export default {
   },
   filter: {
     title: "البحث عن إعلان",
+    wilayatyepe: "نوع الولاية",
+    selectWilayaLabel: "اختر الولاية",
+    selectMoughataaLabel: "اختر المقاطعة",
+    mougtaatype: "نوع المقاطعة",
     annonceType: "نوع الإعلان",
     selectType: "اختر النوع",
     selectCategory: "اختر الفئة",
@@ -188,6 +200,22 @@ export default {
 
   editForm: {
     title: "تعديل الإعلان",
+    fetchMoughataasError: "فشل تحميل المقاطعات",
+    wilaya: "الولاية",
+    moughataa: "المقاطعة",
+    selectMoughataa: "اختر المقاطعة",
+    selectWilaya: "اختر الولاية",
+    fetchWilayaError: "فشل تحميل الولايات",
+    loading:"جارٍ التحميل...",
+    uploading: "جارٍ الرفع...",
+    uploaded: "تم الرفع",
+    uploadError: "خطأ في الرفع",
+    loadError: "خطأ في التحميل",
+    delete: "حذف الصورة",
+    noPhotos: "لا توجد صور",
+    preview: "معاينة الصور",
+    addimages: "إضافة صور",
+    images: "تحديث الصور",
     type: "نوع الإعلان",
     category: "الفئة",
     updating: "جاري التحديث…",
@@ -261,6 +289,8 @@ export default {
 
   common: {
     remove: "إزالة",
+    yes: "نعم",
+    no: "لا",
     edit: "تعديل",
     back:"عودة",
     next:"التالي",

@@ -1,3 +1,4 @@
+// packages/ui/components/FormSearch/FormSearchUI.tsx
 "use client";
 
 import { useState, useEffect, useMemo, startTransition } from "react";
@@ -13,6 +14,9 @@ interface Filters {
   subCategorieId?: string;
   price?: string;
   description?: string;
+  // 👇 nouveaux
+  wilayaId?: string;
+  moughataaId?: string;
 }
 
 interface InputProps {
@@ -20,6 +24,13 @@ interface InputProps {
   typeAnnoncesEndpoint: string;
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
+  // 👇 nouveaux
+  lieuxEndpoint: string;             // ex: /fr/p/api/tursor/lieux
+  wilayaLabel?: string;
+  selectWilayaLabel?: string;
+  moughataaLabel?: string;
+  selectMoughataaLabel?: string;
+
   mobile?: boolean;
   annonceTypeLabel?: string;
   selectTypeLabel?: string;
@@ -35,8 +46,12 @@ export function FormSearchUI({
   typeAnnoncesEndpoint,
   categoriesEndpoint,
   subCategoriesEndpoint,
+  lieuxEndpoint,                   // 👈 add
+  wilayaLabel ,
+  selectWilayaLabel ,
+  moughataaLabel ,
+  selectMoughataaLabel ,
   mobile = false,
-  // libellés (optionnels si tu les passes déjà)
   annonceTypeLabel,
   selectTypeLabel,
   selectCategoryLabel,
@@ -53,14 +68,12 @@ export function FormSearchUI({
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // clef URL courante (pour savoir si la navigation a changé)
   const currentUrlKey = useMemo(
     () => `${pathname}?${searchParams?.toString() || ""}`,
     [pathname, searchParams]
   );
   const [prevUrlKey, setPrevUrlKey] = useState(currentUrlKey);
 
-  // Quand l’URL a réellement changé => couper le loader
   useEffect(() => {
     if (loading && currentUrlKey !== prevUrlKey) {
       setLoading(false);
@@ -69,31 +82,23 @@ export function FormSearchUI({
   }, [currentUrlKey, prevUrlKey, loading]);
 
   const handleSearchSubmit = async (filters: Filters) => {
-    // construire la nouvelle query
     const next = new URLSearchParams(
       Object.entries(filters).map(([k, v]) => [k, v?.toString() || ""])
     );
     const nextUrlKey = `${pathname}?${next.toString()}`;
-
-    // si rien ne change, on ne lance pas un faux loader
     if (nextUrlKey === currentUrlKey) {
       setModalOpen(false);
       setLoading(false);
       return;
     }
-
     setLoading(true);
     setModalOpen(false);
-
-    // lancer la navigation dans une transition
     startTransition(() => {
       router.push(`?${next.toString()}`);
     });
   };
 
   const isRTL = lang.startsWith("ar");
-  const sidebarPosition = isRTL ? "right-0" : "left-0";
-  const roundedSide = isRTL ? "rounded-l-2xl" : "rounded-r-2xl";
 
   // --- MOBILE ---
   if (mobile) {
@@ -111,12 +116,7 @@ export function FormSearchUI({
 
         {modalOpen && (
           <div className="fixed inset-0 z-50 overflow-y-auto">
-            {/* backdrop cliquable */}
-            <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={() => setModalOpen(false)}
-            />
-            {/* conteneur centré */}
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
             <div className="flex min-h-full items-center justify-center p-4">
               <div className="relative w-[94vw] max-w-[420px] bg-white rounded-2xl shadow-2xl p-4 sm:p-5 max-h-[80vh] overflow-y-auto text-sm space-y-3">
                 <button
@@ -133,6 +133,12 @@ export function FormSearchUI({
                   typeAnnoncesEndpoint={typeAnnoncesEndpoint}
                   categoriesEndpoint={categoriesEndpoint}
                   subCategoriesEndpoint={subCategoriesEndpoint}
+                  // 👇 nouveaux
+                  lieuxEndpoint={lieuxEndpoint}
+                  wilayaLabel={t("filter.wilayatyepe")}
+                  selectWilayaLabel={t("filter.selectWilayaLabel")}
+                  moughataaLabel={t("filter.mougtaatype")}
+                  selectMoughataaLabel={t("filter.selectMoughataaLabel")}
                   annonceTypeLabel={annonceTypeLabel ?? t("filter.annonceType")}
                   selectTypeLabel={selectTypeLabel ?? t("filter.selectType")}
                   categoryLabel={selectCategoryLabel ?? t("filter.selectCategory")}
@@ -142,7 +148,7 @@ export function FormSearchUI({
                   formTitle={formTitle ?? t("filter.title")}
                   priceLabel={priceLabel ?? t("filter.price")}
                   searchButtonLabel={searchButtonLabel ?? t("filter.search")}
-                  loading={loading} // ✅ piloté par le parent
+                  loading={loading}
                 />
               </div>
             </div>
@@ -155,7 +161,7 @@ export function FormSearchUI({
   // --- DESKTOP ---
   return (
     <aside
-      className={`max-w-sm w-72 z-40 shadow-2xl ${sidebarPosition} ${roundedSide} flex flex-col items-center transition-transform duration-300 h-full bg-white rounded-2xl p-8 border border-gray-200`}
+      className={`max-w-sm w-72 z-40 shadow-2xl ${isRTL ? "right-0" : "left-0"} ${isRTL ? "rounded-l-2xl" : "rounded-r-2xl"} flex flex-col items-center transition-transform duration-300 h-full bg-white rounded-2xl p-8 border border-gray-200`}
       dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="flex flex-col h-full w-full">
@@ -165,6 +171,12 @@ export function FormSearchUI({
           typeAnnoncesEndpoint={typeAnnoncesEndpoint}
           categoriesEndpoint={categoriesEndpoint}
           subCategoriesEndpoint={subCategoriesEndpoint}
+          // 👇 nouveaux
+          lieuxEndpoint={lieuxEndpoint}
+          wilayaLabel={t("filter.wilayatyepe")}
+          selectWilayaLabel={t("filter.selectWilayaLabel")}
+          moughataaLabel={t("filter.mougtaatype")}
+          selectMoughataaLabel={t("filter.selectMoughataaLabel")}
           annonceTypeLabel={annonceTypeLabel ?? t("filter.annonceType")}
           selectTypeLabel={selectTypeLabel ?? t("filter.selectType")}
           categoryLabel={selectCategoryLabel ?? t("filter.selectCategory")}
@@ -174,7 +186,7 @@ export function FormSearchUI({
           formTitle={formTitle ?? t("filter.title")}
           priceLabel={priceLabel ?? t("filter.price")}
           searchButtonLabel={searchButtonLabel ?? t("filter.search")}
-          loading={loading} // ✅ piloté par le parent
+          loading={loading}
         />
       </div>
     </aside>

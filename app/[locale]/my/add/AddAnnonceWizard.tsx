@@ -1,3 +1,4 @@
+// packages/ui/components/AddAnnonce/AddAnnonceWizard.tsx
 "use client";
 
 import React, { useRef, useEffect, useMemo, useState } from "react";
@@ -6,10 +7,13 @@ import AddAnnonceStep2 from "./AddAnnonceStep2";
 import AddAnnonceStep3 from "./AddAnnonceStep3";
 import { useI18n } from "../../../../locales/client";
 
+type Position = "owner" | "broker" | "other";
+
 type Props = {
   lang?: string;
   relavieUrlOptionsModel: string;
-  relavieUrlAnnonce: string; // POST final ici
+  relavieUrlAnnonce: string;   // endpoint POST final
+  isSamsar?: boolean;          // info de session : utilisateur inscrit comme courtier ?
 };
 
 type Draft = {
@@ -20,10 +24,17 @@ type Draft = {
   title?: string;
   description?: string;
   price?: number | null;
+  classificationFr?: string;
+  classificationAr?: string;
+
+
+  // nouveaux champs (sans commission)
+  position?: Position;
+  directNegotiation?: boolean | null;
 
   // step 2
   images?: File[];
-  mainIndex?: number; // index de l'image principale
+  mainIndex?: number;
 
   // step 3
   lieuId?: string;        // wilaya
@@ -34,13 +45,13 @@ export default function AddAnnonceWizard({
   lang = "ar",
   relavieUrlOptionsModel,
   relavieUrlAnnonce,
+  isSamsar = false,
 }: Props) {
   const t = useI18n();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const wizardRef = useRef<HTMLDivElement | null>(null);
   const isRTL = useMemo(() => lang?.startsWith("ar"), [lang]);
 
-  // 🧠 Draft partagé entre étapes
   const [draft, setDraft] = useState<Draft>({});
 
   const steps = [
@@ -54,7 +65,7 @@ export default function AddAnnonceWizard({
     wizardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [step]);
 
-  // callbacks de progression
+  // ---- callbacks de progression ----
   const onStep1Next = (payload: {
     typeAnnonceId: string;
     categorieId: string;
@@ -62,6 +73,8 @@ export default function AddAnnonceWizard({
     title: string;
     description: string;
     price: number | null;
+    position: Position;
+    directNegotiation?: boolean | null;
   }) => {
     setDraft((d) => ({ ...d, ...payload }));
     setStep(2);
@@ -69,12 +82,11 @@ export default function AddAnnonceWizard({
 
   const onStep2Next = (payload: { images: File[]; mainIndex: number }) => {
     setDraft((d) => ({ ...d, ...payload }));
-    console.log("Draft after Step 2:", { ...draft, ...payload }); // debug
     setStep(3);
   };
 
-  const onStep3Back = () => setStep(2);
   const onStep2Back = () => setStep(1);
+  const onStep3Back = () => setStep(2);
 
   return (
     <main className="min-h-screen bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
@@ -87,6 +99,7 @@ export default function AddAnnonceWizard({
             </h2>
             <p className="text-sm text-gray-500 mt-1">{t("wizard.subtitle")}</p>
           </div>
+
           <div className={["p-4 w-full", isRTL ? "md:flex md:justify-end" : "md:flex md:justify-center"].join(" ")}>
             <div className="w-full overflow-x-auto">
               <ol
@@ -137,20 +150,23 @@ export default function AddAnnonceWizard({
       </div>
 
       {/* ------------ Contenu des étapes ------------ */}
-      <div className="mx-auto w-full max-w-screen-lg px-3 sm:px-4 py-4">
+      <div className="mx-auto w-full max-w-screen-lg px-3 sm:px-4 py-4" ref={wizardRef}>
         {step === 1 && (
           <AddAnnonceStep1
             lang={lang}
             relavieUrlOptionsModel={relavieUrlOptionsModel}
-            // ⚠️ plus d'appel POST ici : on remonte juste les valeurs
+            isSamsar={isSamsar}
             onNext={onStep1Next}
-            // si tu veux préremplir quand on revient en arrière
             initial={{
               typeAnnonceId: draft.typeAnnonceId ?? "",
               categorieId: draft.categorieId ?? "",
               subcategorieId: draft.subcategorieId ?? "",
               description: draft.description ?? "",
               price: draft.price ?? undefined,
+
+              // retour arrière
+              position: draft.position,
+              directNegotiation: draft.directNegotiation ?? null,
             }}
           />
         )}
@@ -168,10 +184,9 @@ export default function AddAnnonceWizard({
           <AddAnnonceStep3
             lang={lang}
             lieuxApiBase={`/${lang}/p/api/tursor/lieux`}
-            // endpoint de création final (multipart)
             createAnnonceEndpoint={`${relavieUrlAnnonce}`}
             onBack={onStep3Back}
-            // on passe le draft complet pour le POST final
+            // 👇 envoie tout le draft (incluant position & directNegotiation)
             draft={draft}
           />
         )}

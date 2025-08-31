@@ -17,8 +17,11 @@ export interface EditFormProps {
     subcategorieId: string;
     description: string;
     price: number;
+    wilayaId: string;
+    moughataaId: string;
   };
   onClose: () => void;
+  onEditImages: () => void;
   onUpdate: () => void;
   typeAnnoncesEndpoint: string;
   categoriesEndpoint: string;
@@ -32,6 +35,7 @@ const EditForm: React.FC<EditFormProps> = ({
   annonceId,
   initialData,
   onUpdate,
+  onEditImages,
   onClose,
   typeAnnoncesEndpoint,
   categoriesEndpoint,
@@ -51,6 +55,11 @@ const EditForm: React.FC<EditFormProps> = ({
 
   // loader état
   const [submitting, setSubmitting] = useState(false);
+  const [wilayas, setWilayas] = useState<any[]>([]);
+  const [moughataas, setMoughataas] = useState<any[]>([]);
+  const [selectedWilayaId, setSelectedWilayaId] = useState(initialData.wilayaId);
+  const [selectedMoughataaId, setSelectedMoughataaId] = useState(initialData.moughataaId);
+
 
   const router = useRouter();
 
@@ -89,6 +98,37 @@ const EditForm: React.FC<EditFormProps> = ({
     })();
   }, [selectedCategoryId, subCategoriesEndpoint, t]);
 
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await axios.get(`/${lang}/p/api/tursor/lieux?tag=wilaya`);
+        setWilayas(res.data?.data || []);
+      } catch {
+        toast.error(t("editForm.fetchWilayaError"));
+      }
+    })();
+  }, [lang, t]);
+
+
+  useEffect(() => {
+    if (!selectedWilayaId) {
+      setMoughataas([]);
+      setSelectedMoughataaId("");
+      return;
+    }
+    (async () => {
+      try {
+        const res = await axios.get(`/${lang}/p/api/tursor/lieux?parentId=${selectedWilayaId}&tag=moughataa`);
+        setMoughataas(res.data?.data || []);
+      } catch {
+        toast.error(t("editForm.fetchMoughataasError"));
+      }
+    })();
+  }, [selectedWilayaId, lang, t]);
+  
+  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
@@ -101,6 +141,8 @@ const EditForm: React.FC<EditFormProps> = ({
         subcategorieId: selectedSubCategoryId,
         description,
         price: Number(price),
+        lieuId: selectedWilayaId,
+        moughataaId: selectedMoughataaId,
       };
 
       const res = await axios.put(updateAnnonceEndpoint, annonceData, {
@@ -132,7 +174,7 @@ const EditForm: React.FC<EditFormProps> = ({
   return (
     <div className="relative">
       {/* Toaster local à ce composant (pas besoin du layout) */}
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="bottom-center"  />
 
       <EditFormDisplay
         typeAnnonces={typeAnnonces}
@@ -162,7 +204,15 @@ const EditForm: React.FC<EditFormProps> = ({
         priceLabel={t("editForm.price")}
         cancelLabel={t("editForm.cancel")}
         updateLabel={submitting ? t("editForm.updating") : t("editForm.update")}
+        /* lieux */
+        wilayas={wilayas}
+        moughataas={moughataas}
+        selectedWilayaId={selectedWilayaId}
+        setSelectedWilayaId={setSelectedWilayaId}
+        selectedMoughataaId={selectedMoughataaId}
+        setSelectedMoughataaId={setSelectedMoughataaId}
         /* état submit */
+        onEditImages={onEditImages}
         submitting={submitting}
       />
 

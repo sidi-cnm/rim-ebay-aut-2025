@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useI18n } from "../../../../locales/client";
 
 interface EditFormDisplayProps {
   editTitle: string;
@@ -15,11 +16,19 @@ interface EditFormDisplayProps {
   submitting?: boolean;
 
   typeAnnonces: any[];
+  wilayas: any[];
+  moughataas: any[];
   categories: any[];
   filteredSubCategories: any[];
 
   selectedTypeId: string;
   setSelectedTypeId: (id: string) => void;
+
+  selectedWilayaId: string;
+  setSelectedWilayaId: (id: string) => void;
+
+  selectedMoughataaId: string;
+  setSelectedMoughataaId: (id: string) => void;
 
   selectedCategoryId: string;
   setSelectedCategoryId: (id: string) => void;
@@ -35,6 +44,7 @@ interface EditFormDisplayProps {
 
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onClose: () => void;
+  onEditImages: () => void;
 
   lang: string;
 }
@@ -51,6 +61,8 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
   cancelLabel,
   updateLabel,
   typeAnnonces,
+  wilayas,
+  moughataas,
   categories,
   filteredSubCategories,
   selectedTypeId,
@@ -59,15 +71,24 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
   setSelectedCategoryId,
   selectedSubCategoryId,
   setSelectedSubCategoryId,
+  selectedWilayaId,
+  setSelectedWilayaId,
+  selectedMoughataaId,
+  setSelectedMoughataaId,
   description,
   setDescription,
   price,
   setPrice,
   handleSubmit,
   onClose,
+  onEditImages,
   lang,
 }) => {
   const isRTL = lang?.startsWith("ar");
+
+  const t = useI18n();
+
+ 
 
   return (
     <div
@@ -172,6 +193,41 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
           />
         </div>
 
+        {/* Wilaya */}
+        <div>
+          <label className="block mb-1 font-medium">{t("editForm.wilaya")}</label>
+          <select
+            value={selectedWilayaId}
+            onChange={(e) => setSelectedWilayaId(e.target.value)}
+            className="border rounded w-full p-2"
+          >
+            <option value="">{t("editForm.selectWilaya")}</option>
+            {wilayas.map((w: any) => (
+              <option key={w.id} value={w.id}>
+                {isRTL ? w.nameAr ?? w.name : w.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Moughataa */}
+        <div>
+          <label className="block mb-1 font-medium">{t("editForm.moughataa")}</label>
+          <select
+            value={selectedMoughataaId}
+            onChange={(e) => setSelectedMoughataaId(e.target.value)}
+            className="border rounded w-full p-2"
+            disabled={!selectedWilayaId}
+          >
+            <option value="">{t("editForm.selectMoughataa")}</option>
+            {moughataas.map((m: any) => (
+              <option key={m.id} value={m.id}>
+                {isRTL ? m.nameAr ?? m.name : m.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Prix */}
         <div>
           <label className="block mb-1 font-medium">{priceLabel}</label>
@@ -187,6 +243,7 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
 
         {/* Actions */}
         <div className="flex justify-end gap-2">
+          
           <button
             type="button"
             onClick={onClose}
@@ -199,6 +256,14 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
           >
             {updateLabel}
+          </button>
+
+          <button
+            type="submit"
+            onClick={onEditImages}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            {t("editForm.images")}
           </button>
         </div>
       </form>

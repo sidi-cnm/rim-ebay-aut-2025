@@ -10,6 +10,5 @@ export default async function page({params}:{
 
   return <div>
     <PageAnnonceImages lang={locale} annonceId={id}  />
-    
   </div>;
 }
