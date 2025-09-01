@@ -1,34 +1,119 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  FaHome,
-  FaList,
-  FaPlus,
-  FaBars,
-  FaSignInAlt,
-  FaTimes,
-} from "react-icons/fa";
-import { useI18n } from "../../../locales/client";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useI18n } from "../../../locales/client";
+import { Home, List as ListIcon, Plus, Menu, X, LogIn, LogOut, Heart } from "lucide-react";
+import Image from "next/image";
 
-/** Hook: bascule la locale en conservant le chemin + les query params */
+/* ---------- Conserver chemin + query quand on change de langue ---------- */
 function useLocaleSwitch() {
-  const pathname = usePathname();           // ex: /ar/my/list
-  const searchParams = useSearchParams();   // ex: ?page=2
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   return (nextLocale: "fr" | "ar") => {
-    const segments = (pathname || "/").split("/").filter(Boolean); // ["ar","my","list"]
-    const rest = segments.slice(1);                                 // ["my","list"]
+    const segments = (pathname || "/").split("/").filter(Boolean);
+    const rest = segments.slice(1);
     const qs = searchParams?.toString();
     const newPath = `/${[nextLocale, ...rest].join("/")}${qs ? `?${qs}` : ""}`;
     router.push(newPath);
   };
 }
 
-/** NAV quand l'utilisateur est connecté */
+/* ---------- Lien nav ---------- */
+const NavLink = ({
+  href,
+  active,
+  children,
+  className = "",
+  onClick,
+}: {
+  href: string;
+  active?: boolean;
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}) => (
+  <Link
+    href={href}
+    onClick={onClick}
+    className={`flex items-center gap-2 px-3 py-2 rounded-md transition duration-200 text-sm md:text-base ${
+      active ? "bg-white text-black" : "hover:bg-blue-600"
+    } ${className}`}
+  >
+    {children}
+  </Link>
+);
+
+/* ---------- Sélecteur de langue (drapeaux) ---------- */
+function LanguageSelectFlags({
+  currentLocale = "fr",
+  onChange,
+  compact = false,
+}: {
+  currentLocale?: "fr" | "ar";
+  onChange: (code: "fr" | "ar") => void;
+  compact?: boolean;
+}) {
+  const btnBase =
+    "relative inline-flex items-center justify-center rounded-full bg-white text-lg leading-none shadow ring-1 ring-gray-300 hover:ring-blue-400 hover:scale-105 transition";
+  const size = compact ? "h-9 w-9" : "h-10 w-10";
+  const inactive = "opacity-60 grayscale";
+  const activeRing = "ring-2 ring-white outline outline-2 outline-blue-600 drop-shadow";
+
+  const Flag = ({
+    code,
+    emoji,
+    label,
+  }: { code: "fr" | "ar"; emoji: string; label: string }) => {
+    const active = currentLocale === code;
+    return (
+      <button
+        type="button"
+        title={label}
+        aria-label={label}
+        aria-pressed={active}
+        aria-current={active ? "page" : undefined}
+        onClick={() => onChange(code)}
+        className={`${btnBase} ${size} ${active ? activeRing : inactive}`}
+      >
+        <span aria-hidden>{emoji}</span>
+        {active && (
+          <>
+            <span
+              aria-hidden
+              className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 grid place-items-center ring-2 ring-white"
+            >
+              <svg viewBox="0 0 20 20" className="h-3 w-3 text-white" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-7.25 7.25a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.414l2.293 2.293 6.543-6.543a1 1 0 011.414 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </span>
+          </>
+        )}
+      </button>
+    );
+  };
+
+  return (
+    <div role="tablist" aria-label="Language selector" className={`flex items-center gap-2`}>
+      <Flag code="ar" emoji="🇲🇷" label="العربية — موريتانيا" />
+      <Flag code="fr" emoji="🇫🇷" label="Français — France" />
+    </div>
+  );
+}
+
+/* =======================================================================
+   NAV connecté
+======================================================================= */
+
+/* ==================== NAV connecté (fix: 1 seul logout + logo aligné aux liens) ==================== */
+/* ==================== NAV connecté ==================== */
 export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const localeKey = (lang || "fr").split("-")[0] as "fr" | "ar";
   const isAr = localeKey === "ar";
@@ -38,172 +123,157 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const switchLocale = useLocaleSwitch();
 
-  const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+  const toggleDrawer = () => setIsDrawerOpen(v => !v);
+  const closeDrawer = () => setIsDrawerOpen(false);
   const isActive = (path: string) => pathname === path;
 
   const handleLogout = async () => {
-    const response = await fetch(`/${localeKey}/api/p/users/logout`, {
-      method: "POST",
-    });
+    const response = await fetch(`/${localeKey}/api/p/users/logout`, { method: "POST" });
     if (response.ok) {
-      // Retourne vers la home dans la langue courante
       router.push(`/${localeKey}`);
       router.refresh();
     }
   };
 
+  const sideClass = isAr
+    ? "left-0 -translate-x-full data-[open=true]:translate-x-0"
+    : "right-0 translate-x-full data-[open=true]:translate-x-0";
+
   return (
-    <nav className="p-6 bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
-      <div className="flex justify-between items-center">
-        {/* Home: conserve la locale */}
-        <Link
-          href={`/${localeKey}`}
-          className="text-2xl font-bold hover:text-yellow-300 transition duration-300"
-        >
-          <FaHome className="inline-block mr-2" />
-          {t("nav.rimIjar")}
-        </Link>
-
-        <button
-          onClick={toggleDrawer}
-          className="text-2xl lg:hidden focus:outline-none"
-        >
-          {isDrawerOpen ? <FaTimes /> : <FaBars />}
-        </button>
-
-        {/* Drawer mobile */}
+    <nav className="sticky top-0 z-40 w-full h-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
+      <div className="mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
+        {/* ===== Ligne principale ===== */}
         <div
-          className={`fixed top-0 right-0 h-full bg-gradient-to-r from-blue-800 to-purple-800 text-white p-6 shadow-lg transform ${
-            isDrawerOpen ? "translate-x-0" : "translate-x-full"
-          } transition-transform duration-300 w-3/4 lg:hidden z-50`}
+          className={`flex items-center justify-between py-8 gap-6`}
         >
-          <button
-            onClick={toggleDrawer}
-            className="text-2xl mb-6 focus:outline-none"
+          {/* Bloc gauche ou droit : logo + liens */}
+          <div className={`flex items-center gap-6`}>
+            
+          <Link
+            href={`/${localeKey}`}
+            className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
           >
-            <FaTimes />
-          </button>
+            <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white p-1 shadow-md">
+              <Image
+                src="/images/logo.png"
+                alt="Rim Ijar"
+                width={48}
+                height={48}
+                className="h-10 w-auto object-contain"
+                priority
+              />
+            </div>
+          </Link>
 
-          <div className="flex flex-col space-y-6">
-            <Link
-              href={`/${localeKey}/my/list`}
-              className={`flex items-center px-3 py-2 rounded transition duration-300 ${
-                isActive(`/${localeKey}/my/list`)
-                  ? "bg-white text-black"
-                  : "hover:bg-blue-600"
-              }`}
-              onClick={toggleDrawer}
-            >
-              <FaList className="mr-2" />
-              {t("nav.myListings")}
-            </Link>
 
-            <Link
-              href={`/${localeKey}/my/add`}
-              id="addannonce"
-              className={`flex items-center px-3 py-2 rounded transition duration-300 ${
-                isActive(`/${localeKey}/my/add`)
-                  ? "bg-white text-black"
-                  : "hover:bg-blue-600"
-              }`}
-              onClick={toggleDrawer}
-            >
-              <FaPlus className="mr-2" />
-              {t("nav.addListing")}
-            </Link>
 
+            <div className="hidden lg:flex items-center gap-2">
+              <NavLink href={`/${localeKey}/my/list`} active={isActive(`/${localeKey}/my/list`)}>
+                <ListIcon className="h-5 w-5" />
+                {t("nav.myListings")}
+              </NavLink>
+
+              <NavLink href={`/${localeKey}/my/add`} active={isActive(`/${localeKey}/my/add`)}>
+                <Plus className="h-5 w-5" />
+                {t("nav.addListing")}
+              </NavLink>
+
+              <NavLink href={`/${localeKey}/my/favorite`} active={isActive(`/${localeKey}/my/favorite`)}>
+                <Heart className="h-5 w-5" />
+                {t("nav.favorites") ?? "Favoris"}
+              </NavLink>
+            </div>
+          </div>
+
+          {/* Bloc opposé : actions (logout + langue) */}
+          <div className={`flex items-center gap-2 sm:gap-3 ${isAr ? "order-1" : "order-2"}`}>
             <button
-              onClick={() => {
-                handleLogout();
-                toggleDrawer();
-              }}
-              className="flex items-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
+              onClick={handleLogout}
+              className="hidden lg:flex items-center gap-2 hover:bg-purple-500/80 bg-white/10 px-3 py-2 rounded-md transition"
             >
-              {t("nav.logout")}
+              <LogOut className="h-5 w-5" />
+              <span className="hidden md:inline">{t("nav.logout")}</span>
             </button>
-
-            {/* Switch langue - mobile (conserve chemin + query) */}
-            {!isAr ? (
-              <button
-                onClick={() => {
-                  switchLocale("ar");
-                  toggleDrawer();
-                }}
-                className="flex items-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
-              >
-                العربية
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  switchLocale("fr");
-                  toggleDrawer();
-                }}
-                className="flex items-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
-              >
-                français
-              </button>
-            )}
+            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
+            {/* Burger visible uniquement en mobile */}
+            <button
+              onClick={toggleDrawer}
+              className="inline-flex lg:hidden p-2 rounded-md hover:bg-white/10"
+              aria-label="Menu"
+            >
+              <Menu className="h-7 w-7" />
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Liens desktop */}
-        <div className="hidden lg:flex items-center space-x-6">
-          <Link
-            href={`/${localeKey}/my/list`}
-            className={`flex items-center px-3 py-2 rounded transition duration-300 ${
-              isActive(`/${localeKey}/my/list`)
-                ? "bg-white text-black"
-                : "hover:bg-blue-600"
-            }`}
-          >
-            <FaList className="mr-2" />
+      {/* Overlay + Drawer mobile */}
+      <button
+        aria-hidden={!isDrawerOpen}
+        onClick={closeDrawer}
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity lg:hidden ${
+          isDrawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      />
+      <aside
+        data-open={isDrawerOpen}
+        className={`fixed top-0 bottom-0 ${sideClass} z-50 w-80 max-w-[85vw] bg-gradient-to-b from-purple-800 to-blue-800 text-white p-4 pt-5 transition-transform lg:hidden`}
+        dir={isAr ? "rtl" : "ltr"}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-lg font-semibold">{t("nav.rimIjar")}</span>
+          <button onClick={closeDrawer} className="p-2 rounded-md hover:bg-white/10" aria-label="Fermer">
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        <div className="flex flex-col space-y-2">
+          <NavLink href={`/${localeKey}/my/list`} active={isActive(`/${localeKey}/my/list`)} onClick={closeDrawer}>
+            <ListIcon className="h-5 w-5" />
             {t("nav.myListings")}
-          </Link>
+          </NavLink>
 
-          <Link
-            href={`/${localeKey}/my/add`}
-            id="addannonce"
-            className={`flex items-center px-3 py-2 rounded transition duration-300 ${
-              isActive(`/${localeKey}/my/add`)
-                ? "bg-white text-black"
-                : "hover:bg-blue-600"
-            }`}
-          >
-            <FaPlus className="mr-2" />
+          <NavLink href={`/${localeKey}/my/add`} active={isActive(`/${localeKey}/my/add`)} onClick={closeDrawer}>
+            <Plus className="h-5 w-5" />
             {t("nav.addListing")}
-          </Link>
+          </NavLink>
+
+          <NavLink href={`/${localeKey}/my/favorite`} active={isActive(`/${localeKey}/my/favorite`)} onClick={closeDrawer}>
+            <Heart className="h-5 w-5" />
+            {t("nav.favorites") ?? "Favoris"}
+          </NavLink>
 
           <button
-            onClick={handleLogout}
-            className="flex items-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
+            onClick={() => {
+              handleLogout();
+              closeDrawer();
+            }}
+            className="mt-2 flex items-center gap-2 hover:bg-purple-500 px-3 py-2 rounded-md transition"
           >
+            <LogOut className="h-5 w-5" />
             {t("nav.logout")}
           </button>
 
-          {/* Switch langue - desktop (conserve chemin + query) */}
-          {!isAr ? (
-            <button
-              onClick={() => switchLocale("ar")}
-              className="flex items-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
-            >
-              العربية
-            </button>
-          ) : (
-            <button
-              onClick={() => switchLocale("fr")}
-              className="flex items-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
-            >
-              français
-            </button>
-          )}
+          <div className="pt-4">
+            <LanguageSelectFlags
+              currentLocale={localeKey}
+              onChange={(code) => {
+                switchLocale(code);
+                closeDrawer();
+              }}
+            />
+          </div>
         </div>
-      </div>
+      </aside>
     </nav>
   );
 };
 
-/** NAV quand l'utilisateur n'est PAS connecté */
+
+
+/* =======================================================================
+   NAV non connecté
+======================================================================= */
 export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const localeKey = (lang || "fr").split("-")[0] as "fr" | "ar";
   const isAr = localeKey === "ar";
@@ -211,98 +281,83 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const switchLocale = useLocaleSwitch();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const close = () => setIsOpen(false);
+  const sideClass = isAr ? "left-0 -translate-x-full data-[open=true]:translate-x-0" : "right-0 translate-x-full data-[open=true]:translate-x-0";
 
   return (
-    <nav className="w-full p-4 bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
-      {/* Header */}
-      <div className="flex justify-between items-center w-full">
-        {/* Home: conserve la locale */}
-        <div>
-          <Link
-            href={`/${localeKey}`}
-            className="text-2xl font-bold hover:text-yellow-300 transition duration-300"
+    <nav className="sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
+      <div dir={isAr ? "rtl" : "ltr"} className="mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
+        <div className="flex items-center justify-between py-3 gap-2">
+          {/* Burger */}
+          <button
+            onClick={() => setIsOpen(v => !v)}
+            className="inline-flex p-2 rounded-md hover:bg-white/10 sm:hidden"
+            aria-label="Menu"
           >
-            <FaHome className="inline-block mr-2" />
+            <Menu className="h-7 w-7" />
+          </button>
+
+          {/* Logo */}
+          <Link href={`/${localeKey}`} className="text-xl sm:text-2xl font-bold hover:text-yellow-300 transition flex items-center gap-2">
+            <Home className="h-5 w-5 sm:h-6 sm:w-6" />
             {t("nav.rimIjar")}
           </Link>
+
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <Link
+              id="connexion"
+              data-cy="connexion"
+              href={`/${localeKey}/p/users/connexion`}
+              className="hidden sm:flex items-center gap-2 hover:bg-green-500 px-3 py-2 text-black bg-white rounded-lg transition"
+            >
+              <LogIn className="h-5 w-5" />
+              <span className="hidden md:inline">{t("nav.login")}</span>
+            </Link>
+            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
+          </div>
         </div>
 
-        {/* Bouton Mobile */}
-        <div className="sm:hidden">
-          <button onClick={toggleMenu} className="text-white focus:outline-none">
-            <FaBars size={24} />
+        {/* Liens desktop en dessous si tu veux en ajouter */}
+      </div>
+
+      {/* Overlay + Drawer mobile */}
+      <button
+        aria-hidden={!isOpen}
+        onClick={close}
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity sm:hidden ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      />
+      <aside
+        data-open={isOpen}
+        className={`fixed top-0 bottom-0 ${sideClass} z-50 w-80 max-w-[85vw] bg-gradient-to-b from-purple-800 to-blue-800 text-white p-4 pt-5 transition-transform sm:hidden`}
+        dir={isAr ? "rtl" : "ltr"}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-lg font-semibold">{t("nav.rimIjar")}</span>
+          <button onClick={close} className="p-2 rounded-md hover:bg-white/10" aria-label="Fermer">
+            <X className="h-6 w-6" />
           </button>
         </div>
 
-        {/* Liens Desktop */}
-        <div className="hidden sm:flex gap-4">
+        <div className="flex flex-col gap-3">
           <Link
-            id="connexion"
-            data-cy="connexion"
+            id="connexion-mobile"
             href={`/${localeKey}/p/users/connexion`}
-            className="flex items-center hover:bg-green-500 px-3 py-2 text-black bg-white rounded-xl transition duration-300"
+            onClick={close}
+            className="flex items-center gap-2 justify-center hover:bg-green-500 px-3 py-2 text-black bg-white rounded-lg transition"
           >
-            <FaSignInAlt className="mr-2" />
+            <LogIn className="h-5 w-5" />
             {t("nav.login")}
           </Link>
 
-          {/* Switch langue - desktop */}
-          {!isAr ? (
-            <button
-              onClick={() => switchLocale("ar")}
-              className="flex items-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
-            >
-              العربية
-            </button>
-          ) : (
-            <button
-              onClick={() => switchLocale("fr")}
-              className="flex items-center hover:bg-purple-500 px-3 py-2 rounded transition durée-300"
-            >
-              français
-            </button>
-          )}
+          <div className="pt-2">
+            <LanguageSelectFlags
+              currentLocale={localeKey}
+              onChange={(code) => { switchLocale(code); close(); }}
+            />
+          </div>
         </div>
-      </div>
-
-      {/* Menu Mobile */}
-      {isOpen && (
-        <div className="sm:hidden mt-4 flex flex-col gap-2">
-          <Link
-            id="connexion"
-            data-cy="connexion"
-            href={`/${localeKey}/p/users/connexion`}
-            className="flex items-center justify-center hover:bg-green-500 px-3 py-2 text-black bg-white rounded-xl transition duration-300"
-          >
-            <FaSignInAlt className="mr-2" />
-            {t("nav.login")}
-          </Link>
-
-          {/* Switch langue - mobile */}
-          {!isAr ? (
-            <button
-              onClick={() => {
-                switchLocale("ar");
-                setIsOpen(false);
-              }}
-              className="flex items-center justify-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
-            >
-              العربية
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                switchLocale("fr");
-                setIsOpen(false);
-              }}
-              className="flex items-center justify-center hover:bg-purple-500 px-3 py-2 rounded transition duration-300"
-            >
-              français
-            </button>
-          )}
-        </div>
-      )}
+      </aside>
     </nav>
   );
 };

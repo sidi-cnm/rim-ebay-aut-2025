@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Annonce } from "../../../mytypes/types";
 import { useI18n } from "../../../../locales/client";
+import toast, { Toaster } from "react-hot-toast";
 
 const FALLBACK_IMG = "/noimage.jpg";
 
@@ -11,6 +12,7 @@ interface AnnonceItemUIProps extends Annonce {
   imageServiceUrl?: string;
   href?: string;
   lang?: string;
+  isFavorite?: boolean;
 }
 
 export default function AnnonceItemUI({
@@ -22,7 +24,10 @@ export default function AnnonceItemUI({
   const t = useI18n();
   const dir = lang === "ar" ? "rtl" : "ltr";
   const router = useRouter();
+
   const [loading, setLoading] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+  const [isFav, setIsFav] = useState<boolean>(Boolean(a.isFavorite));
 
   const imgUrl =
     a.haveImage && a.firstImagePath ? `${a.firstImagePath}` : FALLBACK_IMG;
@@ -40,30 +45,103 @@ export default function AnnonceItemUI({
     router.push(href);
   };
 
-  // alignement du badge selon la langue
   const selfAlign = lang === "ar" ? "self-end" : "self-start";
+
+  // ✅ appel API + toast
+  const onToggleFavorite = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (favLoading) return;
+    const next = !isFav;
+    setIsFav(next); // MAJ optimiste
+    setFavLoading(true);
+
+    try {
+      const res = await fetch(`/${lang}/api/my/annonces/${a.id}/favorite`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ isFavorite: next }),
+      });
+
+      if (res.status === 401) {
+        setIsFav(!next);
+        toast.error(t("card.loginRequired"));
+        return;
+      }
+
+      if (!res.ok) {
+        setIsFav(!next);
+        toast.error(t("card.updateError"));
+      } else {
+        toast.success(
+          next ? t("card.addFavorite") : t("card.removeFavorite")
+        );
+      }
+    } catch {
+      setIsFav(!next);
+      toast.error(t("card.updateError"));
+    } finally {
+      setFavLoading(false);
+    }
+  };
 
   return (
     <article
       data-cy="annonce-item"
       dir={dir}
-      className={`group bg-white rounded-2xl shadow-md ring-1 ring-gray-200 overflow-hidden 
-                  h-full flex flex-col transition hover:shadow-lg hover:ring-gray-300 ${
+      className={`group bg-white rounded-2xl shadow-md ring-1 ring-gray-200 
+                  flex flex-col transition hover:shadow-lg hover:ring-gray-300 ${
                     lang === "ar" ? "text-right" : ""
                   }`}
     >
-      {/* Image */}
-      <div className="relative w-full h-48 md:h-56 lg:h-64 bg-gray-100">
+      {/* Image + bouton favori */}
+      <Toaster position="top-right" />
+      <div className="relative w-full h-48 md:h-56 lg:h-64 bg-gray-100 overflow-hidden rounded-t-2xl">
         <img
           src={imgUrl}
-          alt={a.title ?? (lang === "ar" ? "صورة الإعلان" : "Image annonce")}
+          alt={a.title ?? t("card.altImage")}
           className="w-full h-full object-cover"
           loading="lazy"
         />
+
+        {/* ❤️ bouton cœur */}
+        <button
+          type="button"
+          onClick={onToggleFavorite}
+          disabled={favLoading}
+          aria-label={
+            isFav ? t("card.removeFavorite") : t("card.addFavorite")
+          }
+          title={isFav ? t("card.removeTitle") : t("card.addTitle")}
+          className={`absolute top-2 ${lang === "ar" ? "left-2" : "right-2"} 
+                      z-10 grid place-items-center
+                      w-10 h-10 rounded-full
+                      bg-white/95 backdrop-blur
+                      shadow-md ring-1 ring-gray-300
+                      hover:ring-blue-500 hover:scale-105
+                      disabled:opacity-70 disabled:cursor-not-allowed
+                      transition`}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="w-6 h-6"
+            fill={isFav ? "currentColor" : "none"}
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 8.25c0-2.485-2.04-4.5-4.556-4.5-1.61 0-3.022.86-3.944 2.158A4.973 4.973 0 0 0 8.556 3.75C6.04 3.75 4 5.765 4 8.25c0 6.056 8 10.5 8 10.5s9-4.444 9-10.5Z"
+              className={isFav ? "text-rose-600" : "text-gray-600"} // ✅ rouge si favori
+            />
+          </svg>
+        </button>
       </div>
 
       {/* Contenu */}
-      {/* items-start empêche les enfants de s'étirer en largeur */}
       <div className="p-4 md:p-5 flex flex-col items-start gap-3 flex-1">
         {/* Badge classification */}
         <span
@@ -92,7 +170,8 @@ export default function AnnonceItemUI({
         <div className="flex items-center justify-between pt-2 w-full">
           <span className="text-sm text-gray-500">{t("card.price")}</span>
           <span className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">
-            {a.price} <span className="text-sm font-semibold">{t("card.currency")}</span>
+            {a.price}{" "}
+            <span className="text-sm font-semibold">{t("card.currency")}</span>
           </span>
         </div>
 

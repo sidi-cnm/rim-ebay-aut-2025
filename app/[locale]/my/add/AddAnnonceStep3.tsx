@@ -136,7 +136,7 @@ export default function AddAnnonceStep3({
       if (draft.price != null) fd.append("price", String(draft.price));
       if (draft.classificationFr) fd.append("classificationFr", String(draft.classificationFr));
       if (draft.classificationAr) fd.append("classificationAr", String(draft.classificationAr));
-
+    
       // step3 (lieu)
       fd.append("lieuId", String(selectedWilayaId));       // wilaya
       fd.append("moughataaId", String(selectedMoughataaId));

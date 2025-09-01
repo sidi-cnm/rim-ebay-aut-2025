@@ -114,6 +114,8 @@ export interface Annonce {
   categorieName?: string; // Nom de la catégorie (optionnel)
   categorieNameAr?: string; // Nom de la catégorie en arabe (optionnel)
   subcategorieId?: string; // Identifiant de la sous-catégorie (optionnel)
+  isFavorite?: boolean;
+
 
   classificationFr?: string; // Classification en français (optionnel)
   classificationAr?: string; // Classification en arabe (optionnel)

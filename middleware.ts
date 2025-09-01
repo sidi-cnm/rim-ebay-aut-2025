@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
  
 
   // Vérifier si le chemin commence par /my ou /admin
-  if (path.startsWith("/fr/my") || path.startsWith("/fr/admin")) {
+  if (path.startsWith("/fr/my") || path.startsWith("/ar/my") || path.startsWith("/fr/admin")) {
     if (!userData) {
       // Rediriger vers la page de connexion
       url.pathname = `/p/users/connexion`;

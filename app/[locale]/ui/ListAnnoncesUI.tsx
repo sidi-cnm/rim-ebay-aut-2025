@@ -7,13 +7,15 @@ export default function ListAnnoncesUI({
   currentPage,
   annonces,
   imageServiceUrl,
-  lang
+  lang,
+  favoriteIds = [],
 }: {
   totalPages: number;
   currentPage: number;
   annonces: Annonce[];
   imageServiceUrl?: string;
   lang?: string;
+  favoriteIds?: string[];
 }) {
   const hasItems = annonces && annonces.length > 0;
 
@@ -31,7 +33,8 @@ export default function ListAnnoncesUI({
                 {...a}
                 lang={lang}
                 imageServiceUrl={imageServiceUrl}
-                href={`${lang}/p/annonces/details/${a.id}`} // le lien est DANS la carte
+                href={`${lang}/p/annonces/details/${a.id}`}
+                isFavorite={favoriteIds.includes(String(a.id))} // <—
               />
             ))}
           </div>

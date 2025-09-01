@@ -1,6 +1,8 @@
 export default {
   nav: {
     home: "Accueil",
+    close: "Fermer",
+    favorites: "Favoris",
     myListings: "Mes annonces",
     addListing: "Ajouter une annonce",
     logout: "Déconnexion",
@@ -28,6 +30,15 @@ export default {
   },
   card: {
     published: "publié le",
+    empty: "Aucune annonce favorite pour le moment.",
+    removeFavorite: "Retirer des favoris",
+    addFavorite: "Ajouter aux favoris",
+    altImage: "Image de l'annonce",
+    removeTitle: "Retirer de favoris",
+    addTitle: "Ajouter aux favoris",
+    loginRequired: "Vous devez être connecté pour gérer vos favoris",
+    updateError: "Erreur lors de la mise à jour des favoris",
+    networkError: "Erreur de connexion",
     price: "Prix",
     currency: "UMR",
     details: "Détails",

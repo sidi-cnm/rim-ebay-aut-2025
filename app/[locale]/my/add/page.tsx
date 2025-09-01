@@ -37,11 +37,11 @@ import { ObjectId } from "mongodb";
 
 
 
-const relavieUrlAnnonce = "/fr/api/my/annonces";
-let relavieUrlOptionsModel = "/fr/p/api/tursor";
-if (process.env.NEXT_PUBLIC_OPTIONS_API_MODE === "sqlite") {
-  relavieUrlOptionsModel = "/fr/p/api/sqlite";
-}
+// const relavieUrlAnnonce = "/fr/api/my/annonces";
+// let relavieUrlOptionsModel = "/fr/p/api/tursor";
+// if (process.env.NEXT_PUBLIC_OPTIONS_API_MODE === "sqlite") {
+//   relavieUrlOptionsModel = "/fr/p/api/sqlite";
+// }
 
 export default async function AddAnnonce(props: {
   params: Promise<{ locale: string }>;
@@ -49,6 +49,13 @@ export default async function AddAnnonce(props: {
   const params = await props.params;
 
   console.log("Locale from params:", params);
+
+  const relavieUrlAnnonce = `/${params.locale}/api/my/annonces`;
+  let relavieUrlOptionsModel = `/${params.locale}/p/api/tursor`;
+  if (process.env.NEXT_PUBLIC_OPTIONS_API_MODE === "sqlite") {
+    relavieUrlOptionsModel = `/${params.locale}/p/api/sqlite`;
+}
+
   let isSamsar;
 
   const user = await getUserFromCookies();

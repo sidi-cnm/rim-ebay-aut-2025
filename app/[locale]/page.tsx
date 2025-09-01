@@ -5,6 +5,7 @@ import AnnoceTitle from "../../packages/ui/components/AnnoceTitle";
 import { getI18n } from "../../locales/server";
 import { Annonce } from "../../packages/mytypes/types";
 import { getDb } from "../../lib/mongodb";
+import { getUserFromCookies } from "../../utiles/getUserFomCookies"; // 👈 ajouté
 
 type Params = { locale: string };
 type Search = {
@@ -13,7 +14,7 @@ type Search = {
   categorieId?: string;
   subCategorieId?: string; // en DB: subcategorieId
   price?: string;
-  // 👇 nouveaux filtres
+  // nouveaux filtres
   wilayaId?: string;       // en DB: lieuId (wilaya)
   moughataaId?: string;    // en DB: moughataaId
 };
@@ -27,7 +28,6 @@ export default async function Home({
 }) {
   const { locale } = await params;
   const sp = (await searchParams) ?? {};
-
   const t = await getI18n();
 
   const currentPage = Number(sp.page) || 1;
@@ -42,7 +42,6 @@ export default async function Home({
   if (sp.subCategorieId)  query.subcategorieId  = sp.subCategorieId;
   if (sp.price && !isNaN(Number(sp.price))) query.price = Number(sp.price);
 
-  // 👇 nouveaux filtres
   if (sp.wilayaId)       query.lieuId       = sp.wilayaId;      // wilaya
   if (sp.moughataaId)    query.moughataaId  = sp.moughataaId;   // moughataa
 
@@ -80,11 +79,23 @@ export default async function Home({
     firstImagePath: a.firstImagePath ? String(a.firstImagePath) : "",
     images: a.annonceImages ?? [],
     status: a.status,
+    isFavorite: Boolean(a.isFavorite ?? false),
     updatedAt: a.updatedAt ? new Date(a.updatedAt) : undefined,
     createdAt: a.createdAt ? new Date(a.createdAt) : undefined,
   }));
 
   const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
+
+  // ---- Récupérer favoris de l'utilisateur connecté ----
+  const user = await getUserFromCookies();
+  let favoriteIds: string[] = [];
+  if (user?.id) {
+    const favs = await db
+      .collection("favorites")
+      .find({ userId: String(user.id) }, { projection: { annonceId: 1 } })
+      .toArray();
+    favoriteIds = favs.map(f => String(f.annonceId));
+  }
 
   // Endpoint lieux (wilaya/moughataa)
   const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
@@ -98,7 +109,6 @@ export default async function Home({
           typeAnnoncesEndpoint={`/${locale}/p/api/tursor/options`}
           categoriesEndpoint={`/${locale}/p/api/tursor/options`}
           subCategoriesEndpoint={`/${locale}/p/api/tursor/options`}
-          // 👇 nouveaux props
           lieuxEndpoint={lieuxEndpoint}
           annonceTypeLabel={t("filter.type")}
           selectTypeLabel={t("filter.selectType")}
@@ -122,7 +132,6 @@ export default async function Home({
                 typeAnnoncesEndpoint={`/${locale}/p/api/tursor/options`}
                 categoriesEndpoint={`/${locale}/p/api/tursor/options`}
                 subCategoriesEndpoint={`/${locale}/p/api/tursor/options`}
-                // 👇 nouveaux props
                 lieuxEndpoint={lieuxEndpoint}
                 annonceTypeLabel={t("filter.type")}
                 selectTypeLabel={t("filter.selectType")}
@@ -149,6 +158,7 @@ export default async function Home({
               lang={locale}
               annonces={annonces}
               imageServiceUrl="https://picsum.photos"
+              favoriteIds={favoriteIds}   
             />
           ) : (
             <div className="flex justify-center items-center">Aucun annonce pour le moment</div>

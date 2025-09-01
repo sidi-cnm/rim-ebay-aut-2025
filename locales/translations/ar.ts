@@ -1,7 +1,9 @@
 export default {
   nav: {
     home: "الصفحة الرئيسية",
+    close: "إغلاق",
     myListings: "إعلاناتي",
+    favorites: "المفضلة",
     addListing: "إضافة إعلان",
     logout: "تسجيل الخروج",
     login: "تسجيل الدخول",
@@ -161,6 +163,15 @@ export default {
 
   card: {
     published: "نُشِرَ في",
+    empty: "لا توجد إعلانات.",
+    removeFavorite: "إزالة من المفضلة",
+    addFavorite: "إضافة إلى المفضلة",
+    altImage: "صورة الإعلان",
+    removeTitle: "إزالة هذا الإعلان من المفضلة",
+    addTitle: "إضافة هذا الإعلان إلى المفضلة",
+    loginRequired: "يجب عليك تسجيل الدخول لتعديل المفضلة",
+    updateError: "حدث خطأ أثناء تحديث المفضلة",
+    networkError: "خطأ في الشبكة. حاول مرة أخرى.",
     price: "السعر",
     currency: "أوقية",
     details: "تفاصيل",

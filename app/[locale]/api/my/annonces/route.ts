@@ -165,8 +165,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const classificationAr = form.get("classificationAr") ? String(form.get("classificationAr")) : null;
 
 
-      console.log("directNegotiation:::::::::::::::3", directNegotiation);
-
      
       // -------- Localisation (Step 3) --------
       const lieuId         = String(form.get("lieuId") ?? "");        // wilaya
