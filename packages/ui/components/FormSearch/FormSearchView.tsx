@@ -39,6 +39,7 @@ interface FormSearchViewProps {
   searchButtonLabel: string;
 
   loading?: boolean;
+  isSamsar?: boolean;
 }
 
 export default function FormSearchView({
@@ -75,6 +76,7 @@ export default function FormSearchView({
   formTitle,
   searchButtonLabel,
   loading = false,
+  isSamsar
 }: FormSearchViewProps) {
   const isRTL = lang?.startsWith("ar");
   const labelName = (item: any) => (lang === "ar" ? item?.nameAr : item?.name);
@@ -201,6 +203,10 @@ export default function FormSearchView({
             onChange={(e) => onPriceChange(e.target.value)}
             className="w-full rounded border p-2"
           />
+        </div>
+
+        <div className="text-sm text-gray-500">
+          {isSamsar ? "Vous êtes connecté en tant que Samsar." : "Vous n'êtes pas connecté en tant que Samsar."}
         </div>
 
         <div className="flex justify-end">

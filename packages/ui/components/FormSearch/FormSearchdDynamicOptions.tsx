@@ -39,6 +39,7 @@ interface FormSearchProps {
   loading?: boolean;
   categoryLabel: string;
   subCategoryLabel: string;
+  isSamsar?: boolean;
 }
 
 export default function FormSearch({
@@ -62,6 +63,7 @@ export default function FormSearch({
   loading = false,
   categoryLabel,
   subCategoryLabel,
+  isSamsar
 }: FormSearchProps) {
   const [typeAnnonces, setTypeAnnonces] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -214,6 +216,7 @@ export default function FormSearch({
       selectMoughataaLabel={selectMoughataaLabel}
 
       loading={loading}
+      isSamsar={isSamsar}
     />
   );
 }

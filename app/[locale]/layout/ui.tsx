@@ -6,6 +6,13 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../locales/client";
 import { Home, List as ListIcon, Plus, Menu, X, LogIn, LogOut, Heart } from "lucide-react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+// Importer Prism de manière dynamique, seulement côté client
+const PrismBG = dynamic(() => import("../../../packages/ui/components/Prism"), {
+  ssr: false,
+});
+
 
 /* ---------- Conserver chemin + query quand on change de langue ---------- */
 function useLocaleSwitch() {
@@ -140,9 +147,16 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
     : "right-0 translate-x-full data-[open=true]:translate-x-0";
 
   return (
-    <nav className="sticky top-0 z-40 w-full h-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
+    <nav className="relative sticky top-0 z-40 w-full h-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
       <div className="mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
         {/* ===== Ligne principale ===== */}
+
+
+
+        <div className="absolute inset-0 -z-10 pointer-events-none opacity-70">
+        <PrismBG
+        />
+      </div>
         <div
           className={`flex items-center justify-between py-8 gap-6`}
         >
@@ -168,6 +182,13 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 
 
             <div className="hidden lg:flex items-center gap-2">
+
+            <NavLink href={`/${localeKey}/`} active={isActive(`/${localeKey}`)}>
+                <ListIcon className="h-5 w-5" />
+                {t("nav.home")}
+              </NavLink>
+
+
               <NavLink href={`/${localeKey}/my/list`} active={isActive(`/${localeKey}/my/list`)}>
                 <ListIcon className="h-5 w-5" />
                 {t("nav.myListings")}
@@ -228,6 +249,12 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
         </div>
 
         <div className="flex flex-col space-y-2">
+
+        <NavLink href={`/${localeKey}/`} active={isActive(`/${localeKey}`)}>
+                <ListIcon className="h-5 w-5" />
+                {t("nav.home")}
+        </NavLink>
+
           <NavLink href={`/${localeKey}/my/list`} active={isActive(`/${localeKey}/my/list`)} onClick={closeDrawer}>
             <ListIcon className="h-5 w-5" />
             {t("nav.myListings")}
@@ -282,10 +309,18 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const switchLocale = useLocaleSwitch();
 
   const close = () => setIsOpen(false);
-  const sideClass = isAr ? "left-0 -translate-x-full data-[open=true]:translate-x-0" : "right-0 translate-x-full data-[open=true]:translate-x-0";
+  const sideClass = isAr
+    ? "left-0 -translate-x-full data-[open=true]:translate-x-0"
+    : "right-0 translate-x-full data-[open=true]:translate-x-0";
 
   return (
-    <nav className="sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
+    <nav className="relative sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
+      {/* ===== Fond animé Prism (full width) ===== */}
+      <div className="absolute inset-0 -z-10 pointer-events-none opacity-70">
+        <PrismBG
+        />
+      </div>
+
       <div dir={isAr ? "rtl" : "ltr"} className="mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
         <div className="flex items-center justify-between py-3 gap-2">
           {/* Burger */}
@@ -298,7 +333,10 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
           </button>
 
           {/* Logo */}
-          <Link href={`/${localeKey}`} className="text-xl sm:text-2xl font-bold hover:text-yellow-300 transition flex items-center gap-2">
+          <Link
+            href={`/${localeKey}`}
+            className="text-xl sm:text-2xl font-bold hover:text-yellow-300 transition flex items-center gap-2"
+          >
             <Home className="h-5 w-5 sm:h-6 sm:w-6" />
             {t("nav.rimIjar")}
           </Link>
@@ -317,15 +355,15 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
           </div>
         </div>
-
-        {/* Liens desktop en dessous si tu veux en ajouter */}
       </div>
 
       {/* Overlay + Drawer mobile */}
       <button
         aria-hidden={!isOpen}
         onClick={close}
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity sm:hidden ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity sm:hidden ${
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
       />
       <aside
         data-open={isOpen}
@@ -361,3 +399,4 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
     </nav>
   );
 };
+

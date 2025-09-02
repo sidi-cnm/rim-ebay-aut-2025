@@ -26,6 +26,7 @@ type Props = {
     directNegotiation?: boolean | null;
     classificationFr?: string;
     classificationAr?: string;
+    isSamsar?: boolean;
   };
 };
 
@@ -109,18 +110,17 @@ export default function AddAnnonceStep3({
     return () => { ignore = true; };
   }, [selectedWilayaId, lieuxApiBase, t]);
 
-  // 🚀 POST unique (multipart)
+  // POST unique (multipart)
   const handleSave = async () => {
     if (!selectedWilayaId || !selectedMoughataaId) {
       toast.error(t("step3.toasts.needBoth"));
       return;
     }
-    // validation minimale du draft
-    if (!draft.typeAnnonceId || !draft.categorieId || !draft.subcategorieId || !draft.description) {
+    // Validation assouplie côté client
+    if (!draft.typeAnnonceId || !draft.description) {
       toast.error(t("errors.requiredFields"));
       return;
     }
-    console.log("draft avec classfier", draft);
 
     setSaving(true);
     const loading = toast.loading(t("step3.saving"));
@@ -128,17 +128,22 @@ export default function AddAnnonceStep3({
       const fd = new FormData();
       // step1
       fd.append("typeAnnonceId", String(draft.typeAnnonceId));
-      fd.append("categorieId", String(draft.categorieId));
-      fd.append("subcategorieId", String(draft.subcategorieId));
+      if (draft.categorieId)    fd.append("categorieId", String(draft.categorieId));
+      if (draft.subcategorieId) fd.append("subcategorieId", String(draft.subcategorieId));
+
       fd.append("title", String(draft.title ?? (draft.description ?? "").slice(0, 50)));
       fd.append("description", String(draft.description ?? ""));
-      fd.append("directNegotiation", String(draft.directNegotiation));
+
+      if (typeof draft.directNegotiation === "boolean") {
+        fd.append("directNegotiation", draft.directNegotiation ? "true" : "false");
+      }
       if (draft.price != null) fd.append("price", String(draft.price));
       if (draft.classificationFr) fd.append("classificationFr", String(draft.classificationFr));
       if (draft.classificationAr) fd.append("classificationAr", String(draft.classificationAr));
-    
+      fd.append("issmar", draft.isSamsar ? "true" : "false");
+
       // step3 (lieu)
-      fd.append("lieuId", String(selectedWilayaId));       // wilaya
+      fd.append("lieuId", String(selectedWilayaId));
       fd.append("moughataaId", String(selectedMoughataaId));
 
       // step2 (images)
@@ -146,13 +151,13 @@ export default function AddAnnonceStep3({
       files.forEach((file) => fd.append("files", file));
       fd.append("mainIndex", String(Math.max(0, draft.mainIndex ?? 0)));
 
-      // flags par défaut
+      // flags
       fd.append("status", "active");
       fd.append("haveImage", String(files.length > 0));
 
       const res = await fetch(createAnnonceEndpoint, {
         method: "POST",
-        body: fd, // multipart/form-data
+        body: fd,
         credentials: "include",
       });
 

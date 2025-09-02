@@ -5,7 +5,8 @@ import AnnoceTitle from "../../packages/ui/components/AnnoceTitle";
 import { getI18n } from "../../locales/server";
 import { Annonce } from "../../packages/mytypes/types";
 import { getDb } from "../../lib/mongodb";
-import { getUserFromCookies } from "../../utiles/getUserFomCookies"; // 👈 ajouté
+import { getUserFromCookies } from "../../utiles/getUserFomCookies";
+import { ObjectId } from "mongodb";
 
 type Params = { locale: string };
 type Search = {
@@ -17,6 +18,8 @@ type Search = {
   // nouveaux filtres
   wilayaId?: string;       // en DB: lieuId (wilaya)
   moughataaId?: string;    // en DB: moughataaId
+  issmar?: string; 
+  directNegotiation?: string        // ⬅️ "true" | "false" | undefined (on ne garde que "true")
 };
 
 export default async function Home({
@@ -44,6 +47,11 @@ export default async function Home({
 
   if (sp.wilayaId)       query.lieuId       = sp.wilayaId;      // wilaya
   if (sp.moughataaId)    query.moughataaId  = sp.moughataaId;   // moughataa
+
+  // ⬇️ filtre "Samsar seulement"
+  if (sp.issmar === "true") query.issmar = "true";
+  if (sp.directNegotiation === "true")  query.directNegotiation = "true";
+  if (sp.directNegotiation === "false") query.directNegotiation = "false";
 
   const db = await getDb();
   const coll = db.collection("annonces");
@@ -86,7 +94,7 @@ export default async function Home({
 
   const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
 
-  // ---- Récupérer favoris de l'utilisateur connecté ----
+  // ---- favoris utilisateur ----
   const user = await getUserFromCookies();
   let favoriteIds: string[] = [];
   if (user?.id) {
@@ -95,6 +103,14 @@ export default async function Home({
       .find({ userId: String(user.id) }, { projection: { annonceId: 1 } })
       .toArray();
     favoriteIds = favs.map(f => String(f.annonceId));
+  }
+
+  // ---- est-ce un samsar ? ----
+  let isSamsar = false;
+  if (user?.id) {
+    console.log("user from cookie:", user.id);
+    const userIndb = await db.collection("users").findOne({ _id: new ObjectId(user.id) });
+    if (userIndb?.samsar) isSamsar = true;
   }
 
   // Endpoint lieux (wilaya/moughataa)
@@ -110,6 +126,7 @@ export default async function Home({
           categoriesEndpoint={`/${locale}/p/api/tursor/options`}
           subCategoriesEndpoint={`/${locale}/p/api/tursor/options`}
           lieuxEndpoint={lieuxEndpoint}
+          isSamsar={isSamsar}
           annonceTypeLabel={t("filter.type")}
           selectTypeLabel={t("filter.selectType")}
           selectCategoryLabel={t("filter.selectCategory")}
@@ -133,6 +150,7 @@ export default async function Home({
                 categoriesEndpoint={`/${locale}/p/api/tursor/options`}
                 subCategoriesEndpoint={`/${locale}/p/api/tursor/options`}
                 lieuxEndpoint={lieuxEndpoint}
+                isSamsar={isSamsar}
                 annonceTypeLabel={t("filter.type")}
                 selectTypeLabel={t("filter.selectType")}
                 selectCategoryLabel={t("filter.selectCategory")}
@@ -147,18 +165,17 @@ export default async function Home({
 
         {/* Section annonces */}
         <section className="w-full max-w-[720px] md:max-w-none md:flex-1 mx-auto bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">
-          <div className="mb-6">
-            <AnnoceTitle title={t("nav.Annoce")} />
-          </div>
-
+         
           {annonces.length ? (
             <ListAnnoncesUI
+              title={t("nav.Annoce")} // ⬅️ le titre est géré par la liste
               totalPages={totalPages}
               currentPage={currentPage}
               lang={locale}
               annonces={annonces}
               imageServiceUrl="https://picsum.photos"
-              favoriteIds={favoriteIds}   
+              favoriteIds={favoriteIds}
+              showSamsarToggle={isSamsar}                 
             />
           ) : (
             <div className="flex justify-center items-center">Aucun annonce pour le moment</div>

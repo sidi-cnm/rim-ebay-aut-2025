@@ -1,4 +1,3 @@
-// packages/ui/components/AddAnnonce/AddAnnonceWizard.tsx
 "use client";
 
 import React, { useRef, useEffect, useMemo, useState } from "react";
@@ -13,22 +12,22 @@ type Props = {
   lang?: string;
   relavieUrlOptionsModel: string;
   relavieUrlAnnonce: string;   // endpoint POST final
-  isSamsar?: boolean;          // info de session : utilisateur inscrit comme courtier ?
+  isSamsar?: boolean;          // utilisateur inscrit comme courtier ?
 };
 
 type Draft = {
   // step 1
   typeAnnonceId?: string;
-  categorieId?: string;
-  subcategorieId?: string;
+  categorieId?: string;        // optionnel
+  subcategorieId?: string;     // optionnel
   title?: string;
   description?: string;
   price?: number | null;
   classificationFr?: string;
   classificationAr?: string;
+  isSamsar?: boolean;
 
-
-  // nouveaux champs (sans commission)
+  // sans commission
   position?: Position;
   directNegotiation?: boolean | null;
 
@@ -68,8 +67,8 @@ export default function AddAnnonceWizard({
   // ---- callbacks de progression ----
   const onStep1Next = (payload: {
     typeAnnonceId: string;
-    categorieId: string;
-    subcategorieId: string;
+    categorieId?: string;
+    subcategorieId?: string;
     title: string;
     description: string;
     price: number | null;
@@ -149,7 +148,7 @@ export default function AddAnnonceWizard({
         </div>
       </div>
 
-      {/* ------------ Contenu des étapes ------------ */}
+      {/* ------------ Contenu ------------ */}
       <div className="mx-auto w-full max-w-screen-lg px-3 sm:px-4 py-4" ref={wizardRef}>
         {step === 1 && (
           <AddAnnonceStep1
@@ -164,9 +163,9 @@ export default function AddAnnonceWizard({
               description: draft.description ?? "",
               price: draft.price ?? undefined,
 
-              // retour arrière
               position: draft.position,
               directNegotiation: draft.directNegotiation ?? null,
+              isSamsar: draft.isSamsar,
             }}
           />
         )}
@@ -186,7 +185,6 @@ export default function AddAnnonceWizard({
             lieuxApiBase={`/${lang}/p/api/tursor/lieux`}
             createAnnonceEndpoint={`${relavieUrlAnnonce}`}
             onBack={onStep3Back}
-            // 👇 envoie tout le draft (incluant position & directNegotiation)
             draft={draft}
           />
         )}

@@ -1,4 +1,3 @@
-// app/[locale]/api/my/annonces/route.ts
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
@@ -17,18 +16,14 @@ function safeName(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9._-]/g, "");
 }
 
-
-// recuperation de user contatc function :
-
+// ---- Contact user ----
 async function getUserContact(db: any, userIdStr: string): Promise<string | null> {
-  // 1) contact vérifié/actif
   const verified = await db.collection("contacts").findOne(
     { userId: userIdStr, isVerified: true, isActive: true },
     { projection: { contact: 1 } }
   );
   if (verified?.contact) return String(verified.contact);
 
-  // 2) le plus récent
   const latest = await db.collection("contacts")
     .find({ userId: userIdStr }, { projection: { contact: 1, createdAt: 1 } })
     .sort({ createdAt: -1 })
@@ -39,8 +34,7 @@ async function getUserContact(db: any, userIdStr: string): Promise<string | null
   return null;
 }
 
-
-// ---- Upload + persistance DB (images + annonce_images + update annonce) ----
+// ---- Upload + persistance DB ----
 async function uploadAnnonceImagesAndPersist(
   db: any,
   annonceId: ObjectId,
@@ -50,23 +44,15 @@ async function uploadAnnonceImagesAndPersist(
   if (files.length === 0) {
     return { images: [] as string[], firstImagePath: null as string | null };
   }
-  if (files.length > MAX_FILES) {
-    throw new Error(`Max ${MAX_FILES} images`);
-  }
-  if (!Number.isFinite(mainIndex) || mainIndex < 0 || mainIndex >= files.length) {
-    mainIndex = 0;
-  }
+  if (files.length > MAX_FILES) throw new Error(`Max ${MAX_FILES} images`);
+  if (!Number.isFinite(mainIndex) || mainIndex < 0 || mainIndex >= files.length) mainIndex = 0;
 
   const now = new Date();
   const uploaded: { url: string; contentType: string; key: string }[] = [];
 
   for (const file of files) {
-    if (!ALLOWED_MIME.includes(file.type)) {
-      throw new Error(`Type non autorisé: ${file.type}`);
-    }
-    if (file.size > MAX_SIZE_BYTES) {
-      throw new Error(`Fichier trop volumineux (>10MB)`);
-    }
+    if (!ALLOWED_MIME.includes(file.type)) throw new Error(`Type non autorisé: ${file.type}`);
+    if (file.size > MAX_SIZE_BYTES) throw new Error(`Fichier trop volumineux (>10MB)`);
 
     const key = `annonces/${annonceId.toString()}/${randomUUID()}-${safeName(file.name || "image")}`;
 
@@ -80,7 +66,7 @@ async function uploadAnnonceImagesAndPersist(
     uploaded.push({ url, contentType: file.type, key });
   }
 
-  // Persiste chaque image dans `images`
+  // table images
   const imageIds: ObjectId[] = [];
   for (const u of uploaded) {
     try {
@@ -92,9 +78,7 @@ async function uploadAnnonceImagesAndPersist(
       imageIds.push(res.insertedId);
     } catch (e: any) {
       if (e?.code === 11000) {
-        const existing = await db
-          .collection("images")
-          .findOne({ imagePath: u.url }, { projection: { _id: 1 } });
+        const existing = await db.collection("images").findOne({ imagePath: u.url }, { projection: { _id: 1 } });
         if (existing?._id) imageIds.push(existing._id);
         else throw e;
       } else {
@@ -103,12 +87,8 @@ async function uploadAnnonceImagesAndPersist(
     }
   }
 
-  // Liaisons annonce↔images
-  const links = imageIds.map((imgId) => ({
-    annonceId,
-    imageId: imgId,
-    createdAt: now,
-  }));
+  // liens annonce_images
+  const links = imageIds.map((imgId) => ({ annonceId, imageId: imgId, createdAt: now }));
   if (links.length) {
     try {
       await db.collection("annonce_images").insertMany(links, { ordered: false });
@@ -118,8 +98,6 @@ async function uploadAnnonceImagesAndPersist(
   }
 
   const firstImagePath = uploaded[mainIndex]?.url ?? uploaded[0].url;
-
-  // Update annonce
   await db.collection("annonces").updateOne(
     { _id: annonceId },
     { $set: { haveImage: true, firstImagePath, updatedAt: new Date() } }
@@ -141,9 +119,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const now = new Date();
     const contentType = request.headers.get("content-type") || "";
-    console.log("POST my/annonces content-type:", contentType);
-
-    
 
     // ============================================================
     // ========== BRANCHE MULTIPART (wizard Step 3) ===============
@@ -151,54 +126,52 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (contentType.includes("multipart/form-data")) {
       const form = await request.formData();
 
-      console.log("form keys:", [...form.keys()]);
-      // -------- Champs principaux (Step 1) --------
+      // Step 1
       const typeAnnonceId  = String(form.get("typeAnnonceId") ?? "");
-      const categorieId    = String(form.get("categorieId") ?? "");
-      const subcategorieId = String(form.get("subcategorieId") ?? "");
+      const categorieId    = form.get("categorieId") ? String(form.get("categorieId")) : null;
+      const subcategorieId = form.get("subcategorieId") ? String(form.get("subcategorieId")) : null;
       const title          = String(form.get("title") ?? "");
       const description    = String(form.get("description") ?? "");
-      const priceStr       = form.get("price");
-      const price          = priceStr != null && String(priceStr) !== "" ? Number(priceStr) : null;
-      const directNegotiation =  String(form.get("directNegotiation"));
+
+      const priceStr = form.get("price");
+      const price    = priceStr != null && String(priceStr) !== "" ? Number(priceStr) : null;
+
+      const dnRaw = form.get("directNegotiation");
+      let directNegotiation: boolean | null = null;
+      if (dnRaw !== null && String(dnRaw) !== "" && String(dnRaw) !== "null" && String(dnRaw) !== "undefined") {
+        directNegotiation = String(dnRaw) === "true";
+      }
+
       const classificationFr = form.get("classificationFr") ? String(form.get("classificationFr")) : null;
       const classificationAr = form.get("classificationAr") ? String(form.get("classificationAr")) : null;
+      const issmar = String(form.get("issmar") ?? "false") === "true";
 
+      // Step 3
+      const lieuId      = String(form.get("lieuId") ?? "");
+      const moughataaId = String(form.get("moughataaId") ?? "");
+      const status      = String(form.get("status") ?? "active");
 
-     
-      // -------- Localisation (Step 3) --------
-      const lieuId         = String(form.get("lieuId") ?? "");        // wilaya
-      const moughataaId    = String(form.get("moughataaId") ?? "");   // moughataa
-      const status         = String(form.get("status") ?? "active");
-
-     
-      // -------- Images (Step 2) --------
+      // files
       const files = [
         ...form.getAll("files"),
         ...form.getAll("image"),
         ...form.getAll("images"),
       ].filter((f): f is File => f instanceof File);
 
-      console.log(`Received ${files.length} files`);
       let mainIndex = Number(String(form.get("mainIndex") ?? "0"));
       if (!Number.isFinite(mainIndex) || mainIndex < 0) mainIndex = 0;
-      
-      console.log("mainIndex:", mainIndex);
-      
-      
 
-      // -------- Validation champs essentiels --------
-      if (!typeAnnonceId || !categorieId || !subcategorieId || !description || !price) {
-        return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
+      // ✅ Validation assouplie: type + description suffisent
+      if (!typeAnnonceId || !description) {
+        return NextResponse.json({ error: "Champs requis manquants (type, description)" }, { status: 400 });
       }
 
       const contact = await getUserContact(db, userIdStr);
 
-     
       const annonceDoc: any = {
         typeAnnonceId,
-        categorieId,
-        subcategorieId,
+        categorieId,              // null si absent
+        subcategorieId,           // null si absent
         userId: userIdStr,
         classificationFr,
         classificationAr,
@@ -207,24 +180,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         price,
         status,
         isPublished: false,
+        issmar,                   // bool
         lieuId: lieuId || null,
         contact,
         moughataaId: moughataaId || null,
         haveImage: false,
-        directNegotiation,
+        directNegotiation,        // bool | null
         firstImagePath: '',
         createdAt: now,
         updatedAt: now,
       };
-      console.log("Creating annonce2:", annonceDoc);
 
       let insertedId: ObjectId;
       try {
         const insertRes = await db.collection("annonces").insertOne(annonceDoc);
-        console.log("Annonce created with ID:", insertRes.insertedId.toString());
         insertedId = insertRes.insertedId as ObjectId;
       } catch (e: any) {
-        // Si tu as créé un index unique (userId, idempotencyKey), rattrape le doublon
         if (e?.code === 11000) {
           const existing = await db
             .collection("annonces")
@@ -243,22 +214,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         throw e;
       }
 
-      // -------- Upload intégré (PAS d’appel à /api/images) --------
       if (files.length > 0) {
         try {
           const { firstImagePath } = await uploadAnnonceImagesAndPersist(db, insertedId, files, mainIndex);
-          // annonce déjà mise à jour dans la fonction
           return NextResponse.json(
-            {
-              id: insertedId.toString(),
-              ...annonceDoc,
-              haveImage: true,
-              firstImagePath,
-            },
+            { id: insertedId.toString(), ...annonceDoc, haveImage: true, firstImagePath },
             { status: 201 }
           );
         } catch (e: any) {
-          // échec upload → on garde l’annonce sans images (plus simple), et on remonte l’erreur
           return NextResponse.json(
             { id: insertedId.toString(), ...annonceDoc, haveImage: false, firstImagePath: null, uploadError: String(e?.message ?? e) },
             { status: 201 }
@@ -266,20 +229,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         }
       }
 
-      // -------- Pas d'images --------
-      return NextResponse.json(
-        { id: insertedId.toString(), ...annonceDoc },
-        { status: 201 }
-      );
+      return NextResponse.json({ id: insertedId.toString(), ...annonceDoc }, { status: 201 });
     }
 
     // ============================================================
-    // ========== BRANCHE JSON (compat facultative) ===============
+    // ========== BRANCHE JSON (facultative) ======================
     // ============================================================
     const data = await request.json().catch(() => null);
     if (!data) return NextResponse.json({ error: "Bad payload" }, { status: 400 });
 
-    const required = ["typeAnnonceId", "subcategorieId", "categorieId", "title", "description", "status"] as const;
+    // ⬇️ Catégorie / sous-catégorie ne sont plus obligatoires
+    const required = ["typeAnnonceId", "title", "description", "status"] as const;
     const missing = required.find((k) => {
       const v = data[k];
       return v === undefined || v === null || (typeof v === "string" && v.trim() === "");
@@ -288,13 +248,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: `Champ requis manquant: ${missing}` }, { status: 400 });
     }
 
-
-    console.log("data payload:", data);
-    
     const annonceDoc = {
       typeAnnonceId: String(data.typeAnnonceId),
-      subcategorieId: String(data.subcategorieId),
-      categorieId: String(data.categorieId),
+      categorieId: data.categorieId ? String(data.categorieId) : null,
+      subcategorieId: data.subcategorieId ? String(data.subcategorieId) : null,
       userId: userIdStr,
       title: data.title,
       description: data.description,

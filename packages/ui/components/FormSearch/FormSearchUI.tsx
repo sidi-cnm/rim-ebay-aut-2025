@@ -7,6 +7,8 @@ import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../../locales/client";
 import FormSearch from "./FormSearchdDynamicOptions";
+import { Search } from "lucide-react";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 interface Filters {
   typeAnnonceId?: string;
@@ -39,6 +41,7 @@ interface InputProps {
   formTitle?: string;
   priceLabel?: string;
   searchButtonLabel?: string;
+  isSamsar?: boolean;
 }
 
 export function FormSearchUI({
@@ -59,6 +62,7 @@ export function FormSearchUI({
   formTitle,
   priceLabel,
   searchButtonLabel,
+  isSamsar
 }: InputProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -81,38 +85,60 @@ export function FormSearchUI({
     }
   }, [currentUrlKey, prevUrlKey, loading]);
 
+  
+
   const handleSearchSubmit = async (filters: Filters) => {
-    const next = new URLSearchParams(
-      Object.entries(filters).map(([k, v]) => [k, v?.toString() || ""])
-    );
-    const nextUrlKey = `${pathname}?${next.toString()}`;
-    if (nextUrlKey === currentUrlKey) {
-      setModalOpen(false);
-      setLoading(false);
-      return;
-    }
+    // 1) On part de l'URL actuelle pour garder les filtres déjà présents
+    const params = new URLSearchParams(searchParams?.toString() ?? "");
+  
+    // 2) Nettoyer uniquement les clés gérées par CE formulaire
+    //    ⚠️ Ne PAS inclure 'issmar' ni 'directNegotiation' ici
+    const managedKeys = [
+      "typeAnnonceId",
+      "categorieId",
+      "subCategorieId",
+      "price",
+      "wilayaId",
+      "moughataaId",
+      "description",
+    ];
+    managedKeys.forEach((k) => params.delete(k));
+  
+    // 3) Injecter les nouveaux filtres du formulaire
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v === undefined || v === null || v === "") return;
+      params.set(k, typeof v === "boolean" ? String(v) : String(v));
+    });
+  
+    // 4) Reset pagination (on garde issmar & directNegotiation intacts)
+    params.delete("page");
+  
     setLoading(true);
     setModalOpen(false);
     startTransition(() => {
-      router.push(`?${next.toString()}`);
+      router.push(`?${params.toString()}`);
     });
   };
+  
+  
 
   const isRTL = lang.startsWith("ar");
 
   // --- MOBILE ---
   if (mobile) {
+
+    const alignClass = isRTL ? "justify-end" : "justify-start";
     return (
       <>
-        <div className="w-full flex justify-end mb-4">
-          <button
-            onClick={() => setModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-800 text-white rounded-xl px-4 py-2 shadow hover:bg-blue-700"
-          >
-            <FontAwesomeIcon icon={faFilter} />
-            <span>{t("filter.filterBtn")}</span>
-          </button>
-        </div>
+         <div className={`w-full flex mb-4`}>
+            <button
+              onClick={() => setModalOpen(true)}
+              className="flex items-center gap-2 bg-blue-800 text-white rounded-xl px-4 py-2 shadow hover:bg-blue-700"
+            >
+              <FontAwesomeIcon icon={faSearch} />
+              <span>{t("filter.search")}</span>
+        </button>
+      </div>
 
         {modalOpen && (
           <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -149,6 +175,7 @@ export function FormSearchUI({
                   priceLabel={priceLabel ?? t("filter.price")}
                   searchButtonLabel={searchButtonLabel ?? t("filter.search")}
                   loading={loading}
+                  
                 />
               </div>
             </div>

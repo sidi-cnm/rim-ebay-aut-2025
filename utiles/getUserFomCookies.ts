@@ -21,6 +21,7 @@ export async function getUserFromCookies() {
           id: payload.id,
           email: payload.email,
           role: payload.role,
+          samsar: payload.samsar,
         };
         // Injecter dans les headers
 
