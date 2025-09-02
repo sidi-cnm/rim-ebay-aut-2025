@@ -86,19 +86,19 @@ export default function AddAnnonceStep2({
   };
 
   const handleNext = () => {
-    if (images.length === 0) {
-      alert(isRTL ? "أضف صورة واحدة على الأقل" : "Ajoute au moins une image");
-      return;
-    }
-    const mainIndex = images.findIndex((im) => im.isMain);
-    onNext({ images: images.map((im) => im.file), mainIndex: Math.max(0, mainIndex) });
+    // 🔸 Images optionnelles : on laisse passer même si la liste est vide
+    const mainIndex = Math.max(0, images.findIndex((im) => im.isMain));
+    onNext({ images: images.map((im) => im.file), mainIndex });
   };
 
   return (
     <div className="mx-auto max-w-4xl" dir={isRTL ? "rtl" : "ltr"}>
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+      <h2 className="text-2xl font-semibold mb-1 text-gray-800">
         {lang === "ar" ? "إضافة الصور" : "Ajouter des photos"}
       </h2>
+      <p className="text-sm text-gray-500 mb-4">
+        {lang === "ar" ? "(اختياري)" : "(optionnel)"}
+      </p>
 
       <div
         onDragOver={(e) => e.preventDefault()}
