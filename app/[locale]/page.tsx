@@ -49,8 +49,8 @@ export default async function Home({
   if (sp.moughataaId)    query.moughataaId  = sp.moughataaId;   // moughataa
 
   // ⬇️ filtre "Samsar seulement"
-  if (sp.issmar === "true") query.issmar = "true";
-  if (sp.directNegotiation === "true")  query.directNegotiation = "true";
+  if (sp.issmar === "true") query.issmar = true;
+  if (sp.directNegotiation === "true")  query.directNegotiation = true;
   if (sp.directNegotiation === "false") query.directNegotiation = "false";
 
   const db = await getDb();
