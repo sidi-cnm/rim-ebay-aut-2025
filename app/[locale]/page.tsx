@@ -51,13 +51,13 @@ export default async function Home({
   // ⬇️ filtre "Samsar seulement"
   if (sp.issmar === "true") query.issmar = true;
   if (sp.directNegotiation === "true")  query.directNegotiation = true;
-  if (sp.directNegotiation === "false") query.directNegotiation = "false";
+  if (sp.directNegotiation === "false") query.directNegotiation = false;
 
   const db = await getDb();
   const coll = db.collection("annonces");
 
   const [rows, totalCount] = await Promise.all([
-    coll.find(query).sort({ updatedAt: -1 }).skip(skip).limit(itemsPerPage).toArray(),
+    coll.find(query).sort({isSponsored: -1, updatedAt: -1 }).skip(skip).limit(itemsPerPage).toArray(),
     coll.countDocuments(query),
   ]);
 

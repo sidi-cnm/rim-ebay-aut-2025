@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
     const contact = String(body.contact ?? "").trim();
     const samsar = body.samsar; // doit être boolean
 
+    console.log("Register body:", { email, password, contact, samsar });
     if (!email || !password || !contact || typeof samsar !== "boolean") {
       return NextResponse.json(
         { error: "email, password, contact et samsar (boolean) sont requis" },

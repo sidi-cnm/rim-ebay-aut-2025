@@ -112,6 +112,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // ---------- Auth ----------
     const user = await getUserFromCookies();
+    console.log("Authenticated user:", user);
     const userIdStr = String(user?.id ?? "");
     if (!userIdStr) {
       return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
@@ -136,15 +137,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const priceStr = form.get("price");
       const price    = priceStr != null && String(priceStr) !== "" ? Number(priceStr) : null;
 
-      const dnRaw = form.get("directNegotiation");
-      let directNegotiation: boolean | null = null;
-      if (dnRaw !== null && String(dnRaw) !== "" && String(dnRaw) !== "null" && String(dnRaw) !== "undefined") {
-        directNegotiation = String(dnRaw) === "true";
-      }
+      // const dnRaw = form.get("directNegotiation");
+      // let directNegotiation: boolean | null = null;
+      // if (dnRaw !== null && String(dnRaw) !== "" && String(dnRaw) !== "null" && String(dnRaw) !== "undefined") {
+      //   directNegotiation = String(dnRaw) === "true";
+      // }
 
       const classificationFr = form.get("classificationFr") ? String(form.get("classificationFr")) : null;
       const classificationAr = form.get("classificationAr") ? String(form.get("classificationAr")) : null;
       const issmar = String(form.get("issmar") ?? "false") === "true";
+      const directNegotiation = String(form.get("directNegotiation") ?? "false") === "true"
 
       // Step 3
       const lieuId      = String(form.get("lieuId") ?? "");
@@ -166,7 +168,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ error: "Champs requis manquants (type, description)" }, { status: 400 });
       }
 
+      console.log("Creating annonce for userId:", userIdStr);
       const contact = await getUserContact(db, userIdStr);
+      console.log("User contact:", contact);
 
       const annonceDoc: any = {
         typeAnnonceId,
@@ -185,15 +189,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         contact,
         moughataaId: moughataaId || null,
         haveImage: false,
-        directNegotiation,        // bool | null
+        directNegotiation,  
+        isSponsored:false,      // bool | null
         firstImagePath: '',
         createdAt: now,
         updatedAt: now,
       };
 
+      console.log("Creating annonce:", annonceDoc, { filesCount: files.length, mainIndex });
+
       let insertedId: ObjectId;
       try {
         const insertRes = await db.collection("annonces").insertOne(annonceDoc);
+        console.log("insertRes : " , insertRes)
         insertedId = insertRes.insertedId as ObjectId;
       } catch (e: any) {
         if (e?.code === 11000) {
@@ -258,6 +266,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       price: typeof data.price === "number" ? data.price : null,
       haveImage: Boolean(data.haveImage ?? false),
       firstImagePath: data.firstImagePath ?? '',
+      isSponsored: false,
       status: data.status,
       isPublished: false,
       lieuId: data.lieuId ? String(data.lieuId) : null,
