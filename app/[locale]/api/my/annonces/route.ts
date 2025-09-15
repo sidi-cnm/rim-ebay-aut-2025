@@ -133,6 +133,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const subcategorieId = form.get("subcategorieId") ? String(form.get("subcategorieId")) : null;
       const title          = String(form.get("title") ?? "");
       const description    = String(form.get("description") ?? "");
+      const rentalPeriod = String(form.get("rentalPeriod") ?? "");
+
+      console.log("Form data received:", rentalPeriod)
 
       const priceStr = form.get("price");
       const price    = priceStr != null && String(priceStr) !== "" ? Number(priceStr) : null;
@@ -182,6 +185,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         title,
         description,
         price,
+        rentalPeriod,
         status,
         isPublished: false,
         issmar,                   // bool

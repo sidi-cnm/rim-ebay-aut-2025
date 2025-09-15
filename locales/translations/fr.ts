@@ -74,6 +74,10 @@ export default {
     selectSubCategory: "Sélectionnez une sous-catégorie",
     description: "Description",
     price: "Prix par jour (€)",
+    rentalPeriod: "Période de location",
+    daily: "Journalier",
+    weekly: "Hebdomadaire",
+    monthly: "Mensuel",
     submitButton: "Ajouter l'annonce",
     categories: {
       immobilier: "Immobilier",

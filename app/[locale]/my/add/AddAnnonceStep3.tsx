@@ -27,6 +27,7 @@ type Props = {
     classificationFr?: string;
     classificationAr?: string;
     isSamsar?: boolean;
+    rentalPeriod?: string | null;
   };
 };
 
@@ -141,6 +142,7 @@ export default function AddAnnonceStep3({
       if (draft.classificationFr) fd.append("classificationFr", String(draft.classificationFr));
       if (draft.classificationAr) fd.append("classificationAr", String(draft.classificationAr));
       fd.append("issmar", draft.isSamsar ? "true" : "false");
+      if (draft.rentalPeriod) fd.append("rentalPeriod", String(draft.rentalPeriod));
 
       // step3 (lieu)
       fd.append("lieuId", String(selectedWilayaId));

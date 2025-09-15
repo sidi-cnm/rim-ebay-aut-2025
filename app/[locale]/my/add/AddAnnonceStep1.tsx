@@ -6,6 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { Category, SubCategory, TypeAnnonce } from "../../../../packages/mytypes/types";
 
 type Position = "owner" | "broker" | "other";
+type RentalPeriod = "daily" | "weekly" | "monthly";
 
 type Props = {
   lang?: string;
@@ -25,6 +26,7 @@ type Props = {
     classificationFr: string;
     classificationAr: string;
     isSamsar: boolean;
+    rentalPeriod?: RentalPeriod | null;
   }) => void;
   initial?: {
     typeAnnonceId?: string;
@@ -36,6 +38,7 @@ type Props = {
     position?: Position;
     directNegotiation?: boolean | null;
     isSamsar?: boolean;
+    rentalPeriod?: RentalPeriod | null;
   };
 };
 
@@ -65,6 +68,9 @@ export default function AddAnnonceStep1({
   const [directNegotiation, setDirectNegotiation] = useState<boolean | null>(
     initial?.directNegotiation ?? null
   );
+  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod | null>(
+    initial?.rentalPeriod ?? null
+  );
 
   // Erreurs champ par champ
   const [errors, setErrors] = useState<{
@@ -73,6 +79,7 @@ export default function AddAnnonceStep1({
     subCategory?: boolean;
     description?: boolean;
     directNegotiation?: boolean;
+    rentalPeriod?: boolean;
   }>({});
 
   // Charger Types d'annonces
@@ -144,12 +151,20 @@ export default function AddAnnonceStep1({
     const needCategory = categories.length > 0;
     const needSubcat = needCategory && filteredSubCategories.length > 0;
 
+    // Détecter si le type sélectionné est "Location"
+    const selectedType = typeAnnonces.find(t => String(t.id) === String(selectedTypeId));
+    const isLocationRental = selectedType && (
+      selectedType.name.toLowerCase().includes("location") ||
+      selectedType.nameAr.includes("إيجار")
+    );
+
     const nextErrors: typeof errors = {};
     if (!selectedTypeId) nextErrors.type = true;
     if (needCategory && !selectedCategoryId) nextErrors.category = true;
     if (needSubcat && !selectedSubCategoryId) nextErrors.subCategory = true;
     if (!description.trim()) nextErrors.description = true;
     if (position === "broker" && directNegotiation == null) nextErrors.directNegotiation = true;
+    if (isLocationRental && !rentalPeriod) nextErrors.rentalPeriod = true;
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -178,8 +193,16 @@ export default function AddAnnonceStep1({
       classificationFr,
       classificationAr,
       isSamsar,
+      rentalPeriod,
     });
   };
+
+  // Détecter si le type sélectionné est "Location"
+  const selectedType = typeAnnonces.find(t => String(t.id) === String(selectedTypeId));
+  const isLocationRental = selectedType && (
+    selectedType.name.toLowerCase().includes("location") ||
+    selectedType.nameAr.includes("إيجار")
+  );
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -290,6 +313,55 @@ export default function AddAnnonceStep1({
             min={0}
           />
         </div>
+
+        {/* Période de location (seulement pour les annonces de location) */}
+        {isLocationRental && (
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              {t("addAnnonce.rentalPeriod")}
+            </label>
+            <div className="flex gap-4">
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="rentalPeriod"
+                  value="daily"
+                  checked={rentalPeriod === "daily"}
+                  onChange={() => setRentalPeriod("daily")}
+                  className="h-4 w-4 text-blue-700"
+                />
+                <span>{t("addAnnonce.daily")}</span>
+              </label>
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="rentalPeriod"
+                  value="weekly"
+                  checked={rentalPeriod === "weekly"}
+                  onChange={() => setRentalPeriod("weekly")}
+                  className="h-4 w-4 text-blue-700"
+                />
+                <span>{t("addAnnonce.weekly")}</span>
+              </label>
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="rentalPeriod"
+                  value="monthly"
+                  checked={rentalPeriod === "monthly"}
+                  onChange={() => setRentalPeriod("monthly")}
+                  className="h-4 w-4 text-blue-700"
+                />
+                <span>{t("addAnnonce.monthly")}</span>
+              </label>
+            </div>
+            {errors.rentalPeriod && (
+              <p className="text-red-500 text-xs mt-1">
+                {t("errors.required")}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* ➜ TA PARTIE RÉINSÉRÉE, avec gestion d'erreur visuelle pour directNegotiation */}
         {isSamsar && (

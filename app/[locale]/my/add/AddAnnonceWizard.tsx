@@ -7,6 +7,7 @@ import AddAnnonceStep3 from "./AddAnnonceStep3";
 import { useI18n } from "../../../../locales/client";
 
 type Position = "owner" | "broker" | "other";
+type RentalPeriod = "daily" | "weekly" | "monthly";
 
 type Props = {
   lang?: string;
@@ -30,6 +31,7 @@ type Draft = {
   // sans commission
   position?: Position;
   directNegotiation?: boolean | null;
+  rentalPeriod?: RentalPeriod | null;
 
   // step 2
   images?: File[];
@@ -74,6 +76,7 @@ export default function AddAnnonceWizard({
     price: number | null;
     position: Position;
     directNegotiation?: boolean | null;
+    rentalPeriod?: RentalPeriod | null;
   }) => {
     setDraft((d) => ({ ...d, ...payload }));
     setStep(2);
@@ -166,6 +169,7 @@ export default function AddAnnonceWizard({
               position: draft.position,
               directNegotiation: draft.directNegotiation ?? null,
               isSamsar: draft.isSamsar,
+              rentalPeriod: draft.rentalPeriod,
             }}
           />
         )}
