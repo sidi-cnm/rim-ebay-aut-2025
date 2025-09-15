@@ -155,7 +155,7 @@ export default function AnnonceItemUI({
         </span>
 
         <h2 className="text-base md:text-lg font-semibold leading-tight line-clamp-1">
-          {a.title}
+          {a.description}
         </h2>
 
         {humanDate && (

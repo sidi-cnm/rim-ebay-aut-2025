@@ -3,6 +3,8 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { useI18n } from "../../../../../locales/client";
+import toast, { Toaster } from "react-hot-toast";
+
 
 
 
@@ -29,19 +31,28 @@ export default function MyAnnonceImages({
   const openPicker = () => inputRef.current?.click();
 
   const handlePick: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+
+    toast.loading("loading ....");
+
     const files = Array.from(e.target.files || []);
     if (files.length && onAddFiles) onAddFiles(files);
+
+    toast.success("Image ajoutés");
     // reset pour permettre le même fichier à nouveau
     e.currentTarget.value = "";
   };
 
   const handleRemove = (idx: number) => {
+    toast.loading("deleting .....")
     if (onRemove) onRemove(idx);
+    toast.remove("removed")
   };
 
   return (
     <section className="w-full">
       {/* Header */}
+      <Toaster position="bottom-right" reverseOrder={false} />
+
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="text-lg md:text-xl font-semibold text-gray-800">

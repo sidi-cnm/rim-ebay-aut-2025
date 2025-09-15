@@ -19,7 +19,7 @@ function safeName(name: string) {
 // ---- Contact user ----
 async function getUserContact(db: any, userIdStr: string): Promise<string | null> {
   const verified = await db.collection("contacts").findOne(
-    { userId: userIdStr, isVerified: true, isActive: true },
+    { userId: userIdStr},
     { projection: { contact: 1 } }
   );
   if (verified?.contact) return String(verified.contact);

@@ -184,7 +184,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             <div className="hidden lg:flex items-center gap-2">
 
             <NavLink href={`/${localeKey}/`} active={isActive(`/${localeKey}`)}>
-                <ListIcon className="h-5 w-5" />
+                <Home className="h-5 w-5" />
                 {t("nav.home")}
               </NavLink>
 

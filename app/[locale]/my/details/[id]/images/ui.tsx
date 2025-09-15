@@ -48,8 +48,8 @@ export default function PageAnnonceImages({ lang, annonceId }: PageProps) {
   const handleAddFiles = async (files: File[]) => {
     if (!files?.length) return;
 
-
-    const toastId = toast.loading(t("editForm.uploading"));
+    const loadingId = toast.loading("L`ajout en cours...");
+    
     try {
       const fd = new FormData();
       files.forEach((f) => fd.append("files", f));
@@ -75,9 +75,9 @@ export default function PageAnnonceImages({ lang, annonceId }: PageProps) {
       // Ajoute les nouvelles au début (ou à la fin selon ton choix)
       setImages((prev) => [...newUrls, ...prev]);
 
-      toast.success(t("editForm.uploaded"), { id: toastId });
+      toast.success(t("editForm.uploaded"), { id: loadingId });
     } catch (e: any) {
-      toast.error(e?.message || t("editForm.uploadError"), { id: toastId });
+      toast.error(e?.message || t("editForm.uploadError"));
     }
   };
 
@@ -108,7 +108,6 @@ export default function PageAnnonceImages({ lang, annonceId }: PageProps) {
   if (loading) {
     return (
       <div className="p-6">
-        <Toaster position="bottom-right" />
         {t("editForm.loading")}
       </div>
     );
@@ -116,6 +115,8 @@ export default function PageAnnonceImages({ lang, annonceId }: PageProps) {
 
   return (
     <div className="mx-auto max-w-6xl p-4">
+    <Toaster position="bottom-right" reverseOrder={false} />
+     
       <MyAnnonceImages
         imagesUrl={images}
         title={t("editForm.title")}

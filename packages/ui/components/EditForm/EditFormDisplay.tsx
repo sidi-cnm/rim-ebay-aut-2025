@@ -258,15 +258,16 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
             {updateLabel}
           </button>
 
-          <button
+          
+        </div>
+      </form>
+      <button
             type="submit"
             onClick={onEditImages}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+            className="bg-blue-600 w-full mt-2 hover:bg-blue-700 text-white px-4 py-2 rounded"
           >
             {t("editForm.images")}
           </button>
-        </div>
-      </form>
     </div>
   );
 };

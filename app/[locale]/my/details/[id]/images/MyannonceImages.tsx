@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useI18n  } from "../../../../../../locales/client";
 
+
 export type MyAnnonceImagesProps = {
   imagesUrl: string[];
   title?: string;
@@ -30,6 +31,7 @@ export default function MyAnnonceImages({
 
   return (
     <section className="px-3 sm:px-4 py-5">
+
       {/* Carte centrée */}
       <div className="mx-auto w-full max-w-6xl rounded-2xl border border-gray-200 bg-white shadow-md">
         {/* En-tête */}
