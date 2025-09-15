@@ -169,6 +169,7 @@ export default {
   
 
   card: {
+    sponsored: "مُرَاعًى",
     published: "نُشِرَ في",
     empty: "لا توجد إعلانات.",
     removeFavorite: "إزالة من المفضلة",

@@ -29,6 +29,7 @@ export default {
     time: "Heure",
   },
   card: {
+    sponsored: "Sponsorisé",
     published: "publié le",
     empty: "Aucune annonce favorite pour le moment.",
     removeFavorite: "Retirer des favoris",

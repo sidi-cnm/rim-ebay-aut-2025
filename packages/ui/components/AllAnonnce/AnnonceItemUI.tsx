@@ -87,6 +87,8 @@ export default function AnnonceItemUI({
     }
   };
 
+  console.log("sponsored:", a.isSponsored);
+
   return (
     <article
       data-cy="annonce-item"
@@ -105,6 +107,24 @@ export default function AnnonceItemUI({
           className="w-full h-full object-cover"
           loading="lazy"
         />
+
+        {/* ✅ Ruban SPONSORISÉ */}
+        {a.isSponsored && (
+          <div
+            className={`absolute top-2 
+                       mx-auto left-0 
+                      w-40 rotate-[-45deg] 
+                      bg-red-600
+                      text-white font-bold text-xs uppercase
+                      text-center py-1 shadow-lg
+                      ring-1 ring-red-900
+                      rounded-sm
+                      px-2
+                      z-20 isolate`}
+          >
+           {lang === "ar" ? "مُموّل" : "SPONSORISÉ"}
+          </div>
+        )}
 
         {/* ❤️ bouton cœur */}
         <button
@@ -135,7 +155,7 @@ export default function AnnonceItemUI({
               strokeLinecap="round"
               strokeLinejoin="round"
               d="M21 8.25c0-2.485-2.04-4.5-4.556-4.5-1.61 0-3.022.86-3.944 2.158A4.973 4.973 0 0 0 8.556 3.75C6.04 3.75 4 5.765 4 8.25c0 6.056 8 10.5 8 10.5s9-4.444 9-10.5Z"
-              className={isFav ? "text-rose-600" : "text-gray-600"} // ✅ rouge si favori
+              className={isFav ? "text-rose-600" : "text-gray-600"}
             />
           </svg>
         </button>
