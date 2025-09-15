@@ -15,10 +15,10 @@ export default function ConnexionForm({ lang = "ar" }) {
   const defaultPassword = "";
   //"password123";
     const userForTest = {
-    email:"ely@gmail.com",
-    contact: "22334455",
-    password: "password123",
-    confirmPassword: "password123",
+    email:"",
+    contact: "",
+    password: "",
+    confirmPassword: "",
   }
   const defaultUser = {
     email: "",
