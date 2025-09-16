@@ -141,4 +141,5 @@ export interface Annonce {
   updatedAt?: Date | string; // Date de la dernière mise à jour de l'annonce
   createdAt?: Date | string | null; // Date de création de l'annonce,
   rentalPeriod?: string | null; // Période de location (daily, weekly, monthly)
+  rentalPeriodAr?: string | null; 
 }

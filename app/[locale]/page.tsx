@@ -87,6 +87,8 @@ export default async function Home({
     firstImagePath: a.firstImagePath ? String(a.firstImagePath) : "",
     images: a.annonceImages ?? [],
     status: a.status,
+    rentalPeriod: a.rentalPeriod ?? "",
+    rentalPeriodAr: a.rentalPeriodAr ?? "",
     isSponsored:a.isSponsored,
     isFavorite: Boolean(a.isFavorite ?? false),
     updatedAt: a.updatedAt ? new Date(a.updatedAt) : undefined,

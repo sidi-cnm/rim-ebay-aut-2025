@@ -17,7 +17,7 @@ export default {
   detail: {
     title: "Détails de l’annonce",
     price: "PRIX",
-    perDay: "UMR / jour",
+    perDay: "UMR /Noveau",
     contact: "Contact",
     delete: "Supprimer",
     disclaimer:

@@ -195,6 +195,35 @@ export default function AnnonceItemUI({
           </span>
         </div>
 
+        {/* ✅ Affichage période de location en mode “draft” */}
+
+                      
+      
+        {a.rentalPeriod && a.rentalPeriodAr && (
+        <div
+        className={`inline-flex items-center gap-2
+          max-w-[180px] rounded-xl
+          border border-yellow-300
+         bg-blue-800 text-white font-semibold text-base
+          text-center py-1 shadow-lg
+          ring-1 ring-red-900
+          rounded-sm
+          px-2
+          z-20 isolate
+          ${lang === "ar" ? "self-end text-right" : "self-start text-left"}`}
+      >
+        <span className="font-semibold">
+          {lang === "ar" ? "إيجار" : "Location"}
+        </span>
+        <span className="font-bold">
+          {lang === "ar" ? a.rentalPeriodAr : a.rentalPeriod}
+        </span>
+      </div>
+)}
+
+
+
+
         {/* Bouton DÉTAILS */}
         <div className="mt-4 w-full">
           <button

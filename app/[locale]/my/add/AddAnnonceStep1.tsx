@@ -27,6 +27,7 @@ type Props = {
     classificationAr: string;
     isSamsar: boolean;
     rentalPeriod?: RentalPeriod | null;
+    rentalPeriodAr?: string | null; // ✅ nouveau
   }) => void;
   initial?: {
     typeAnnonceId?: string;
@@ -39,6 +40,7 @@ type Props = {
     directNegotiation?: boolean | null;
     isSamsar?: boolean;
     rentalPeriod?: RentalPeriod | null;
+    rentalPeriodAr?: string | null; // ✅ nouveau
   };
 };
 
@@ -72,6 +74,11 @@ export default function AddAnnonceStep1({
     initial?.rentalPeriod ?? null
   );
 
+  // Ajout d’un état pour la version arabe
+const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
+  initial?.rentalPeriodAr ?? null
+);
+
   // Erreurs champ par champ
   const [errors, setErrors] = useState<{
     type?: boolean;
@@ -80,6 +87,7 @@ export default function AddAnnonceStep1({
     description?: boolean;
     directNegotiation?: boolean;
     rentalPeriod?: boolean;
+    rentalPeriodAr?: boolean;
   }>({});
 
   // Charger Types d'annonces
@@ -165,6 +173,7 @@ export default function AddAnnonceStep1({
     if (!description.trim()) nextErrors.description = true;
     if (position === "broker" && directNegotiation == null) nextErrors.directNegotiation = true;
     if (isLocationRental && !rentalPeriod) nextErrors.rentalPeriod = true;
+    if (isLocationRental && !rentalPeriodAr) nextErrors.rentalPeriodAr = true;
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -194,6 +203,7 @@ export default function AddAnnonceStep1({
       classificationAr,
       isSamsar,
       rentalPeriod,
+      rentalPeriodAr,
     });
   };
 
@@ -320,15 +330,17 @@ export default function AddAnnonceStep1({
             <label className="block text-sm font-medium mb-1">
               {t("addAnnonce.rentalPeriod")}
             </label>
-            <div className="flex gap-4">
+            <div className="flex gap-4 mb-3">
               <label className="inline-flex items-center gap-2">
                 <input
                   type="radio"
                   name="rentalPeriod"
                   value="daily"
                   checked={rentalPeriod === "daily"}
-                  onChange={() => setRentalPeriod("daily")}
-                  className="h-4 w-4 text-blue-700"
+                  onChange={() => {
+                    setRentalPeriod("daily");
+                    setRentalPeriodAr("يومي");
+                  }}
                 />
                 <span>{t("addAnnonce.daily")}</span>
               </label>
@@ -338,8 +350,10 @@ export default function AddAnnonceStep1({
                   name="rentalPeriod"
                   value="weekly"
                   checked={rentalPeriod === "weekly"}
-                  onChange={() => setRentalPeriod("weekly")}
-                  className="h-4 w-4 text-blue-700"
+                  onChange={() => {
+                    setRentalPeriod("weekly");
+                    setRentalPeriodAr("أسبوعي");
+                  }}
                 />
                 <span>{t("addAnnonce.weekly")}</span>
               </label>
@@ -349,16 +363,16 @@ export default function AddAnnonceStep1({
                   name="rentalPeriod"
                   value="monthly"
                   checked={rentalPeriod === "monthly"}
-                  onChange={() => setRentalPeriod("monthly")}
-                  className="h-4 w-4 text-blue-700"
+                  onChange={() => {
+                    setRentalPeriod("monthly");
+                    setRentalPeriodAr("شهري");
+                  }}
                 />
                 <span>{t("addAnnonce.monthly")}</span>
               </label>
             </div>
             {errors.rentalPeriod && (
-              <p className="text-red-500 text-xs mt-1">
-                {t("errors.required")}
-              </p>
+              <p className="text-red-500 text-xs">{t("errors.required")}</p>
             )}
           </div>
         )}

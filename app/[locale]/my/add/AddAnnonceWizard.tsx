@@ -77,6 +77,7 @@ export default function AddAnnonceWizard({
     position: Position;
     directNegotiation?: boolean | null;
     rentalPeriod?: RentalPeriod | null;
+    rentalPeriodAr?: string | null;
   }) => {
     setDraft((d) => ({ ...d, ...payload }));
     setStep(2);
@@ -170,6 +171,7 @@ export default function AddAnnonceWizard({
               directNegotiation: draft.directNegotiation ?? null,
               isSamsar: draft.isSamsar,
               rentalPeriod: draft.rentalPeriod,
+              rentalPeriodAr: draft.classificationAr ,
             }}
           />
         )}

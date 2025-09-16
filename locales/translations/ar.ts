@@ -192,7 +192,7 @@ export default {
   detail: {
     title: "تفاصيل الإعلان",
     price: "السعر",
-    perDay: "أوقية / اليوم",
+    perDay: "أوقية / جديدة",
     contact: "اتصال",
     delete: "حذف",
     disclaimer:
