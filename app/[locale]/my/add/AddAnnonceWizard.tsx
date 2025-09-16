@@ -27,6 +27,10 @@ type Draft = {
   classificationFr?: string;
   classificationAr?: string;
   isSamsar?: boolean;
+  typeAnnonceName?: string;
+  categorieName?: string;
+  typeAnnonceNameAr?: string;
+  categorieNameAr?: string;
 
   // sans commission
   position?: Position;
@@ -78,6 +82,10 @@ export default function AddAnnonceWizard({
     directNegotiation?: boolean | null;
     rentalPeriod?: RentalPeriod | null;
     rentalPeriodAr?: string | null;
+    typeAnnonceName?: string;
+    categorieName?: string;
+    typeAnnonceNameAr?: string;
+    categorieNameAr?: string;
   }) => {
     setDraft((d) => ({ ...d, ...payload }));
     setStep(2);
@@ -172,6 +180,10 @@ export default function AddAnnonceWizard({
               isSamsar: draft.isSamsar,
               rentalPeriod: draft.rentalPeriod,
               rentalPeriodAr: draft.classificationAr ,
+              typeAnnonceName: draft.typeAnnonceName,
+              categorieName: draft.categorieName,
+              typeAnnonceNameAr: draft.typeAnnonceNameAr,
+              categorieNameAr: draft.categorieNameAr,
             }}
           />
         )}

@@ -5,6 +5,7 @@ import PaginationUI from "./PaginationUI";
 import AnnonceItemUI from "../../../packages/ui/components/AllAnonnce/AnnonceItemUI";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../locales/client";
+import { FaCar, FaMapMarkerAlt,FaMoneyBillWave,FaHome } from "react-icons/fa"; // ajouter en haut du fichier
 
 export default function ListAnnoncesUI({
   totalPages,
@@ -14,7 +15,7 @@ export default function ListAnnoncesUI({
   lang,
   favoriteIds = [],
   showSamsarToggle = false,
-  title, // ⬅️ nouveau: on affiche le titre ici pour pouvoir aligner les filtres en face
+  title,
 }: {
   totalPages: number;
   currentPage: number;
@@ -25,27 +26,20 @@ export default function ListAnnoncesUI({
   showSamsarToggle?: boolean;
   title?: string;
 }) {
-  const hasItems = annonces && annonces.length > 0;
-
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
   const t = useI18n();
 
-  // RTL/LTR
   const isRTL = (lang ?? "").startsWith("ar");
 
-  console.log("favoriteIds ::" , favoriteIds)
+  // Détecte si on est sur la page principale ("/" ou "/fr/")
+  const isMainPage = pathname === `/${lang}` || pathname === `/`;
 
-  
-
-// Vérifie si on est dans /my (ex: /fr/my ou /fr/my/favorites)
-  const inMySection = pathname.includes("/my");
-
-
-  // état actuel depuis l'URL
+  const mainChoice = sp.get("mainChoice") as "location" | "vente" | null;
+  const subChoice = sp.get("subChoice") as "voitures" | "maison" | null;
   const samsarChecked = sp.get("issmar") === "true";
-  const dn = sp.get("directNegotiation"); // "true" | "false" | null
+  const dn = sp.get("directNegotiation");
   const dnState: "any" | "true" | "false" =
     dn === "true" ? "true" : dn === "false" ? "false" : "any";
 
@@ -56,137 +50,150 @@ export default function ListAnnoncesUI({
     router.push(`${pathname}?${params.toString()}`);
   };
 
+  const updateChoice = (key: "mainChoice" | "subChoice", value: string | null) => {
+    pushParams((p) => {
+      if (value) p.set(key, value);
+      else p.delete(key);
+      if (key === "mainChoice" && value === null) p.delete("subChoice");
+    });
+  };
+
   const onToggleSamsar = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      pushParams((p) => p.set("issmar", "true"));
-    } else {
-      // si on décoche samsar, on enlève aussi directNegotiation
-      pushParams((p) => {
-        p.delete("issmar");
-        p.delete("directNegotiation");
-      });
-    }
+    if (e.target.checked) pushParams((p) => p.set("issmar", "true"));
+    else pushParams((p) => { p.delete("issmar"); p.delete("directNegotiation"); });
   };
 
   const setDirect = (state: "any" | "true" | "false") => {
     pushParams((p) => {
-      p.set("issmar", "true"); // on garde issmar actif
+      p.set("issmar", "true");
       if (state === "any") p.delete("directNegotiation");
       if (state === "true") p.set("directNegotiation", "true");
       if (state === "false") p.set("directNegotiation", "false");
     });
   };
 
+  const hasItems = annonces && annonces.length > 0;
+
   return (
-    <div className="container px-2 md:px-4" dir={isRTL ? "rtl" : "ltr"}>
-      {/* En-tête: Titre à un côté, filtres à l'autre */}
-      <div className="mb-3 md:mb-4 flex items-center justify-between gap-3">
-        {title ? (
-          <h2 className="text-base md:text-lg font-semibold text-gray-800">
-            {title}
-          </h2>
-        ) : (
-          <div />
-        )}
+    <div className="container mx-auto px-2 md:px-4" >
+      {/* En-tête: Titre */}
+      <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        
+        <button
+          onClick={() => router.push(`/${lang}/`)} // Retour à la page principale
+          className="text-base md:text-lg font-semibold text-blue-600 hover:underline"
+        >
+          {title} 
+        </button>
+        {/* Filtres affichés seulement sur la page principale */}
+        {isMainPage && (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            {/* MainChoice */}
+            <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden shadow-sm flex-1 sm:flex-none w-full sm:w-auto">
+              <button
+                className={`flex-1 px-3 py-1.5 text-sm ${mainChoice === "location" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                onClick={() => updateChoice("mainChoice", mainChoice === "location" ? null : "location")}
+              >
+                <FaMapMarkerAlt className={`w-5 h-5 ${mainChoice === "location" ? "text-white" : "text-blue-500"}`} />
+                 {t("card.location")}
+              </button>
+              <button
+                className={`flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${mainChoice === "vente" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                onClick={() => updateChoice("mainChoice", mainChoice === "vente" ? null : "vente")}
+              >
+                  <FaMoneyBillWave className={`w-5 h-5 ${mainChoice === "vente" ? "text-white" : "text-green-500"}`} />
+               {t("card.sale")}
+              </button>
+            </div>
 
-        {showSamsarToggle && (
-          <div className="flex items-center gap-3">
-            {/* Switch moderne pour "Samsar seulement" */}
-            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={samsarChecked}
-                onChange={onToggleSamsar}
-              />
-              <span className="relative inline-block w-10 h-6 rounded-full bg-gray-300 transition peer-checked:bg-blue-600">
-                <span className="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
-              </span>
-              <span className="text-xs sm:text-sm text-gray-700">
-                {t("filter.samsarOnly")}
-              </span>
-            </label>
+            {/* SubChoice (si mainChoice) */}
+            {mainChoice && (
+              <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden shadow-sm flex-1 sm:flex-none w-full sm:w-auto">
+                <button
+                  className={`flex-1 px-3 py-1.5 text-sm ${subChoice === "voitures" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                  onClick={() => updateChoice("subChoice", subChoice === "voitures" ? null : "voitures")}
+                >
+                <FaCar className={`w-5 h-5 ${subChoice === "voitures" ? "text-white" : "text-blue-500"}`} />
+                {t("card.voiture")}
+                </button>
+                <button
+                  className={`flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${subChoice === "maison" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                  onClick={() => updateChoice("subChoice", subChoice === "maison" ? null : "maison")}
+                >
+                  <FaHome className={`w-5 h-5 ${subChoice === "maison" ? "text-white" : "text-green-500"}`} />
+                  {t("card.maison")}
+                </button>
+              </div>
+            )}
 
-            {/* Segmented control pour “Négociation directe” (visible si samsar actif) */}
-            {samsarChecked && (
-              <div className="flex items-center gap-2">
-                <span className="hidden sm:inline text-xs text-gray-600">
-                  {t("filter.directNegotiation")}
-                </span>
-                <div className="inline-flex overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm">
-                  <button
-                    type="button"
-                    onClick={() => setDirect("any")}
-                    className={
-                      "px-3 py-1.5 text-xs sm:text-sm transition " +
-                      (dnState === "any"
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-700 hover:bg-gray-50")
-                    }
-                  >
-                    {t("filter.any")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDirect("true")}
-                    className={
-                      "px-3 py-1.5 text-xs sm:text-sm border-l border-gray-300 transition " +
-                      (dnState === "true"
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-700 hover:bg-gray-50")
-                    }
-                  >
-                    {t("filter.yes")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDirect("false")}
-                    className={
-                      "px-3 py-1.5 text-xs sm:text-sm border-l border-gray-300 transition " +
-                      (dnState === "false"
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-700 hover:bg-gray-50")
-                    }
-                  >
-                    {t("filter.no")}
-                  </button>
-                </div>
+            {/* Samsar */}
+            {showSamsarToggle && (
+              <div className="flex items-center gap-3 mt-2 sm:mt-0 flex-wrap">
+                <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                  <input type="checkbox" className="sr-only peer" checked={samsarChecked} onChange={onToggleSamsar} />
+                  <span className="relative inline-block w-10 h-6 rounded-full bg-gray-300 transition peer-checked:bg-blue-600">
+                    <span className="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
+                  </span>
+                  <span className="text-xs sm:text-sm text-gray-700">{t("filter.samsarOnly")}</span>
+                </label>
+
+                {samsarChecked && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="hidden sm:inline text-xs text-gray-600">{t("filter.directNegotiation")}</span>
+                    <div className="inline-flex overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm">
+                      <button
+                        type="button"
+                        onClick={() => setDirect("any")}
+                        className={`px-3 py-1.5 text-xs sm:text-sm transition ${dnState === "any" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                      >
+                        {t("filter.any")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDirect("true")}
+                        className={`px-3 py-1.5 text-xs sm:text-sm border-l border-gray-300 transition ${dnState === "true" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                      >
+                        {t("filter.yes")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDirect("false")}
+                        className={`px-3 py-1.5 text-xs sm:text-sm border-l border-gray-300 transition ${dnState === "false" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                      >
+                        {t("filter.no")}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
       </div>
 
+      {/* Liste annonces */}
       {hasItems ? (
         <>
-          <div
-            aria-label="Liste des annonces"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {annonces.map((a) => (
               <AnnonceItemUI
                 key={a.id}
                 {...a}
                 lang={lang}
                 imageServiceUrl={imageServiceUrl}
-                href={
-                  inMySection
-                    ? `/${lang}/p/annonces/details/${a.id}` // ✅ lien "propre"
-                    : `/${lang}/p/annonces/details/${a.id}`
-                }
+                href={`/${lang}/p/annonces/details/${a.id}`}
                 isFavorite={favoriteIds.includes(String(a.id))}
               />
             ))}
           </div>
-
           <div className="mt-6 flex justify-center">
             <PaginationUI totalPages={totalPages} currentPage={currentPage} />
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center text-gray-500">
-          <p className="text-lg">Aucune annonce trouvée.</p>
-          <p className="text-sm">Modifie les filtres pour voir des résultats.</p>
+        <div>
+          
+          <p className="text-lg">{t("card.Noitem")}</p>
         </div>
       )}
     </div>

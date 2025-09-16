@@ -29,6 +29,10 @@ type Props = {
     isSamsar?: boolean;
     rentalPeriod?: string | null;
     rentalPeriodAr?: string | null;
+    typeAnnonceName?: string;
+    categorieName?: string;
+    typeAnnonceNameAr?: string;
+    categorieNameAr?: string;
   };
 };
 
@@ -145,6 +149,11 @@ export default function AddAnnonceStep3({
       fd.append("issmar", draft.isSamsar ? "true" : "false");
       if (draft.rentalPeriod) fd.append("rentalPeriod", String(draft.rentalPeriod));
       if (draft.rentalPeriodAr) fd.append("rentalPeriodAr", String(draft.rentalPeriodAr));
+      if(draft.categorieName) fd.append("categorieName", String(draft.categorieName));
+      if(draft.typeAnnonceName) fd.append("typeAnnonceName", String(draft.typeAnnonceName));
+      if(draft.categorieNameAr) fd.append("categorieNameAr", String(draft.categorieNameAr));
+      if(draft.typeAnnonceNameAr) fd.append("typeAnnonceNameAr", String(draft.typeAnnonceNameAr));
+      
       // step3 (lieu)
       fd.append("lieuId", String(selectedWilayaId));
       fd.append("moughataaId", String(selectedMoughataaId));

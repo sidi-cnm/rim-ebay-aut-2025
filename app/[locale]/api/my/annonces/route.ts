@@ -135,6 +135,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const description    = String(form.get("description") ?? "");
       const rentalPeriod = String(form.get("rentalPeriod") ?? "");
       const rentalPeriodAr = String(form.get("rentalPeriodAr") ?? "");
+      const typeAnnonceName = String(form.get("typeAnnonceName") ?? "");
+      const categorieName = String(form.get("categorieName") ?? "");
+      const typeAnnonceNameAr = String(form.get("typeAnnonceNameAr") ?? "");
+      const categorieNameAr = String(form.get("categorieNameAr") ?? "");
 
       console.log("Form data received:", rentalPeriod)
 
@@ -188,6 +192,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         price,
         rentalPeriod,
         rentalPeriodAr,
+        typeAnnonceName,
+        categorieName,
+        typeAnnonceNameAr,
+        categorieNameAr,
         status,
         isPublished: false,
         issmar,                   // bool

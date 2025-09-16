@@ -52,9 +52,9 @@ export default async function AddAnnonce(props: {
 
   const relavieUrlAnnonce = `/${params.locale}/api/my/annonces`;
   let relavieUrlOptionsModel = `/${params.locale}/p/api/tursor`;
-  if (process.env.NEXT_PUBLIC_OPTIONS_API_MODE === "sqlite") {
-    relavieUrlOptionsModel = `/${params.locale}/p/api/sqlite`;
-}
+//   if (process.env.NEXT_PUBLIC_OPTIONS_API_MODE === "sqlite") {
+//     relavieUrlOptionsModel = `/${params.locale}/p/api/sqlite`;
+// }
 
   let isSamsar;
 

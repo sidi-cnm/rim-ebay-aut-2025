@@ -49,7 +49,7 @@ export default {
     subCategory: "الفئة الفرعية",
     selectSubCategory: "اختر فئة فرعية",
     description: "الوصف",
-    price: "السعر باليوم (€)",
+    price: "السعر بالأوقية الجديدة",
     rentalPeriod: "فترة الإيجار",
     daily: "يومي",
     weekly: "أسبوعي",
@@ -173,7 +173,12 @@ export default {
   
 
   card: {
+    Noitem: "لا توجد إعلانات.",
     sponsored: "مُرَاعًى",
+    location: "إيجار",
+    sale: "بيع",
+    voiture: "سيارة",
+    maison: "منزل",
     published: "نُشِرَ في",
     empty: "لا توجد إعلانات.",
     removeFavorite: "إزالة من المفضلة",
@@ -185,7 +190,7 @@ export default {
     updateError: "حدث خطأ أثناء تحديث المفضلة",
     networkError: "خطأ في الشبكة. حاول مرة أخرى.",
     price: "السعر",
-    currency: "أوقية",
+    currency: "أوقية جديدة",
     details: "تفاصيل",
   },
 

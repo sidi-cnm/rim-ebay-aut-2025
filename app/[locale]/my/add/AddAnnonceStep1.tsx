@@ -14,8 +14,13 @@ type Props = {
   isSamsar?: boolean;
   onNext: (payload: {
     typeAnnonceId: string;
+    typeAnnonceName?: string;
+    typeAnnonceNameAr?: string;
     // deviennent optionnels s’ils n’existent pas
     categorieId?: string;
+    categorieName?: string;
+    categorieNameAr?: string;
+
     subcategorieId?: string;
     title: string;
     description: string;
@@ -31,10 +36,15 @@ type Props = {
   }) => void;
   initial?: {
     typeAnnonceId?: string;
+    typeAnnonceName?: string;
+    typeAnnonceNameAr?: string;
     categorieId?: string;
+    categorieName?: string;
+    categorieNameAr?: string;
     subcategorieId?: string;
     description?: string;
     price?: number | null | undefined;
+
 
     position?: Position;
     directNegotiation?: boolean | null;
@@ -204,6 +214,10 @@ const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
       isSamsar,
       rentalPeriod,
       rentalPeriodAr,
+      typeAnnonceName: typeObj?.name,
+      typeAnnonceNameAr: typeObj?.nameAr,
+      categorieName: catObj?.name,
+      categorieNameAr: catObj?.nameAr,
     });
   };
 

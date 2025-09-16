@@ -1,7 +1,6 @@
 // app/[locale]/page.tsx
 import ListAnnoncesUI from "./ui/ListAnnoncesUI";
 import { FormSearchUI } from "../../packages/ui/components/FormSearch/FormSearchUI";
-import AnnoceTitle from "../../packages/ui/components/AnnoceTitle";
 import { getI18n } from "../../locales/server";
 import { Annonce } from "../../packages/mytypes/types";
 import { getDb } from "../../lib/mongodb";
@@ -15,11 +14,12 @@ type Search = {
   categorieId?: string;
   subCategorieId?: string; // en DB: subcategorieId
   price?: string;
-  // nouveaux filtres
   wilayaId?: string;       // en DB: lieuId (wilaya)
   moughataaId?: string;    // en DB: moughataaId
   issmar?: string; 
-  directNegotiation?: string        // ⬅️ "true" | "false" | undefined (on ne garde que "true")
+  directNegotiation?: string;
+  mainChoice?: "location" | "vente";
+  subChoice?: "voitures" | "maison";       
 };
 
 export default async function Home({
@@ -38,26 +38,28 @@ export default async function Home({
   const skip = (currentPage - 1) * itemsPerPage;
 
   // ----- Query Mongo -----
-  const query: Record<string, any> = { status: "active" ,isPublished: false };
+  const query: Record<string, any> = { status: "active", isPublished: false };
 
   if (sp.typeAnnonceId)   query.typeAnnonceId   = sp.typeAnnonceId;
   if (sp.categorieId)     query.categorieId     = sp.categorieId;
   if (sp.subCategorieId)  query.subcategorieId  = sp.subCategorieId;
   if (sp.price && !isNaN(Number(sp.price))) query.price = Number(sp.price);
 
-  if (sp.wilayaId)       query.lieuId       = sp.wilayaId;      // wilaya
-  if (sp.moughataaId)    query.moughataaId  = sp.moughataaId;   // moughataa
+  if (sp.wilayaId)       query.lieuId       = sp.wilayaId;
+  if (sp.moughataaId)    query.moughataaId  = sp.moughataaId;
 
-  // ⬇️ filtre "Samsar seulement"
   if (sp.issmar === "true") query.issmar = true;
   if (sp.directNegotiation === "true")  query.directNegotiation = true;
   if (sp.directNegotiation === "false") query.directNegotiation = false;
+
+  if (sp.subChoice === "voitures") query.categorieName = { $regex: /^voitures$/i };
+  if (sp.subChoice === "maison") query.categorieName = { $regex: /^maisons$/i };
 
   const db = await getDb();
   const coll = db.collection("annonces");
 
   const [rows, totalCount] = await Promise.all([
-    coll.find(query).sort({isSponsored: -1, updatedAt: -1 }).skip(skip).limit(itemsPerPage).toArray(),
+    coll.find(query).sort({ isSponsored: -1, updatedAt: -1 }).skip(skip).limit(itemsPerPage).toArray(),
     coll.countDocuments(query),
   ]);
 
@@ -65,12 +67,11 @@ export default async function Home({
     id: String(a._id ?? a.id),
     typeAnnonceId: a.typeAnnonceId,
     typeAnnonceid: a.typeAnnonceId,
-    typeAnnonceName: a.type_annonce?.name ?? "",
-    typeAnnonceNameAr: a.type_annonce?.nameAr ?? "",
+    typeAnnonceName: a.typeAnnonceName ?? "",
+    typeAnnonceNameAr: a.typeAnnonceNameAr ?? "",
     categorieId: a.categorieId,
-    categorieid: a.categorieId,
-    categorieName: a.categorie?.name ?? "",
-    categorieNameAr: a.categorie?.nameAr ?? "",
+    categorieName: a.categorieName ?? "",
+    categorieNameAr: a.categorieNameAr ?? "",
     classificationAr: a.classificationAr ?? "",
     classificationFr: a.classificationFr ?? "",
     lieuId: a.lieuId,
@@ -89,7 +90,7 @@ export default async function Home({
     status: a.status,
     rentalPeriod: a.rentalPeriod ?? "",
     rentalPeriodAr: a.rentalPeriodAr ?? "",
-    isSponsored:a.isSponsored,
+    isSponsored: a.isSponsored,
     isFavorite: Boolean(a.isFavorite ?? false),
     updatedAt: a.updatedAt ? new Date(a.updatedAt) : undefined,
     createdAt: a.createdAt ? new Date(a.createdAt) : undefined,
@@ -101,8 +102,7 @@ export default async function Home({
   const user = await getUserFromCookies();
   let favoriteIds: string[] = [];
   if (user?.id) {
-    const favs = await db
-      .collection("favorites")
+    const favs = await db.collection("favorites")
       .find({ userId: String(user.id) }, { projection: { annonceId: 1 } })
       .toArray();
     favoriteIds = favs.map(f => String(f.annonceId));
@@ -111,12 +111,10 @@ export default async function Home({
   // ---- est-ce un samsar ? ----
   let isSamsar = false;
   if (user?.id) {
-    console.log("user from cookie:", user.id);
     const userIndb = await db.collection("users").findOne({ _id: new ObjectId(user.id) });
     if (userIndb?.samsar) isSamsar = true;
   }
 
-  // Endpoint lieux (wilaya/moughataa)
   const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
 
   return (
@@ -168,21 +166,18 @@ export default async function Home({
 
         {/* Section annonces */}
         <section className="w-full max-w-[720px] md:max-w-none md:flex-1 mx-auto bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">
-         
-          {annonces.length ? (
+          
             <ListAnnoncesUI
-              title={t("nav.Annoce")} // ⬅️ le titre est géré par la liste
+              title={t("nav.Annoce")}
               totalPages={totalPages}
               currentPage={currentPage}
               lang={locale}
               annonces={annonces}
               imageServiceUrl="https://picsum.photos"
               favoriteIds={favoriteIds}
-              showSamsarToggle={isSamsar}                 
+              showSamsarToggle={isSamsar}
             />
-          ) : (
-            <div className="flex justify-center items-center">Aucun annonce pour le moment</div>
-          )}
+          
         </section>
       </div>
     </main>
