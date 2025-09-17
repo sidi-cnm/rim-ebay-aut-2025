@@ -5,6 +5,7 @@ import { useI18n } from "../../../../locales/client";
 interface EditFormDisplayProps {
   editTitle: string;
   annonceTypeLabel: string;
+  userFromDB: boolean;
   categoryLabel: string;
   selectCategoryLabel: string;
   subCategoryLabel: string;
@@ -42,6 +43,17 @@ interface EditFormDisplayProps {
   price: string;
   setPrice: (v: string) => void;
 
+  rentalPeriod: string;
+  setRentalPeriod: (id: string) => void;
+  rentalPeriodAr: string;
+  setRentalPeriodAr: (id: string) => void;
+
+  issmar: boolean;
+  setIssmar: (id: boolean) => void;
+
+  directNegotiation: boolean | null;
+  setDirectNegotiation: (id: boolean | null) => void;
+
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onClose: () => void;
   onEditImages: () => void;
@@ -71,6 +83,7 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
   setSelectedCategoryId,
   selectedSubCategoryId,
   setSelectedSubCategoryId,
+  userFromDB,
   selectedWilayaId,
   setSelectedWilayaId,
   selectedMoughataaId,
@@ -78,38 +91,49 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
   description,
   setDescription,
   price,
+  submitting,
   setPrice,
+  rentalPeriod,
+  setRentalPeriod,
+  rentalPeriodAr,
+  setRentalPeriodAr,
+  issmar,
+  setIssmar,
+  directNegotiation,
+  setDirectNegotiation,
   handleSubmit,
   onClose,
   onEditImages,
   lang,
 }) => {
   const isRTL = lang?.startsWith("ar");
-
   const t = useI18n();
 
- 
+  // Trouver le typeAnnonce sélectionné
+  const selectedType = typeAnnonces.find((t: any) => String(t.id) === String(selectedTypeId));
+  console.log("typeAnnonces:test", typeAnnonces);
+  console.log("selectedType:", selectedType);
+  const isLocation =
+    selectedType &&
+    (selectedType.name?.toLowerCase() === "location" ||
+      selectedType.nameAr?.includes("يجار"));
+
+  console.log("ismsar:", issmar);    
+  console.log("directNegotiation:", directNegotiation);
+  console.log("rentalPeriod:", rentalPeriod);
+  console.log("rentalPeriodAr:", rentalPeriodAr);
+  console.log("isLocation:", isLocation);
+  console.log("selectedTypeId:", selectedTypeId);
 
   return (
     <div
-    role="dialog"
-    aria-modal="true"
-    dir={isRTL ? "rtl" : "ltr"}
-    className="
-      w-full
-      max-w-[260px]       /* très compact sur mobile */
-      sm:max-w-[300px]    /* petit écran */
-      md:max-w-[360px]    /* desktop */
-      lg:max-w-[400px]    /* grand écran */
-      bg-white
-      rounded-lg
-      border border-gray-200
-      shadow-lg
-      p-3 sm:p-4
-      max-h-[80vh] overflow-y-auto
-    "
-  >
-  
+      role="dialog"
+      aria-modal="true"
+      dir={isRTL ? "rtl" : "ltr"}
+      className="w-full max-w-[260px] sm:max-w-[300px] md:max-w-[360px] lg:max-w-[400px] 
+                 bg-white rounded-lg border border-gray-200 shadow-lg p-3 sm:p-4 
+                 max-h-[80vh] overflow-y-auto"
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base sm:text-lg md:text-xl font-semibold">
@@ -241,26 +265,161 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
           />
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-2">
-          
-          <button
-            type="button"
-            onClick={onClose}
-            className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
-          >
+        {/* Rental period : seulement si type = Location/إيجار */}
+        {isLocation && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium">
+              {t("editForm.rentalPeriod")}
+            </label>
+            <select
+              value={rentalPeriod}
+              onChange={(e) => {
+                const value = e.target.value;
+                setRentalPeriod(value);
+
+                // 🔗 synchroniser rentalPeriodAr aussi
+                switch (value) {
+                  case "daily":
+                    setRentalPeriodAr("يومي");
+                    break;
+                  case "weekly":
+                    setRentalPeriodAr("أسبوعي");
+                    break;
+                  case "monthly":
+                    setRentalPeriodAr("شهري");
+                    break;
+                  default:
+                    setRentalPeriodAr("");
+                }
+              }}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">{isRTL ? "-- اختر --" : "-- Select --"}</option>
+              <option value="daily">
+                {isRTL ? "يومي" : t("editForm.Journalier")}
+              </option>
+              <option value="weekly">
+                {isRTL ? "أسبوعي" : t("editForm.Hebdomadaire")}
+              </option>
+              <option value="monthly">
+                {isRTL ? "شهري" : t("editForm.Mensuel")}
+              </option>
+            </select>
+          </div>
+        )}
+
+
+
+        {/* Issmar : si true => afficher les options */}
+       {/* Samsar / Position */}
+       {userFromDB && (
+        <fieldset className="border rounded-md p-3 border-gray-200">
+          <legend className="px-1 text-sm text-gray-700">
+            {t("addAnnonce.positionLegend") ?? "Votre position par rapport au bien"}
+          </legend>
+
+          <div className="flex flex-col gap-2 mt-2">
+            {/* Propriétaire */}
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="radio"
+                name="position"
+                value="owner"
+                checked={!issmar} // affiché mais non sélectionnable si pas samsar
+                onChange={() => {
+                  setIssmar(false);
+                  setDirectNegotiation(null);
+                }}
+                className="h-4 w-4 text-blue-700"
+              />
+              <span>{t("addAnnonce.owner") ?? "Propriétaire"}</span>
+            </label>
+
+            {/* Courtier / Intermédiaire */}
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="radio"
+                name="position"
+                value="broker"
+                checked={issmar && directNegotiation !== null}
+                onChange={() => {
+                  setIssmar(true);
+                  setDirectNegotiation(false); // par défaut, négociation non directe
+                }}
+                className="h-4 w-4 text-blue-700"
+              />
+              <span>{t("addAnnonce.broker") ?? "Courtier / Intermédiaire"}</span>
+            </label>
+
+            {/* Autre */}
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="radio"
+                name="position"
+                value="other"
+                checked={issmar && directNegotiation === null}
+                onChange={() => {
+                  setIssmar(true);
+                  setDirectNegotiation(null);
+                }}
+                className="h-4 w-4 text-blue-700"
+              />
+              <span>{t("addAnnonce.other") ?? "Autre"}</span>
+            </label>
+          </div>
+
+          {/* Sous-question si broker */}
+          {issmar && directNegotiation !== null && (
+            <div className="mt-4">
+              <span className="block text-sm mb-2">
+                {t("addAnnonce.directQ") ?? "La négociation est-elle directe ?"}
+              </span>
+              <div className="flex gap-6">
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="directNegotiation"
+                    value="yes"
+                    checked={directNegotiation === true}
+                    onChange={() => setDirectNegotiation(true)}
+                    className="h-4 w-4 text-blue-700"
+                  />
+                  <span>{t("common.yes") ?? "Oui"}</span>
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="directNegotiation"
+                    value="no"
+                    checked={directNegotiation === false}
+                    onChange={() => setDirectNegotiation(false)}
+                    className="h-4 w-4 text-blue-700"
+                  />
+                  <span>{t("common.no") ?? "Non"}</span>
+                </label>
+              </div>
+            </div>
+          )}
+        </fieldset>
+      )}
+
+
+
+        {/* Boutons */}
+        <div className="flex justify-end gap-3 mt-4">
+          <button type="button" onClick={onClose} className="px-3 py-1 border rounded">
             {cancelLabel}
           </button>
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+            disabled={submitting}
+            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             {updateLabel}
           </button>
-
-          
         </div>
       </form>
+
       <button
             type="submit"
             onClick={onEditImages}

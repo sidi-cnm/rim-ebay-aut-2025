@@ -234,6 +234,18 @@ export default {
   },
 
   editForm: {
+    rentalPeriodAr: "فترة الإيجار",
+    rentalPeriod: "فترة الإيجار",
+    annonceType: "نوع الإعلان",
+    updatedAt: "تم التحديث ",
+    Mensuel: "شهري",
+    Hebdomadaire: "أسبوعي",
+    Journalier: "يومي",
+    selectRentalPeriodAr: "اختر فترة الإيجار",
+    selectRentalPeriod: "Select Rental Period",
+    directNegotiation: "تفاوض مباشر",
+    issmar: "أنا سمسار",
+    edit: "تعديل الإعلان",
     title: "تعديل الإعلان",
     fetchMoughataasError: "فشل تحميل المقاطعات",
     wilaya: "الولاية",

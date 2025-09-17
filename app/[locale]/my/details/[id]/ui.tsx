@@ -19,6 +19,7 @@ export default function MyAnnonceDetailsCompo({
   retiveUrldetailsAnnonce,
   i18nAnnonce,
   i18nContact,
+  userFromDB,
   i18nPrix,
   i18nNotificationsCreating,
   i18nNotificationsSuccessDelete,
@@ -34,6 +35,7 @@ export default function MyAnnonceDetailsCompo({
   i18nAnnonce: string;
   i18nContact: string;
   i18nPrix: string;
+  userFromDB: boolean ;
   i18nNotificationsCreating: string;
   i18nNotificationsSuccessDelete: string;
   i18nNotificationsErrorDelete: string;
@@ -64,6 +66,10 @@ export default function MyAnnonceDetailsCompo({
     price: 0,
     moughataaId: "",
     wilayaId: "",
+    rentalPeriod:"",
+    rentalPeriodAr:"",
+    directNegotiation:false,
+    issmar:false,
   });
 
   const onEditImages = () => {
@@ -105,7 +111,7 @@ export default function MyAnnonceDetailsCompo({
         images: mergedImages.length > 0 ? mergedImages : (data.images ?? []),
       });
 
-      console.log("Annonce fetched:", { ...data, images: mergedImages });
+      console.log("Annonce fetched::::", { ...data, images: mergedImages });
 
       setInitialData({
         typeAnnonceId: data?.typeAnnonceId ?? "",
@@ -115,6 +121,10 @@ export default function MyAnnonceDetailsCompo({
         price: Number(data?.price ?? 0),
         moughataaId: data?.moughataaId ?? "",
         wilayaId: data?.lieuId ?? "",
+        rentalPeriod: data?.rentalPeriod ?? "",
+        rentalPeriodAr: data?.rentalPeriodAr ?? "",
+        directNegotiation: data?.directNegotiation ?? false,
+        issmar: data?.issmar ?? false,
       });
 
       setError(null);
@@ -164,6 +174,10 @@ export default function MyAnnonceDetailsCompo({
         wilayaId: annonces.lieuId ?? "",
         moughataaId: annonces.moughataaId ?? "",
         price: Number(annonces.price ?? 0),
+        rentalPeriod: annonces.rentalPeriod ?? "",
+        rentalPeriodAr: annonces.rentalPeriodAr ?? "",
+        directNegotiation: annonces.directNegotiation ?? false,
+        issmar: annonces.issmar ?? false,
       });
     }
     setEditModalOpen(true);
@@ -199,6 +213,7 @@ export default function MyAnnonceDetailsCompo({
           <div className="w-[92vw] max-w-[380px] sm:max-w-[440px] md:max-w-[520px] lg:max-w-[560px]">
             <EditForm
               lang={lang}
+              userFromDB={userFromDB}
               userid={""}
               annonceId={annonceId}
               initialData={initialData}

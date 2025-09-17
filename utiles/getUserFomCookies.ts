@@ -15,12 +15,14 @@ export async function getUserFromCookies() {
         const token = jwtStore.value
         const { payload } = await jwtVerify(token, secret)
 
+         console.log("Payload from JWT:", payload);
+
         //console.log(payload)
         // Récupérer les données essentielles de l'utilisateur
         userData = {
           id: payload.id,
           email: payload.email,
-          role: payload.role,
+          role: payload.roleName,
           samsar: payload.samsar,
         };
         // Injecter dans les headers

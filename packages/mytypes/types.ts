@@ -107,6 +107,9 @@ export interface Annonce {
   typeAnnonceName?: string; // Nom du type d'annonce (optionnel)
   typeAnnonceNameAr?: string; // Nom du type d'annonce en arabe (optionnel)
 
+  directNegotiation?: boolean; // Négociation directe (optionnel)
+  issmar?: boolean; // Indique si l'annonce est publiée par un samsar (optionnel)
+
   categorieId: string; // Identifiant de la catégorie
   categorie?: OptionsModel;
   subcategorie?: OptionsModel;

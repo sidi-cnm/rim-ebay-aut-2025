@@ -7,10 +7,14 @@ import { Category, SubCategory } from "../../../mytypes/types";
 import EditFormDisplay from "./EditFormDisplay";
 import { useI18n } from "../../../../locales/client";
 
+
+type Position = "owner" | "broker" | "other";
+
 export interface EditFormProps {
   lang: string;
   annonceId: string;
   userid: string;
+  userFromDB: boolean;
   initialData: {
     typeAnnonceId: string;
     categorieId: string;
@@ -19,6 +23,11 @@ export interface EditFormProps {
     price: number;
     wilayaId: string;
     moughataaId: string;
+    rentalPeriod: string;
+    rentalPeriodAr: string;
+    issmar: boolean;
+    directNegotiation: boolean | null;
+
   };
   onClose: () => void;
   onEditImages: () => void;
@@ -33,6 +42,7 @@ const EditForm: React.FC<EditFormProps> = ({
   lang,
   userid,
   annonceId,
+  userFromDB,
   initialData,
   onUpdate,
   onEditImages,
@@ -52,6 +62,14 @@ const EditForm: React.FC<EditFormProps> = ({
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>(initialData.subcategorieId);
   const [description, setDescription] = useState(initialData.description);
   const [price, setPrice] = useState(initialData.price.toString());
+  
+
+  const [rentalPeriod, setRentalPeriod] = useState(initialData.rentalPeriod);
+const [rentalPeriodAr, setRentalPeriodAr] = useState(initialData.rentalPeriodAr);
+const [issmar, setIssmar] = useState(initialData.issmar);
+
+const [directNegotiation, setDirectNegotiation] = useState(initialData.directNegotiation);
+
 
   // loader état
   const [submitting, setSubmitting] = useState(false);
@@ -59,6 +77,29 @@ const EditForm: React.FC<EditFormProps> = ({
   const [moughataas, setMoughataas] = useState<any[]>([]);
   const [selectedWilayaId, setSelectedWilayaId] = useState(initialData.wilayaId);
   const [selectedMoughataaId, setSelectedMoughataaId] = useState(initialData.moughataaId);
+
+
+  console.log("initialData:::", initialData);
+
+
+  // --- inside EditForm.tsx ---
+
+// When type changes (owner vs broker), update issmar + directNegotiation automatically
+useEffect(() => {
+  const selectedType = typeAnnonces.find((t) => t.id === selectedTypeId);
+  if (!selectedType) return;
+
+  // Ici on se base sur issamsar
+  if (selectedType.issmar) {
+    setIssmar(true);
+    // directNegotiation reste éditable
+  } else {
+    setIssmar(false);
+    setDirectNegotiation(null); // reset si ce n'est pas un samsar
+  }
+}, [selectedTypeId, typeAnnonces]);
+
+
 
 
   const router = useRouter();
@@ -128,6 +169,7 @@ const EditForm: React.FC<EditFormProps> = ({
   }, [selectedWilayaId, lang, t]);
   
   
+  console.log("typeAnnonces:::::", typeAnnonces);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -143,6 +185,10 @@ const EditForm: React.FC<EditFormProps> = ({
         price: Number(price),
         lieuId: selectedWilayaId,
         moughataaId: selectedMoughataaId,
+        rentalPeriod,
+        rentalPeriodAr,
+        issmar,
+        directNegotiation
       };
 
       const res = await axios.put(updateAnnonceEndpoint, annonceData, {
@@ -178,6 +224,7 @@ const EditForm: React.FC<EditFormProps> = ({
 
       <EditFormDisplay
         typeAnnonces={typeAnnonces}
+        userFromDB={userFromDB}
         categories={categories}
         filteredSubCategories={filteredSubCategories}
         selectedTypeId={selectedTypeId}
@@ -190,6 +237,14 @@ const EditForm: React.FC<EditFormProps> = ({
         setDescription={setDescription}
         price={price}
         setPrice={setPrice}
+        rentalPeriod={rentalPeriod}
+        setRentalPeriod={setRentalPeriod} 
+        rentalPeriodAr={rentalPeriodAr}
+        setRentalPeriodAr={setRentalPeriodAr}
+        issmar={issmar}
+        setIssmar={setIssmar}
+        directNegotiation={directNegotiation}
+        setDirectNegotiation={setDirectNegotiation}
         handleSubmit={handleSubmit}
         onClose={onClose}
         lang={lang}

@@ -18,9 +18,22 @@ export default async function AnnonceDetail({
 
   const user = await getUserFromCookies();
   const userId = user?.id ?? "";
+  console.log("User ID from cookies:", user);
+
+  
+  
 
   const db = await getDb();
 
+  let userFromDB
+
+  if (user?.id) {
+     userFromDB = await db.collection("users").findOne(
+      { _id: new ObjectId(user.id) }, // filtrer par ObjectId
+      { projection: { samsar: 1 } } // sélectionner uniquement ces champs
+    );
+
+    console.log("User from DB:", userFromDB);
   let contact = "Contact non trouvé";
   if (userId) {
     const contactDoc = await db.collection("contacts").findOne({
@@ -47,6 +60,7 @@ export default async function AnnonceDetail({
 
       <MyAnnonceDetailsUI
         lang={locale}
+        userFromDB={userFromDB?.samsar}
         i18nAnnonce={t("filter.Annonces")}
         i18nContact={t("footer.contact")}
         i18nPrix={t("filter.price")}
@@ -62,4 +76,4 @@ export default async function AnnonceDetail({
       />
     </div>
   );
-}
+}}

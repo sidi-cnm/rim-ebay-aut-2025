@@ -29,6 +29,7 @@ export async function GET(_req: Request, ctx: any) {
 }
 
 // PUT /[locale]/api/my/annonces/:id
+// PUT /[locale]/api/my/annonces/:id
 export async function PUT(req: Request, ctx: any) {
   try {
     const { id } = ctx.params;
@@ -50,6 +51,10 @@ export async function PUT(req: Request, ctx: any) {
       price?: number | null;
       lieuId?: string;          // wilaya
       moughataaId?: string;
+      issmar?: boolean;
+      directNegotiation?: boolean | null;
+      rentalPeriod?: string | null;
+      rentalPeriodAr?: string | null;
     };
 
     const norm = (v: unknown) =>
@@ -61,9 +66,18 @@ export async function PUT(req: Request, ctx: any) {
     if (typeof body.subcategorieId === "string") update.subcategorieId = body.subcategorieId;
     if (typeof body.description === "string") update.description = body.description;
     if (typeof body.price === "number" || body.price === null) update.price = body.price ?? null;
-    if (typeof body.lieuId === "string") update.lieuId = body.lieuId;   // ✅ on met à jour le lieuId
-    if ("lieuId" in body)        update.lieuId = norm(body.lieuId);           // wilaya
+    if ("lieuId" in body)        update.lieuId = norm(body.lieuId);
     if ("moughataaId" in body)   update.moughataaId = norm(body.moughataaId);
+    if (typeof body.issmar === "boolean") update.issmar = body.issmar;
+
+    if (typeof body.directNegotiation === "boolean" || body.directNegotiation === null || body.directNegotiation === undefined) {
+      update.directNegotiation = body.directNegotiation ?? null;
+    }
+
+    if ("rentalPeriod" in body)  update.rentalPeriod = norm(body.rentalPeriod);
+    if ("rentalPeriodAr" in body) update.rentalPeriodAr = norm(body.rentalPeriodAr);
+
+    console.log("body: " ,body)
 
     const value = await db.collection("annonces").findOneAndUpdate(
       { _id: annonceId, userId: userIdStr },
@@ -82,6 +96,9 @@ export async function PUT(req: Request, ctx: any) {
     return NextResponse.json({ error: "Error updating annonce" }, { status: 500 });
   }
 }
+
+
+
 
 // DELETE /[locale]/api/my/annonces/:id
 export async function DELETE(_req: Request, ctx: any) {

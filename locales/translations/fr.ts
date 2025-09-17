@@ -1,3 +1,5 @@
+import { update } from "node-persist";
+
 export default {
   nav: {
     home: "Accueil",
@@ -256,6 +258,19 @@ export default {
 
 
   editForm: {
+    rentalPeriodAr: "Période de location (arabe)",
+    update: "Mettre à jour",
+    rentalPeriod: "Période de location",
+    Mensuel: "Mensuel",
+    Hebdomadaire: "Hebdomadaire",
+    Journalier: "Journalier",
+    daily: "Journalier",
+    weekly: "Hebdomadaire",
+    monthly: "Mensuel",
+    issmar: "Annonce par un samsar",
+    directNegotiation: "Négociation directe",
+    isLocation: "Type Location",
+    isSale: "Type Vente",
     title: "Modifier l'annonce",
     wilaya: "Wilaya",
     moughataa: "Moughataa",
@@ -280,9 +295,12 @@ export default {
     selectCategory: "Sélectionner la catégorie",
     selectSubCategory: "Sélectionner la sous-catégorie",
     description: "Description",
+    updated: "Annonce mise à jour !",
     price: "Prix",
     close: "Fermer",
-    update: "Mettre à jour",
+    common: "Commun",
+    annonceType: "Type d'annonce",
+    errorUpdate: "Échec de la mise à jour de l'annonce",
     cancel: "Annuler",
     errors: {
       fetchTypes: "Échec du chargement des types d'annonce",
