@@ -36,8 +36,8 @@ export default function ListAnnoncesUI({
   // Détecte si on est sur la page principale ("/" ou "/fr/")
   const isMainPage = pathname === `/${lang}` || pathname === `/`;
 
-  const mainChoice = sp.get("mainChoice") as "location" | "vente" | null;
-  const subChoice = sp.get("subChoice") as "voitures" | "maison" | null;
+  const mainChoice = sp.get("mainChoice") as "Location" | "Vente" | null;
+  const subChoice = sp.get("subChoice") as "voitures" | "Maisons" | null;
   const samsarChecked = sp.get("issmar") === "true";
   const dn = sp.get("directNegotiation");
   const dnState: "any" | "true" | "false" =
@@ -91,17 +91,17 @@ export default function ListAnnoncesUI({
             {/* MainChoice */}
             <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden shadow-sm flex-1 sm:flex-none w-full sm:w-auto">
               <button
-                className={`flex-1 px-3 py-1.5 text-sm ${mainChoice === "location" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                onClick={() => updateChoice("mainChoice", mainChoice === "location" ? null : "location")}
+                className={`flex-1 px-3 py-1.5 text-sm ${mainChoice === "Location" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                onClick={() => updateChoice("mainChoice", mainChoice === "Location" ? null : "Location")}
               >
-                <FaMapMarkerAlt className={`w-5 h-5 ${mainChoice === "location" ? "text-white" : "text-blue-500"}`} />
+                <FaMapMarkerAlt className={`w-5 h-5 ${mainChoice === "Location" ? "text-white" : "text-blue-500"}`} />
                  {t("card.location")}
               </button>
               <button
-                className={`flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${mainChoice === "vente" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                onClick={() => updateChoice("mainChoice", mainChoice === "vente" ? null : "vente")}
+                className={`flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${mainChoice === "Vente" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                onClick={() => updateChoice("mainChoice", mainChoice === "Vente" ? null : "Vente")}
               >
-                  <FaMoneyBillWave className={`w-5 h-5 ${mainChoice === "vente" ? "text-white" : "text-green-500"}`} />
+                  <FaMoneyBillWave className={`w-5 h-5 ${mainChoice === "Vente" ? "text-white" : "text-green-500"}`} />
                {t("card.sale")}
               </button>
             </div>
@@ -117,10 +117,10 @@ export default function ListAnnoncesUI({
                 {t("card.voiture")}
                 </button>
                 <button
-                  className={`flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${subChoice === "maison" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                  onClick={() => updateChoice("subChoice", subChoice === "maison" ? null : "maison")}
+                  className={`flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${subChoice === "Maisons" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+                  onClick={() => updateChoice("subChoice", subChoice === "Maisons" ? null : "Maisons")}
                 >
-                  <FaHome className={`w-5 h-5 ${subChoice === "maison" ? "text-white" : "text-green-500"}`} />
+                  <FaHome className={`w-5 h-5 ${subChoice === "Maisons" ? "text-white" : "text-green-500"}`} />
                   {t("card.maison")}
                 </button>
               </div>

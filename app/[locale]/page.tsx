@@ -18,8 +18,8 @@ type Search = {
   moughataaId?: string;    // en DB: moughataaId
   issmar?: string; 
   directNegotiation?: string;
-  mainChoice?: "location" | "vente";
-  subChoice?: "voitures" | "maison";       
+  mainChoice?: "Location" | "Vente";
+  subChoice?: "voitures" | "Maisons";       
 };
 
 export default async function Home({
@@ -52,8 +52,22 @@ export default async function Home({
   if (sp.directNegotiation === "true")  query.directNegotiation = true;
   if (sp.directNegotiation === "false") query.directNegotiation = false;
 
-  if (sp.subChoice === "voitures") query.categorieName = { $regex: /^voitures$/i };
-  if (sp.subChoice === "maison") query.categorieName = { $regex: /^maisons$/i };
+  // if (sp.subChoice === "voitures") query.categorieName = { $regex: /^voitures$/i };
+  // if (sp.subChoice === "maison") query.categorieName = { $regex: /^maisons$/i };
+
+  if (sp.mainChoice) {
+    // Appliquer le filtre uniquement si subChoice est aussi défini
+    if (sp.subChoice === "voitures") {
+      query.typeAnnonceName = sp.mainChoice; // location ou vente
+      query.categorieName = "voitures";
+    }
+    if (sp.subChoice === "Maisons") {
+      console.log("filtering maisons");
+      query.typeAnnonceName = sp.mainChoice; // location ou vente
+      query.categorieName = "Maisons";
+    }
+  }
+  
 
   const db = await getDb();
   const coll = db.collection("annonces");
