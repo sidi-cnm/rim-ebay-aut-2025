@@ -38,7 +38,7 @@ export default async function Home({
   const skip = (currentPage - 1) * itemsPerPage;
 
   // ----- Query Mongo -----
-  const query: Record<string, any> = { status: "active", isPublished: false };
+  const query: Record<string, any> = { status: "active", isPublished: true };
 
   if (sp.typeAnnonceId)   query.typeAnnonceId   = sp.typeAnnonceId;
   if (sp.categorieId)     query.categorieId     = sp.categorieId;
