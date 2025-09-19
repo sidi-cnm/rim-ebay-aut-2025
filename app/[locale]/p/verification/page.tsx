@@ -22,6 +22,10 @@ export default function VerificationPage() {
           يجب توثيق حسابك أولاً.  
           الرجاء التحقق من بريدك الإلكتروني (Email) لتفعيل حسابك.
         </p>
+        
+        <p className="text-gray-600 leading-relaxed" >
+        انتظر من 5 إلى 10 دقائق لتصلك الرسالة
+        </p>
 
       </div>
     </div>
