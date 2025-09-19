@@ -339,7 +339,7 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                 alt="Rim Ijar"
                 width={120}
                 height={120}
-                className="h-16 w-auto object-contain sm:h-20"
+                className="h-24 w-auto object-contain sm:h-20"
                 priority
               />
             </div>
