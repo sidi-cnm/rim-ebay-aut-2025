@@ -65,7 +65,7 @@ export default function RegisterForm({ lang = "ar" }) {
       });
 
       setSubmitStatus(t("register.success"));
-      router.push(`/${lang}/p/users/connexion`);
+      router.push(`/${lang}/p/verification`);
       router.refresh();
     } catch (error: any) {
       setSubmitStatus(error.response?.data?.error || t("nav.labo"));
