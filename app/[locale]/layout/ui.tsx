@@ -172,9 +172,9 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
     <Image
       src="/images/logeddeyar.png"
       alt="Rim Ijar"
-      width={150}               // largeur augmentée
-      height={150}              // hauteur augmentée
-      className="h-32 w-auto object-contain"  // h-24 = 6rem = 96px
+      width={120}               // largeur augmentée
+      height={120}              // hauteur augmentée
+      className="h-24 w-auto object-contain"  // h-24 = 6rem = 96px
       priority
     />
   </div>
