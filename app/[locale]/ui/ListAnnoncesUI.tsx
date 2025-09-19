@@ -108,6 +108,7 @@ export default function ListAnnoncesUI({
               <span>{t("card.location")}</span>
             </button>
 
+            <span className="w-px bg-gray-300" />
             <button
               className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${
                 mainChoice === "Vente"
@@ -147,6 +148,8 @@ export default function ListAnnoncesUI({
                 />
                 <span>{t("card.voiture")}</span>
               </button>
+
+              <span className="w-px bg-gray-300" />
             
               <button
                 className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${
