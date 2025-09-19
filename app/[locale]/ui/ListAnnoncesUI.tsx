@@ -90,40 +90,83 @@ export default function ListAnnoncesUI({
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
             {/* MainChoice */}
             <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden shadow-sm flex-1 sm:flex-none w-full sm:w-auto">
-              <button
-                className={`flex-1 px-3 py-1.5 text-sm ${mainChoice === "Location" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                onClick={() => updateChoice("mainChoice", mainChoice === "Location" ? null : "Location")}
-              >
-                <FaMapMarkerAlt className={`w-5 h-5 ${mainChoice === "Location" ? "text-white" : "text-blue-500"}`} />
-                 {t("card.location")}
-              </button>
-              <button
-                className={`flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${mainChoice === "Vente" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                onClick={() => updateChoice("mainChoice", mainChoice === "Vente" ? null : "Vente")}
-              >
-                  <FaMoneyBillWave className={`w-5 h-5 ${mainChoice === "Vente" ? "text-white" : "text-green-500"}`} />
-               {t("card.sale")}
-              </button>
-            </div>
+            <button
+              className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm ${
+                mainChoice === "Location"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+              onClick={() =>
+                updateChoice("mainChoice", mainChoice === "Location" ? null : "Location")
+              }
+            >
+              <FaMapMarkerAlt
+                className={`w-5 h-5 ${
+                  mainChoice === "Location" ? "text-white" : "text-blue-500"
+                }`}
+              />
+              <span>{t("card.location")}</span>
+            </button>
+
+            <button
+              className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${
+                mainChoice === "Vente"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+              onClick={() =>
+                updateChoice("mainChoice", mainChoice === "Vente" ? null : "Vente")
+              }
+            >
+              <FaMoneyBillWave
+                className={`w-5 h-5 ${
+                  mainChoice === "Vente" ? "text-white" : "text-green-500"
+                }`}
+              />
+              <span>{t("card.sale")}</span>
+            </button>
+          </div>
 
             {/* SubChoice (si mainChoice) */}
             {mainChoice && (
               <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden shadow-sm flex-1 sm:flex-none w-full sm:w-auto">
-                <button
-                  className={`flex-1 px-3 py-1.5 text-sm ${subChoice === "voitures" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                  onClick={() => updateChoice("subChoice", subChoice === "voitures" ? null : "voitures")}
-                >
-                <FaCar className={`w-5 h-5 ${subChoice === "voitures" ? "text-white" : "text-blue-500"}`} />
-                {t("card.voiture")}
-                </button>
-                <button
-                  className={`flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${subChoice === "Maisons" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                  onClick={() => updateChoice("subChoice", subChoice === "Maisons" ? null : "Maisons")}
-                >
-                  <FaHome className={`w-5 h-5 ${subChoice === "Maisons" ? "text-white" : "text-green-500"}`} />
-                  {t("card.maison")}
-                </button>
-              </div>
+              <button
+                className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm ${
+                  subChoice === "voitures"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
+                onClick={() =>
+                  updateChoice("subChoice", subChoice === "voitures" ? null : "voitures")
+                }
+              >
+                <FaCar
+                  className={`w-5 h-5 ${
+                    subChoice === "voitures" ? "text-white" : "text-blue-500"
+                  }`}
+                />
+                <span>{t("card.voiture")}</span>
+              </button>
+            
+              <button
+                className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${
+                  subChoice === "Maisons"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
+                onClick={() =>
+                  updateChoice("subChoice", subChoice === "Maisons" ? null : "Maisons")
+                }
+              >
+                <FaHome
+                  className={`w-5 h-5 ${
+                    subChoice === "Maisons" ? "text-white" : "text-green-500"
+                  }`}
+                />
+                <span>{t("card.maison")}</span>
+              </button>
+            </div>
+            
             )}
 
             {/* Samsar */}
