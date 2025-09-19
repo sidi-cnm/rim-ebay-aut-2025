@@ -165,20 +165,20 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             
             {/* Logo */}
             <Link
-  href={`/${localeKey}`}
-  className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
->
-  <div className="flex items-center justify-center">
-    <Image
-      src="/images/logeddeyar.png"
-      alt="Rim Ijar"
-      width={120}               // largeur augmentée
-      height={120}              // hauteur augmentée
-      className="h-24 w-auto object-contain"  // h-24 = 6rem = 96px
-      priority
-    />
-  </div>
-</Link>
+              href={`/${localeKey}`}
+              className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
+            >
+              <div className="flex items-center justify-center">
+                <Image
+                  src="/images/logeddeyar.png"
+                  alt="Rim Ijar"
+                  width={120}               // largeur augmentée
+                  height={120}              // hauteur augmentée
+                  className="h-24 w-auto object-contain"  // h-24 = 6rem = 96px
+                  priority
+                />
+              </div>
+            </Link>
 
 
 
@@ -303,6 +303,9 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 /* =======================================================================
    NAV non connecté
 ======================================================================= */
+/* =======================================================================
+   NAV non connecté
+======================================================================= */
 export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const localeKey = (lang || "fr").split("-")[0] as "fr" | "ar";
   const isAr = localeKey === "ar";
@@ -319,32 +322,41 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
     <nav className="relative sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
       {/* ===== Fond animé Prism (full width) ===== */}
       <div className="absolute inset-0 -z-10 pointer-events-none opacity-70">
-        <PrismBG
-        />
+        <PrismBG />
       </div>
 
       <div dir={isAr ? "rtl" : "ltr"} className="mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
         <div className="flex items-center justify-between py-3 gap-2">
-          {/* Burger */}
-          <button
-            onClick={() => setIsOpen(v => !v)}
-            className="inline-flex p-2 rounded-md hover:bg-white/10 sm:hidden"
-            aria-label="Menu"
-          >
-            <Menu className="h-7 w-7" />
-          </button>
 
-          {/* Logo */}
+          {/* === Groupe Logo === */}
           <Link
             href={`/${localeKey}`}
             className="text-xl sm:text-2xl font-bold hover:text-yellow-300 transition flex items-center gap-2"
           >
-            <Home className="h-5 w-5 sm:h-6 sm:w-6" />
-            {t("nav.rimIjar")}
+            <div>
+              <Image
+                src="/images/logeddeyar.png"
+                alt="Rim Ijar"
+                width={120}
+                height={120}
+                className="h-16 w-auto object-contain sm:h-20"
+                priority
+              />
+            </div>
           </Link>
 
-          {/* Actions */}
+          {/* === Groupe Actions (menu + langue) === */}
           <div className="flex items-center gap-2">
+            {/* Burger visible uniquement en mobile */}
+            <button
+              onClick={() => setIsOpen(v => !v)}
+              className="inline-flex p-2 rounded-md hover:bg-white/10 sm:hidden"
+              aria-label="Menu"
+            >
+              <Menu className="h-7 w-7" />
+            </button>
+
+            {/* Lien Connexion visible uniquement en desktop */}
             <Link
               id="connexion"
               data-cy="connexion"
@@ -354,6 +366,8 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
               <LogIn className="h-5 w-5" />
               <span className="hidden md:inline">{t("nav.login")}</span>
             </Link>
+
+            {/* Sélecteur de langue */}
             <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
           </div>
         </div>
