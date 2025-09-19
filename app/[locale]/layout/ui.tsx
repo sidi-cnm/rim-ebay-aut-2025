@@ -163,21 +163,23 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
           {/* Bloc gauche ou droit : logo + liens */}
           <div className={`flex items-center gap-6`}>
             
-          <Link
-            href={`/${localeKey}`}
-            className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
-          >
-            <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white p-1 shadow-md">
-              <Image
-                src="/images/logo.png"
-                alt="Rim Ijar"
-                width={48}
-                height={48}
-                className="h-10 w-auto object-contain"
-                priority
-              />
-            </div>
-          </Link>
+            {/* Logo */}
+            <Link
+  href={`/${localeKey}`}
+  className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
+>
+  <div className="flex items-center justify-center">
+    <Image
+      src="/images/logoeddeyar1.png"
+      alt="Rim Ijar"
+      width={120}               // largeur augmentée
+      height={120}              // hauteur augmentée
+      className="h-24 w-auto object-contain"  // h-24 = 6rem = 96px
+      priority
+    />
+  </div>
+</Link>
+
 
 
 
