@@ -99,7 +99,7 @@ export default function RegisterForm({ lang = "ar" }) {
           {/* CONTACT */}
           <div>
             <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-1">
-              Téléphone
+              {t("register.Telephone")}
             </label>
             <input
               type="text" id="contact"
