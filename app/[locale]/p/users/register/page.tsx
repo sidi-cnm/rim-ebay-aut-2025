@@ -6,5 +6,5 @@ export default async function RegisterPage(props: {
   const params = await props.params;
   console.log("local cote server");
   console.log("parmas test", params.locale);
-  return <RegisterForm lang={params.locale} />;
+  return <RegisterForm lang={params.locale} urlboot={`/${params.locale}/api/telegram`} />;
 }

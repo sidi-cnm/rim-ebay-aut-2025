@@ -4,6 +4,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { useI18n } from "../../../../locales/client";
+import { sendTelegramMessage } from "../../../../Telegramboot/main";
+
+const url = process.env.SITE_BASE_URL
 
 type Lieu = { id: number; name: string; nameAr: string };
 
@@ -11,6 +14,7 @@ type Props = {
   lang?: string;
   lieuxApiBase: string;             // `/${lang}/p/api/tursor/lieux`
   createAnnonceEndpoint: string;    // `/${lang}/api/annonces`
+  urlboot: string;               // `/${lang}/api/telegram`
   onBack: () => void;
   draft: {
     typeAnnonceId?: string;
@@ -42,11 +46,15 @@ export default function AddAnnonceStep3({
   createAnnonceEndpoint,
   onBack,
   draft,
+  urlboot,
 }: Props) {
   const t = useI18n();
   const router = useRouter();
   const isRTL = useMemo(() => lang.startsWith("ar"), [lang]);
 
+  // console.log("process : " ,process.env.SITE_BASE_URL)
+  // console.log("url : " , url)
+  
   const [wilayas, setWilayas] = useState<Lieu[]>([]);
   const [moughataas, setMoughataas] = useState<Lieu[]>([]);
   const [selectedWilayaId, setSelectedWilayaId] = useState<number | "">(
@@ -59,6 +67,9 @@ export default function AddAnnonceStep3({
   const [loadingMoughataas, setLoadingMoughataas] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  console.log("🚀 urlboot reçu dans AddAnnonceStep3:", urlboot);
+
+ 
   // Charger wilayas
   useEffect(() => {
     let ignore = false;
@@ -176,7 +187,19 @@ export default function AddAnnonceStep3({
       const data = await res.json().catch(() => ({} as any));
       if (!res.ok) throw new Error(data?.error || "Create failed");
 
+      // console.log("Annonce created:", data.id);
+
+      const ress = await fetch(
+        `${urlboot}?msg=eddeyar.com/${lang}/annonces/details/${data?.id}`,
+        { method: "GET" }
+      );
+      
+      console.log("Telegram API response:", ress);
+
       toast.success(t("step3.toasts.saved"), { id: loading });
+
+      
+
       router.push(`/${lang}/my/list`);
       router.refresh();
     } catch (e: any) {

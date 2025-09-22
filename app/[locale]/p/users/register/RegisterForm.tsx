@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "../../../../../locales/client";
 import axios from "axios";
 
-export default function RegisterForm({ lang = "ar" }) {
+export default function RegisterForm({ lang = "ar" , urlboot}: { lang?: string; urlboot: string }) {
   const router = useRouter();
   const t = useI18n();
 
@@ -63,6 +63,17 @@ export default function RegisterForm({ lang = "ar" }) {
         password,
         samsar, // 👈 envoi du choix radio
       });
+
+      console.log("response email : " ,response.data.user.email)
+
+      const ress = await fetch(
+        `${urlboot}?msg=utilisateur avec email(${response.data.user.email}) vient de s'inscrire sur le site`,
+        { method: "GET" }
+      );
+
+      console.log("ress boot : " ,ress)
+      
+      
 
       setSubmitStatus(t("register.success"));
       router.push(`/${lang}/p/verification`);
