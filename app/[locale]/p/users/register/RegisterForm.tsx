@@ -67,7 +67,7 @@ export default function RegisterForm({ lang = "ar" , urlboot}: { lang?: string; 
       console.log("response email : " ,response.data.user.email)
 
       const ress = await fetch(
-        `${urlboot}?msg=utilisateur avec email(${response.data.user.email}) vient de s'inscrire sur le site`,
+        `${urlboot}?msg=https://admin-rim.vercel.app/users/${response.data.user.id}`,
         { method: "GET" }
       );
 

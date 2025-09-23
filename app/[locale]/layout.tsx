@@ -6,7 +6,7 @@ import { Providers } from "./layout/providers";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
-  title: "RIM IJAR",
+  title: "eddeyar",
   description: "trouver des maisons,appartement, voiture, engine a louer",
 };
 
