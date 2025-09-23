@@ -190,7 +190,7 @@ export default function AddAnnonceStep3({
       // console.log("Annonce created:", data.id);
 
       const ress = await fetch(
-        `${urlboot}?msg=admin-rim.vercel.app/annonces/details/${data?.id}`,
+        `${urlboot}?msg=admin-rim.vercel.app/annonces/${data?.id}`,
         { method: "GET" }
       );
       
