@@ -39,7 +39,7 @@ export default async function RootLayout(
       <head>
         {/* ✅ Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-2W4N8MP60"
+          src="https://www.googletagmanager.com/gtag/js?id=G-2WW4N8MP60"
           strategy="afterInteractive"
         />
         <Script id="ga4-init" strategy="afterInteractive">
