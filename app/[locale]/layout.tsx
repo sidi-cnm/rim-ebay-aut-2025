@@ -4,6 +4,7 @@ import "./globals.css";
 import ConditionalNav from "./layout/ConditionalNav";
 import { Providers } from "./layout/providers";
 import { cookies } from "next/headers";
+import Script from "next/script"; // ✅ ajouter l'import
 
 export const metadata: Metadata = {
   title: "eddeyar",
@@ -20,10 +21,8 @@ export default async function RootLayout(
   }>,
 ) {
   const params = await props.params;
-
   const { children } = props;
 
-  // const { direction: dir } = new Locale(params.locale).textInfo;
   let dir = "ltr"; // Default direction
   try {
     if (params.locale) {
@@ -37,15 +36,27 @@ export default async function RootLayout(
 
   return (
     <html lang={params.locale} dir={dir}>
-      <body
-        className={`bg-gradient-to-br  from-gray-50 to-gray-100 min-h-screen`}
-      >
+      <head>
+        {/* ✅ Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-2W4N8MP60"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-2W4N8MP60', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
+      </head>
+      <body className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <Providers locale={params.locale}>
           <ConditionalNav lang={params.locale} isAuthenticated={hasSession} />
-          <>
-           {children}
-          </>
-         
+          {children}
         </Providers>
       </body>
     </html>
