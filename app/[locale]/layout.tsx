@@ -47,11 +47,13 @@ export default async function RootLayout(
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-2W4N8MP60', {
+            gtag('config', 'G-2WW4N8MP60', {
               page_path: window.location.pathname,
             });
           `}
         </Script>
+
+        
       </head>
       <body className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
         <Providers locale={params.locale}>
