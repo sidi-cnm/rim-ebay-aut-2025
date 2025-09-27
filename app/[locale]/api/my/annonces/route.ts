@@ -178,6 +178,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       console.log("Creating annonce for userId:", userIdStr);
       const contact = await getUserContact(db, userIdStr);
+     
+      if (contact === null) {
+        return NextResponse.json(
+          { error: "Champs requis manquants (contact)" },
+          { status: 400 }
+        );
+      }
+      
       console.log("User contact:", contact);
 
       const annonceDoc: any = {

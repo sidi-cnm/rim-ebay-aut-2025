@@ -4,7 +4,7 @@ import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../locales/client";
-import { Home, List as ListIcon, Plus, Menu, X, LogIn, LogOut, Heart } from "lucide-react";
+import { Home, List as ListIcon, Plus, Menu, X, LogIn, LogOut, Heart, Info } from "lucide-react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
@@ -205,6 +205,12 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                 <Heart className="h-5 w-5" />
                 {t("nav.favorites") ?? "Favoris"}
               </NavLink>
+
+               {/* === Nouveau lien About us === */}
+               <NavLink href={`/${localeKey}/about`} active={isActive(`/${localeKey}/about`)}>
+               <Info />
+                 {t("nav.about") ?? "About us"}
+              </NavLink>
             </div>
           </div>
 
@@ -244,7 +250,6 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
         dir={isAr ? "rtl" : "ltr"}
       >
         <div className="flex items-center justify-between mb-4">
-          <span className="text-lg font-semibold">{t("nav.rimIjar")}</span>
           <button onClick={closeDrawer} className="p-2 rounded-md hover:bg-white/10" aria-label="Fermer">
             <X className="h-6 w-6" />
           </button>
@@ -270,6 +275,12 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
           <NavLink href={`/${localeKey}/my/favorite`} active={isActive(`/${localeKey}/my/favorite`)} onClick={closeDrawer}>
             <Heart className="h-5 w-5" />
             {t("nav.favorites") ?? "Favoris"}
+          </NavLink>
+
+           {/* === About us mobile === */}
+           <NavLink href={`/${localeKey}/about`} active={isActive(`/${localeKey}/about`)} onClick={closeDrawer}>
+           <Info />
+             {t("nav.about") ?? "About us"}
           </NavLink>
 
           <button
@@ -367,6 +378,8 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
               <span className="hidden md:inline">{t("nav.login")}</span>
             </Link>
 
+            
+
             {/* Sélecteur de langue */}
             <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
           </div>
@@ -387,13 +400,30 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
         dir={isAr ? "rtl" : "ltr"}
       >
         <div className="flex items-center justify-between mb-4">
-          <span className="text-lg font-semibold">{t("nav.rimIjar")}</span>
+              <Image 
+                  src="/images/logeddeyar.png"
+                  alt="Rim Ijar"
+                  width={120}               // largeur augmentée
+                  height={120}              // hauteur augmentée
+                  className="h-24 w-auto object-contain"  // h-24 = 6rem = 96px
+                  priority
+                />
           <button onClick={close} className="p-2 rounded-md hover:bg-white/10" aria-label="Fermer">
             <X className="h-6 w-6" />
           </button>
         </div>
 
         <div className="flex flex-col gap-3">
+
+        <Link
+            href={`/${localeKey}/about`}
+            onClick={close}
+            className="flex items-center gap-2 hover:bg-blue-600 px-3 py-2 rounded-md transition"
+          >
+             <Info />
+             {t("nav.about") ?? "About us"}
+        </Link>
+
           <Link
             id="connexion-mobile"
             href={`/${localeKey}/p/users/connexion`}

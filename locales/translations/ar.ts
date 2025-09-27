@@ -1,6 +1,7 @@
 export default {
   nav: {
     home: "الصفحة الرئيسية",
+    about:"معلومات عنا",
     close: "إغلاق",
     myListings: "إعلاناتي",
     favorites: "المفضلة",

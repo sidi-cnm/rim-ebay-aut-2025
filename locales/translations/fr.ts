@@ -4,6 +4,7 @@ export default {
   nav: {
     home: "Accueil",
     close: "Fermer",
+    about:"About us",
     favorites: "Favoris",
     myListings: "Mes annonces",
     addListing: "Ajouter une annonce",
