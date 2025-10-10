@@ -29,6 +29,9 @@ export default function AnnonceDetailUI({
   // Copie locale de l’annonce pour merger les images chargées côté client
   const [localAnnonce, setLocalAnnonce] = useState<Annonce>(annonce);
 
+
+  console.log("AnnonceDetailUI render", localAnnonce );
+
   
   // Helper: retourne l'URL telle quelle (Blob public)
   const getImageUrl = (imagePath: string) => String(imagePath || "");
