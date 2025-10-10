@@ -39,7 +39,7 @@ export default async function AnnonceDetail({
     title: doc.title ?? "",
     description: doc.description ?? "",
     price: doc.price != null ? Number(doc.price) : 0,
-    contact: contactDoc?.contact ?? "",
+    contact: doc?.contact ?? "",
     haveImage: !!doc.haveImage,
     firstImagePath: doc.firstImagePath ? String(doc.firstImagePath) : "",
     // on laisse images vide : le client va appeler /fr/api/images/:id pour les charger toutes
