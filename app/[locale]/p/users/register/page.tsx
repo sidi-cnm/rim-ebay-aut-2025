@@ -1,4 +1,5 @@
 import RegisterForm from "./RegisterForm";
+import RegisterFormNumber from "./RegisterFormPhone";
 
 export default async function RegisterPage(props: {
   params: Promise<{ locale: string }>;
