@@ -378,6 +378,16 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
               <span className="hidden md:inline">{t("nav.login")}</span>
             </Link>
 
+            <Link
+              id="register"
+              data-cy="register"
+              href={`/${localeKey}/p/users/register`}
+              className="hidden sm:flex items-center gap-2 hover:bg-green-500 px-3 py-2 text-black bg-white rounded-lg transition"
+            >
+              <LogIn className="h-5 w-5" />
+              <span className="hidden md:inline">{t("nav.signup")}</span>
+            </Link>
+
             
 
             {/* Sélecteur de langue */}
@@ -432,6 +442,16 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
           >
             <LogIn className="h-5 w-5" />
             {t("nav.login")}
+          </Link>
+
+          <Link
+            id="connexion-mobile"
+            href={`/${localeKey}/p/users/register`}
+            onClick={close}
+            className="flex items-center gap-2 justify-center hover:bg-green-500 px-3 py-2 text-black bg-white rounded-lg transition"
+          >
+            <LogIn className="h-5 w-5" />
+            {t("nav.signup")}
           </Link>
 
           <div className="pt-2">
