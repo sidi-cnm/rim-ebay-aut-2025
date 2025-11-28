@@ -29,8 +29,11 @@ export default function AnnonceItemUI({
   const [favLoading, setFavLoading] = useState(false);
   const [isFav, setIsFav] = useState<boolean>(Boolean(a.isFavorite));
 
-  const imgUrl =
-    a.haveImage && a.firstImagePath ? `${a.firstImagePath}` : FALLBACK_IMG;
+  const imgUrl = a.haveImage && a.firstImagePath ? `${a.firstImagePath}` : FALLBACK_IMG;
+
+  
+  // description shortening the text if too long for better display and it is comatible with both languages
+  const description = a.description.length > 60 ? a.description.slice(0, 57) + "..." : a.description;
 
   const created = a.createdAt ? new Date(a.createdAt) : null;
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -175,7 +178,7 @@ export default function AnnonceItemUI({
         </span>
 
         <h2 className="text-base md:text-lg font-semibold leading-tight line-clamp-1">
-          {a.description}
+          {description}
         </h2>
 
         {humanDate && (
