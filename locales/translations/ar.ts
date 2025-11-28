@@ -8,7 +8,7 @@ export default {
     addListing: "إضافة إعلان",
     logout: "تسجيل الخروج",
     login: "الدخول للإعلانات",
-    signup: "تسجيل الإعلان",
+    signup: "تسجيل للإعلان",
     rimIjar: "ريم إيجار",
     labo: "تحميل ..",
     Avances: "متقدم",
