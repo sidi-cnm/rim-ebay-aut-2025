@@ -132,6 +132,7 @@ export default async function Home({
   let lieuxEndpoint = `/${locale}/p/api/sqlite/lieux`;
   let optionsEndpoint = `/${locale}/p/api/sqlite/options`;
   // si on est en production alors on utilise les endpoints turso
+  console.log("NODE_ENV:", process.env.NODE_ENV);
   if (process.env.NODE_ENV === "production") {
     // turso api endpoints
     optionsEndpoint = `/${locale}/p/api/tursor/options`;
@@ -168,9 +169,9 @@ export default async function Home({
             <div className="h-full bg-white rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 overflow-y-auto">
               <FormSearchUI
                 lang={locale}
-                typeAnnoncesEndpoint={`/${locale}/p/api/tursor/options`}
-                categoriesEndpoint={`/${locale}/p/api/tursor/options`}
-                subCategoriesEndpoint={`/${locale}/p/api/tursor/options`}
+                typeAnnoncesEndpoint={optionsEndpoint}
+                categoriesEndpoint={optionsEndpoint}
+                subCategoriesEndpoint={optionsEndpoint}
                 lieuxEndpoint={lieuxEndpoint}
                 isSamsar={isSamsar}
                 annonceTypeLabel={t("filter.type")}
