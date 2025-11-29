@@ -48,7 +48,7 @@ export default function ConnexionForm({ lang = "ar" }) {
 
         {/* Conditionally render the appropriate form */}
         {/* {registrationMethod === "email" ? ( */}
-          <ConnexionFormEmail lang={lang} />
+          <ConnexionFormPhone lang={lang} />
         {/* ) : (
           <ConnexionFormPhone lang={lang} />
         )} */}
