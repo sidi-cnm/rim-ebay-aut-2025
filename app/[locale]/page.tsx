@@ -16,10 +16,10 @@ type Search = {
   price?: string;
   wilayaId?: string;       // en DB: lieuId (wilaya)
   moughataaId?: string;    // en DB: moughataaId
-  issmar?: string; 
+  issmar?: string;
   directNegotiation?: string;
   mainChoice?: "Location" | "Vente";
-  subChoice?: "voitures" | "Maisons";       
+  subChoice?: "voitures" | "Maisons";
 };
 
 export default async function Home({
@@ -40,16 +40,16 @@ export default async function Home({
   // ----- Query Mongo -----
   const query: Record<string, any> = { status: "active", isPublished: true };
 
-  if (sp.typeAnnonceId)   query.typeAnnonceId   = sp.typeAnnonceId;
-  if (sp.categorieId)     query.categorieId     = sp.categorieId;
-  if (sp.subCategorieId)  query.subcategorieId  = sp.subCategorieId;
+  if (sp.typeAnnonceId) query.typeAnnonceId = sp.typeAnnonceId;
+  if (sp.categorieId) query.categorieId = sp.categorieId;
+  if (sp.subCategorieId) query.subcategorieId = sp.subCategorieId;
   if (sp.price && !isNaN(Number(sp.price))) query.price = Number(sp.price);
 
-  if (sp.wilayaId)       query.lieuId       = sp.wilayaId;
-  if (sp.moughataaId)    query.moughataaId  = sp.moughataaId;
+  if (sp.wilayaId) query.lieuId = sp.wilayaId;
+  if (sp.moughataaId) query.moughataaId = sp.moughataaId;
 
   if (sp.issmar === "true") query.issmar = true;
-  if (sp.directNegotiation === "true")  query.directNegotiation = true;
+  if (sp.directNegotiation === "true") query.directNegotiation = true;
   if (sp.directNegotiation === "false") query.directNegotiation = false;
 
   // if (sp.subChoice === "voitures") query.categorieName = { $regex: /^voitures$/i };
@@ -67,7 +67,7 @@ export default async function Home({
       query.categorieName = "Maisons";
     }
   }
-  
+
 
   const db = await getDb();
   const coll = db.collection("annonces");
@@ -128,8 +128,15 @@ export default async function Home({
     const userIndb = await db.collection("users").findOne({ _id: new ObjectId(user.id) });
     if (userIndb?.samsar) isSamsar = true;
   }
-
-  const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
+  //sqlite api endpoints
+  let lieuxEndpoint = `/${locale}/p/api/sqlite/lieux`;
+  let optionsEndpoint = `/${locale}/p/api/sqlite/options`;
+  // si on est en production alors on utilise les endpoints turso
+  if (process.env.NODE_ENV === "production") {
+    // turso api endpoints
+    optionsEndpoint = `/${locale}/p/api/tursor/options`;
+    lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
+  }
 
   return (
     <main className="min-h-screen bg-gray-100">
@@ -137,9 +144,9 @@ export default async function Home({
       <div className="block md:hidden w-full px-2 pt-4">
         <FormSearchUI
           lang={locale}
-          typeAnnoncesEndpoint={`/${locale}/p/api/tursor/options`}
-          categoriesEndpoint={`/${locale}/p/api/tursor/options`}
-          subCategoriesEndpoint={`/${locale}/p/api/tursor/options`}
+          typeAnnoncesEndpoint={optionsEndpoint}
+          categoriesEndpoint={optionsEndpoint}
+          subCategoriesEndpoint={optionsEndpoint}
           lieuxEndpoint={lieuxEndpoint}
           isSamsar={isSamsar}
           annonceTypeLabel={t("filter.type")}
@@ -180,18 +187,18 @@ export default async function Home({
 
         {/* Section annonces */}
         <section className="w-full max-w-[720px] md:max-w-none md:flex-1 mx-auto bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">
-          
-            <ListAnnoncesUI
-              title={t("nav.Annoce")}
-              totalPages={totalPages}
-              currentPage={currentPage}
-              lang={locale}
-              annonces={annonces}
-              imageServiceUrl="https://picsum.photos"
-              favoriteIds={favoriteIds}
-              showSamsarToggle={isSamsar}
-            />
-          
+
+          <ListAnnoncesUI
+            title={t("nav.Annoce")}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            lang={locale}
+            annonces={annonces}
+            imageServiceUrl="https://picsum.photos"
+            favoriteIds={favoriteIds}
+            showSamsarToggle={isSamsar}
+          />
+
         </section>
       </div>
     </main>
