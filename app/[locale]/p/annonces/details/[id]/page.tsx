@@ -42,7 +42,7 @@ export async function generateMetadata({
   const keywords = [doc.categorie?.name, doc.lieuStr, "annonce", "vente", "achat"].filter(Boolean);
 
   const metadata: Metadata = {
-    title: `${title} | Rim EBay`,
+    title: `${title} | Eddeyar`,
     description,
     keywords,
     openGraph: {
