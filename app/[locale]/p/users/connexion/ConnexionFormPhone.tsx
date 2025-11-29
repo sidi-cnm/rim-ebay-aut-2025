@@ -64,10 +64,11 @@ const handleNavigateToForgetPassword = () => {
     if (!password) {
       newErrors.password = t("connexion.passwordRequired");
       isValid = false;
-    } else if (password.length < 6) {
-      newErrors.password = t("connexion.passwordShort");
-      isValid = false;
-    }
+    } 
+    // else if (password.length < 6) {
+    //   newErrors.password = t("connexion.passwordShort");
+    //   isValid = false;
+    // }
 
     setErrors(newErrors);
     return isValid;

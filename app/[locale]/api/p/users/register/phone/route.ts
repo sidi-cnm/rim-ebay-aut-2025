@@ -40,9 +40,9 @@ export async function POST(request: NextRequest) {
     if (!/\S+@\S+\.\S+/.test(email)) {
       return NextResponse.json({ error: "email invalide" }, { status: 400 });
     }
-    if (password.length < 6) {
-      return NextResponse.json({ error: "password trop court" }, { status: 400 });
-    }
+    // if (password.length < 6) {
+    //   return NextResponse.json({ error: "password trop court" }, { status: 400 });
+    // }
 
     // validate phone format for Chinguisoft
     if (!isValidChinguPhone(contact)) {

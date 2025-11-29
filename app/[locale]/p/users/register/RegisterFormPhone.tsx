@@ -28,10 +28,11 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
     if (!password) {
       newErrors.password = t("register.passwordRequired");
       isValid = false;
-    } else if (password.length < 6) {
-      newErrors.password = t("register.passwordMinLength");
-      isValid = false;
-    }
+    } 
+    // else if (password.length < 6) {
+    //   newErrors.password = t("register.passwordMinLength");
+    //   isValid = false;
+    // }
 
     if (password !== confirmPassword) {
       newErrors.confirmPassword = t("register.passwordsNotMatch");
