@@ -42,7 +42,8 @@ export default function VerifyOtpPageUi() {
       setMsg("Verification successful!");
       localStorage.removeItem("pendingOtpUserId");
 
-      router.push(`${lang}/my/add`); // go to home or dashboard
+      router.replace(`/${lang}/my/add`); 
+      //.push(`${lang}/my/add`); // go to home or dashboard
     } catch (err: any) {
       setMsg(err.response?.data?.error || "Verification failed.");
     } finally {
