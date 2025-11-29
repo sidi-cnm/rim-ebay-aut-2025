@@ -4,12 +4,13 @@ import bcrypt from "bcrypt";
 import crypto from "node:crypto";
 import { getDb } from "../../../../../../../lib/mongodb"; // your existing import
 import { Roles } from "../../../../../../../DATA/roles";
+import { env } from "node:process";
 
 const CHINGUI_KEY = process.env.CHINGUISOFT_VALIDATION_KEY;
 const CHINGUI_TOKEN = process.env.CHINGUISOFT_VALIDATION_TOKEN;
 
 // helper: validate phone according to Chinguisoft rules: starts with 2/3/4 and 8 digits
-function isValidChinguPhone(p : string): boolean {
+function isValidChinguPhone(p: string): boolean {
   return /^[234]\d{7}$/.test(p);
 }
 
@@ -27,8 +28,9 @@ export async function POST(request: NextRequest) {
     const password = String(body.password ?? "");
     const contact = String(body.contact ?? "").trim();
     const samsar = body.samsar; // must be boolean
-
-    console.log("Register body:", { email, password, contact, samsar });
+    if (env.NODE_ENV === "development") {
+      console.log("Register request body:", { email, password, contact, samsar });
+    }
     if (!email || !password || !contact || typeof samsar !== "boolean") {
       return NextResponse.json(
         { error: "email, password, contact et samsar (boolean) sont requis" },
