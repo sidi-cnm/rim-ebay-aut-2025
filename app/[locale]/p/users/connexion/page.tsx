@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Connexion | Rim EBay",
+    title: "Connexion | eddeyar.com",
     description: "Connectez-vous à votre compte pour accéder à vos annonces et gérer vos achats/ventes.",
     keywords: ["connexion", "login", "compte", "authentification", "Rim EBay"],
     openGraph: {

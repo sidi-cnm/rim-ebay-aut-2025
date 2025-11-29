@@ -16,7 +16,7 @@ export default function ConnexionForm({ lang = "ar" }) {
         </h1>
 
         {/* connexion Method Toggle */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-3">
             اختر طريقة التسجيل
           </label>
@@ -44,14 +44,14 @@ export default function ConnexionForm({ lang = "ar" }) {
               {t("connexion.emailLabel")}
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Conditionally render the appropriate form */}
-        {registrationMethod === "email" ? (
+        {/* {registrationMethod === "email" ? ( */}
           <ConnexionFormEmail lang={lang} />
-        ) : (
+        {/* ) : (
           <ConnexionFormPhone lang={lang} />
-        )}
+        )} */}
       </div>
     </main>
   );
