@@ -4,6 +4,29 @@ Description: Page for users to request a password reset link.
 */
 
 import ForgotPasswordForm from './ui';
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Mot de passe oublié | Rim EBay",
+    description: "Demandez un lien de réinitialisation de mot de passe pour récupérer l'accès à votre compte.",
+    keywords: ["mot de passe oublié", "réinitialisation", "reset password", "Rim EBay"],
+    openGraph: {
+      title: "Mot de passe oublié",
+      description: "Demandez un lien de réinitialisation de mot de passe.",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: "Mot de passe oublié",
+      description: "Demandez un lien de réinitialisation de mot de passe.",
+    },
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default function ForgotPasswordPage() {
   return (

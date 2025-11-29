@@ -4,8 +4,67 @@ import AnnonceDetailCompo from "../../../../../../packages/ui/components/All_Ann
 import { Annonce } from "../../../../../../packages/mytypes/types";
 import { getDb } from "../../../../../../lib/mongodb";
 import { ObjectId } from "mongodb";
+import { Metadata } from "next";
 
 type PageParams = { id: string; locale: string };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<PageParams>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
+  const db = await getDb();
+  const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { id: id as any };
+  const doc = await db.collection("annonces").findOne(query);
+
+  if (!doc) {
+    return {
+      title: "Annonce non trouvée | Rim EBay",
+      description: "L'annonce demandée n'existe pas. Découvrez d'autres annonces sur notre plateforme.",
+      keywords: ["annonce", "non trouvée", "erreur"],
+      openGraph: {
+        title: "Annonce non trouvée",
+        description: "L'annonce demandée n'existe pas.",
+        type: "website",
+      },
+      twitter: {
+        card: "summary",
+        title: "Annonce non trouvée",
+        description: "L'annonce demandée n'existe pas.",
+      },
+    };
+  }
+
+  const title = doc.title || "Détails de l'annonce";
+  const description = doc.description ? doc.description.substring(0, 160) : "Consultez les détails de cette annonce.";
+  const keywords = [doc.categorie?.name, doc.lieuStr, "annonce", "vente", "achat"].filter(Boolean);
+
+  const metadata: Metadata = {
+    title: `${title} | Rim EBay`,
+    description,
+    keywords,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: doc.firstImagePath ? [{ url: doc.firstImagePath, alt: title }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: doc.firstImagePath ? [doc.firstImagePath] : [],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+
+  return metadata;
+}
 
 export default async function AnnonceDetail({
   params,

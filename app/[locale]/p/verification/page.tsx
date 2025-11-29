@@ -1,4 +1,27 @@
 import { MailCheck } from "lucide-react";
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Vérification de l'email | Rim EBay",
+    description: "Vérifiez votre email pour activer votre compte et commencer à utiliser notre plateforme.",
+    keywords: ["vérification email", "activation compte", "email", "Rim EBay"],
+    openGraph: {
+      title: "Vérification de l'email",
+      description: "Vérifiez votre email pour activer votre compte.",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: "Vérification de l'email",
+      description: "Vérifiez votre email pour activer votre compte.",
+    },
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default function VerificationPage() {
   return (
