@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
     const user = await db.collection("users").findOne({ _id: new ObjectId(userId) });
     
     if (user) {
+      console.log("Auto-login: User found", user._id);
       // Activate user account since phone is verified
       await db.collection("users").updateOne(
         { _id: user._id },
@@ -91,6 +92,7 @@ export async function POST(request: NextRequest) {
       // 3. Create JWT
       const sessionToken = uuidv4();
       if (process.env.JWT_SECRET) {
+        console.log("Auto-login: Creating JWT");
         const token = jwt.sign(
           {
             id: user._id.toString(),
@@ -112,6 +114,12 @@ export async function POST(request: NextRequest) {
           createdAt: new Date(),
         });
 
+        // Mettre à jour le lastLogin de l'utilisateur
+        await db.collection("users").updateOne(
+          { _id: user._id },
+          { $set: { lastLogin: new Date() } }
+        );
+
         // 5. Set Cookies
         const cookieStore = await cookies();
         cookieStore.set({
@@ -129,9 +137,12 @@ export async function POST(request: NextRequest) {
           value: user._id.toString(),
           path: "/",
         });
+        console.log("Auto-login: Cookies set");
       } else {
         console.error("JWT_SECRET is missing, cannot auto-login user");
       }
+    } else {
+        console.log("Auto-login: User NOT found for userId", userId);
     }
     // --- AUTO-LOGIN END ---
 
