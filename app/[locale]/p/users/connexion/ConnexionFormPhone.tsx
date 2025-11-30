@@ -45,7 +45,7 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
   const handleNavigate = () => {
     router.push(`/${lang}/p/users/register`);
   };
-const handleNavigateToForgetPassword = () => {
+  const handleNavigateToForgetPassword = () => {
   // fr/p/users/forgot-password
     router.push(`/${lang}/p/users/forgot-password`);
   };
