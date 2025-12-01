@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import crypto from "node:crypto";
 import { getDb } from "../../../../../../../lib/mongodb"; // your existing import
+import { ObjectId } from "mongodb";
 import { Roles } from "../../../../../../../DATA/roles";
 import { env } from "node:process";
 
@@ -56,11 +57,32 @@ export async function POST(request: NextRequest) {
 
     const db = await getDb();
 
-    // 2) Unique email
-    const existing = await db.collection("users").findOne({ email });
-    if (existing) {
-      return NextResponse.json({ error: "Email already exists" }, { status: 400 });
+    // 1.5) Check if contact exists
+    const existingContact = await db.collection("contacts").findOne({ contact });
+    if (existingContact) {
+      if (existingContact.isVerified) {
+        return NextResponse.json(
+          { error: "le numéro de téléphone existe déjà" },
+          { status: 400 }
+        );
+      } else {
+        // Unverified: delete contact and associated user
+        await db.collection("contacts").deleteOne({ _id: existingContact._id });
+        if (existingContact.userId) {
+          try {
+             await db.collection("users").deleteOne({ _id: new ObjectId(existingContact.userId) });
+          } catch (e) {
+            console.error("Error deleting unverified user:", e);
+          }
+        }
+      }
     }
+
+    // 2) Unique email
+    // const existing = await db.collection("users").findOne({ email });
+    // if (existing) {
+    //   return NextResponse.json({ error: "Email already exists" }, { status: 400 });
+    // }
 
     // 3) Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
