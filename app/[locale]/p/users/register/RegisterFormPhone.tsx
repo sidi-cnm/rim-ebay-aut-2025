@@ -3,6 +3,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "../../../../../locales/client";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: string; urlboot: string }) {
   const router = useRouter();
@@ -12,6 +13,8 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
   const [contact, setContact] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({ contact: "", password: "", confirmPassword: "" });
   const [submitStatus, setSubmitStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -105,15 +108,24 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
         <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
           {t("register.passwordLabel")}
         </label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-          disabled={isLoading}
-          required
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 pr-10"
+            disabled={isLoading}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
         {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
       </div>
 
@@ -122,15 +134,24 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
         <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
           {t("register.confirmPasswordLabel")}
         </label>
-        <input
-          type="password"
-          id="confirmPassword"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-          disabled={isLoading}
-          required
-        />
+        <div className="relative">
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 pr-10"
+            disabled={isLoading}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+          >
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
         {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
       </div>
 

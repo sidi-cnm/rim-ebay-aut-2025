@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "../../../../../locales/client";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function ConnexionFormPhone({ lang = "ar" }) {
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
 
   const [phone, setphone] = useState(""); 
   const [password, setPassword] = useState(""); 
+  const [showPassword, setShowPassword] = useState(false); 
 
   // const [email, setEmail] = useState(defaultEmail);
   // const [password, setPassword] = useState(defaultPassword);
@@ -153,14 +155,23 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
             >
               {t("connexion.passwordLabel")}
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>
             )}
