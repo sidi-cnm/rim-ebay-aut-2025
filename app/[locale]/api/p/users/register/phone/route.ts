@@ -1,6 +1,6 @@
 // app/.../route.js  (use the same path you provided)
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
 import { getDb } from "../../../../../../../lib/mongodb"; // your existing import
 import { ObjectId } from "mongodb";

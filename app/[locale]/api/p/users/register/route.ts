@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
 import { getDb } from "../../../../../../lib/mongodb"; // ← utilise ta connexion existante
 import { Roles } from "../../../../../../DATA/roles";
