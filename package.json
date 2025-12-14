@@ -9,8 +9,7 @@
     "start": "next start",
     "dev": "next dev --turbopack",
     "dev:test": "NODE_ENV=test next dev",
-    "check-types": "tsc --noEmit",
-    "lint": "next lint",
+    "check-types": "tsc --noEmit", 
     "mongo:init": "tsx -r dotenv/config script/initMongo.ts"
   },
   "dependencies": {
