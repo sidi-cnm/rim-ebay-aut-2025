@@ -10,7 +10,7 @@ const I18nMiddleware = createI18nMiddleware({
 });
 
  
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
   // Exclure favicon.ico
