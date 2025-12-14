@@ -15,6 +15,7 @@ export async function POST(req: Request) {
       );
     }
 
+    console.log("test")
     const db = await getDb();
 
     // 1) Retrouver la demande de reset via le token
