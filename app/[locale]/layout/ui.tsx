@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../locales/client";
@@ -145,6 +146,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const sideClass = isAr
     ? "left-0 -translate-x-full data-[open=true]:translate-x-0"
     : "right-0 translate-x-full data-[open=true]:translate-x-0";
+  const whatsapp = localeKey == "ar" ? "واتساب" : "WhatsApp";
 
   return (
     <nav className="relative sticky top-0 z-40 w-full h-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
@@ -277,6 +279,15 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             {t("nav.favorites") ?? "Favoris"}
           </NavLink>
 
+          <Link
+              href="https://wa.me/22241862698"
+              target="_blank"
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
+            >
+              <FaWhatsapp className="h-6 w-6" />
+              {whatsapp}
+          </Link>
+
            {/* === About us mobile === */}
            <NavLink href={`/${localeKey}/about`} active={isActive(`/${localeKey}/about`)} onClick={closeDrawer}>
            <Info />
@@ -328,6 +339,7 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const sideClass = isAr
     ? "left-0 -translate-x-full data-[open=true]:translate-x-0"
     : "right-0 translate-x-full data-[open=true]:translate-x-0";
+  const whatsapp = localeKey == "ar" ? "واتساب" : "WhatsApp";
 
   return (
     <nav className="relative sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
@@ -452,6 +464,15 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
           >
             <LogIn className="h-5 w-5" />
             {t("nav.signup")}
+          </Link>
+
+          <Link
+              href="https://wa.me/22241862698"
+              target="_blank"
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
+            >
+              <FaWhatsapp className="h-6 w-6" />
+              {whatsapp}
           </Link>
 
           <div className="pt-2">
