@@ -186,6 +186,14 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 
 
             <div className="hidden lg:flex items-center gap-2">
+            {/* <Link
+              href="https://wa.me/22241862698"
+              target="_blank"
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
+            >
+              <FaWhatsapp className="h-6 w-6" />
+              {whatsapp}
+          </Link>  */}
 
             <NavLink href={`/${localeKey}/`} active={isActive(`/${localeKey}`)}>
                 <Home />
@@ -218,6 +226,14 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 
           {/* Bloc opposé : actions (logout + langue) */}
           <div className={`flex items-center gap-2 sm:gap-3 ${isAr ? "order-1" : "order-2"}`}>
+            <Link
+              href="https://wa.me/22241862698"
+              target="_blank"
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
+            >
+              <FaWhatsapp className="h-6 w-6" />
+              {whatsapp}
+            </Link>
             <button
               onClick={handleLogout}
               className="hidden lg:flex items-center gap-2 hover:bg-purple-500/80 bg-white/10 px-3 py-2 rounded-md transition"
@@ -279,14 +295,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             {t("nav.favorites") ?? "Favoris"}
           </NavLink>
 
-          <Link
-              href="https://wa.me/22241862698"
-              target="_blank"
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
-            >
-              <FaWhatsapp className="h-6 w-6" />
-              {whatsapp}
-          </Link>
+
 
            {/* === About us mobile === */}
            <NavLink href={`/${localeKey}/about`} active={isActive(`/${localeKey}/about`)} onClick={closeDrawer}>
@@ -370,6 +379,14 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 
           {/* === Groupe Actions (menu + langue) === */}
           <div className="flex items-center gap-2">
+            <Link
+              href="https://wa.me/22241862698"
+              target="_blank"
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
+            >
+              <FaWhatsapp className="h-6 w-6" />
+              {whatsapp}
+          </Link>
             {/* Burger visible uniquement en mobile */}
             <button
               onClick={() => setIsOpen(v => !v)}
@@ -415,7 +432,7 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
         className={`fixed inset-0 z-40 bg-black/40 transition-opacity sm:hidden ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
-      />
+      /> 
       <aside
         data-open={isOpen}
         className={`fixed top-0 bottom-0 ${sideClass} z-50 w-80 max-w-[85vw] bg-gradient-to-b from-purple-800 to-blue-800 text-white p-4 pt-5 transition-transform sm:hidden`}
@@ -466,14 +483,6 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             {t("nav.signup")}
           </Link>
 
-          <Link
-              href="https://wa.me/22241862698"
-              target="_blank"
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
-            >
-              <FaWhatsapp className="h-6 w-6" />
-              {whatsapp}
-          </Link>
 
           <div className="pt-2">
             <LanguageSelectFlags
