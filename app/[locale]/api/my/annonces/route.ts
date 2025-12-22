@@ -159,6 +159,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Step 3
       const lieuId      = String(form.get("lieuId") ?? "");
       const moughataaId = String(form.get("moughataaId") ?? "");
+      const lieuStr      = String(form.get("lieuStr") ?? "");
+      const lieuStrAr      = String(form.get("lieuStrAr") ?? "");
+      const moughataaStr = String(form.get("moughataaStr") ?? "");
+      const moughataaStrAr = String(form.get("moughataaStrAr") ?? "");
       const status      = String(form.get("status") ?? "active");
 
       // files
@@ -208,8 +212,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         isPublished: false,
         issmar,                   // bool
         lieuId: lieuId || null,
+        lieuStr: lieuStr || null,
+        lieuStrAr: lieuStrAr || null,
         contact,
         moughataaId: moughataaId || null,
+        moughataaStr: moughataaStr || null,
+        moughataaStrAr: moughataaStrAr || null,
         haveImage: false,
         directNegotiation,  
         isSponsored:false,      // bool | null
@@ -292,7 +300,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       status: data.status,
       isPublished: false,
       lieuId: data.lieuId ? String(data.lieuId) : null,
+      lieuStr: data.lieuStr ? String(data.lieuStr) : null,
+      lieuStrAr: data.lieuStrAr ? String(data.lieuStrAr) : null,
       moughataaId: data.moughataaId ? String(data.moughataaId) : null,
+      moughataaStr: data.moughataaStr ? String(data.moughataaStr) : null,
+      moughataaStrAr: data.moughataaStrAr ? String(data.moughataaStrAr) : null,
       createdAt: now,
       updatedAt: now,
     };

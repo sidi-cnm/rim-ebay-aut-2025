@@ -92,6 +92,13 @@ export default function AnnonceItemUI({
 
   console.log("sponsored:", a.isSponsored);
 
+  const hasLocation = a.lieuStr && a.lieuStrAr && a.moughataaStr && a.moughataaStrAr;
+
+  let location = "";
+  if(hasLocation) {
+    location = lang === "ar" ? `${a.lieuStrAr}/${a.moughataaStrAr}` : `${a.lieuStr}/${a.moughataaStr}`;
+  }
+
   return (
     <article
       data-cy="annonce-item"
@@ -176,7 +183,18 @@ export default function AnnonceItemUI({
         >
           {lang === "fr" ? a.classificationFr : a.classificationAr}
         </span>
-
+        {/* Badge location*/}
+        {hasLocation && (
+        <span
+          className={`inline-block w-fit max-w-full ${selfAlign}
+                      bg-blue-800 rounded-full px-3 py-1
+                      text-sm font-semibold text-white mt-0
+                      break-words`}
+          title={location}
+        >
+          {location}
+        </span>
+        )}
         <h2 className="text-base md:text-lg font-semibold leading-tight line-clamp-1">
           {description}
         </h2>

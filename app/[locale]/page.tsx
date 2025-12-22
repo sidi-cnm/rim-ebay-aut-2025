@@ -92,6 +92,8 @@ export default async function Home({
     lieuid: a.lieuId,
     lieuStr: a.lieuStr ?? "",
     lieuStrAr: a.lieuStrAr ?? "",
+    moughataaStr: a.moughataaStr ?? "",
+    moughataaStrAr: a.moughataaStrAr ?? "",
     userId: a.userId,
     userid: a.userId,
     title: a.title,

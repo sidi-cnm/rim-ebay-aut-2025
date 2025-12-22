@@ -169,6 +169,18 @@ export default function AddAnnonceStep3({
       fd.append("lieuId", String(selectedWilayaId));
       fd.append("moughataaId", String(selectedMoughataaId));
 
+      const selectedWilaya = wilayas.find(w => w.id === Number(selectedWilayaId));
+      const selectedMoughataa = moughataas.find(m => m.id === Number(selectedMoughataaId));
+
+      if (selectedWilaya) {
+        fd.append("lieuStr", selectedWilaya.name);
+        fd.append("lieuStrAr", selectedWilaya.nameAr);
+      }
+      if (selectedMoughataa) {
+        fd.append("moughataaStr", selectedMoughataa.name);
+        fd.append("moughataaStrAr", selectedMoughataa.nameAr);
+      }
+
       // step2 (images)
       const files = draft.images ?? [];
       files.forEach((file) => fd.append("files", file));

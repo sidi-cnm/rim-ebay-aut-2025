@@ -126,6 +126,8 @@ export interface Annonce {
   // lieuId: string; // Identifiant du lieu de l'annonce
   lieuStr?: string; // Lieu de l'annonce
   lieuStrAr?: string; // Lieu de l'annonce en arabe
+  moughataaStr?: string; // Moughataa de l'annonce
+  moughataaStrAr?: string; // Moughataa de l'annonce en arabe
 
   lieuId?: string | null;        // wilaya
   moughataaId?: string | null;

@@ -99,7 +99,7 @@ export default function AddAnnonceWizard({
   const onStep2Back = () => setStep(1);
   const onStep3Back = () => setStep(2);
 
-  console.log("🚀 Lang in Wizard:", lang);
+  // console.log("🚀 Lang in Wizard:", lang);
 
 
   return (

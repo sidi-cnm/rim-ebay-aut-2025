@@ -48,7 +48,7 @@ export default async function AddAnnonce(props: {
 }) {
   const params = await props.params;
 
-  console.log("Locale from params:", params);
+  // console.log("Locale from params:", params);
 
   const relavieUrlAnnonce = `/${params.locale}/api/my/annonces`;
   let relavieUrlOptionsModel = `/${params.locale}/p/api/tursor`;
@@ -62,11 +62,11 @@ export default async function AddAnnonce(props: {
   const db = await getDb();
 
   if(user){
-    console.log("user from cookie:", user.id);
+    // console.log("user from cookie:", user.id);
     const userIndb= await db.collection("users").findOne({_id: new ObjectId(user.id)});
-    console.log("userIndb check:", userIndb);
+    // console.log("userIndb check:", userIndb);
     if(userIndb){
-      console.log("userIndb:", userIndb);
+      // console.log("userIndb:", userIndb);
       isSamsar = userIndb.samsar;
     }
   }
