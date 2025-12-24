@@ -112,7 +112,19 @@ export function FormSearchUI({
   
     // 4) Reset pagination (on garde issmar & directNegotiation intacts)
     params.delete("page");
-  
+
+
+    // 5) make post call to /api/p/search for insert search params
+    fetch(`/${lang}/api/p/search`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      keepalive: true,
+      // Convert URLSearchParams to a plain object
+      body: JSON.stringify(Object.fromEntries(params)),
+    }).catch(console.error);
+
     setLoading(true);
     setModalOpen(false);
     startTransition(() => {
