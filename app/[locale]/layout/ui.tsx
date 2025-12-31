@@ -9,10 +9,11 @@ import { Home, List as ListIcon, Plus, Menu, X, LogIn, LogOut, Heart, Info } fro
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
-// Importer Prism de manière dynamique, seulement côté client
 const PrismBG = dynamic(() => import("../../../packages/ui/components/Prism"), {
   ssr: false,
 });
+
+import BottomNav from "./BottomNav";
 
 
 /* ---------- Conserver chemin + query quand on change de langue ---------- */
@@ -149,7 +150,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const whatsapp = localeKey == "ar" ? "واتساب" : "WhatsApp";
 
   return (
-    <nav className="relative sticky top-0 z-40 w-full h-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
+    <nav className="relative sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
       <div className="mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
         {/* ===== Ligne principale ===== */}
 
@@ -160,10 +161,10 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
         />
       </div>
         <div
-          className={`flex items-center justify-between py-8 gap-6`}
+          className={`hidden lg:flex items-center justify-between py-8 gap-6`}
         >
           {/* Bloc gauche ou droit : logo + liens */}
-          <div className={`flex items-center gap-6`}>
+          <div className={`hidden lg:flex items-center gap-6`}>
             
             {/* Logo */}
             <Link
@@ -234,6 +235,9 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
               <FaWhatsapp className="h-6 w-6" />
               {whatsapp}
             </Link>
+            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
+            
+            {/* Desktop Logout */}
             <button
               onClick={handleLogout}
               className="hidden lg:flex items-center gap-2 hover:bg-purple-500/80 bg-white/10 px-3 py-2 rounded-md transition"
@@ -241,90 +245,51 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
               <LogOut className="h-5 w-5" />
               <span className="hidden md:inline">{t("nav.logout")}</span>
             </button>
-            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
-            {/* Burger visible uniquement en mobile */}
-            <button
-              onClick={toggleDrawer}
-              className="inline-flex lg:hidden p-2 rounded-md hover:bg-white/10"
-              aria-label="Menu"
-            >
-              <Menu className="h-7 w-7" />
-            </button>
+            
           </div>
         </div>
+
+        {/* ==================== LOGIN MOBILE HEADER USERS ==================== */}
+        <div className="flex lg:hidden items-center justify-between pb-3">
+             <Link
+              href={`/${localeKey}`}
+              className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
+            >
+                <Image
+                  src="/images/logeddeyar.png"
+                  alt="Rim Ijar"
+                  width={90}
+                  height={90}
+                  className="h-16 w-auto object-contain"
+                  priority
+                />
+            </Link>
+
+            <div className="flex items-center gap-3">
+                 <Link
+                  href="https://wa.me/22241862698"
+                  target="_blank"
+                  className="flex items-center justify-center w-9 h-9 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md transition"
+                >
+                  <FaWhatsapp className="h-5 w-5" />
+                </Link>
+
+                 <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center w-9 h-9 bg-red-500/10 text-red-100 hover:bg-red-500 hover:text-white rounded-full transition"
+                  title={t("nav.logout")}
+                >
+                  <LogOut className="h-5 w-5" />
+                </button>
+
+                <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
+            </div>
+        </div>
+        {/* ==================== END MOBILE HEADER ==================== */}
+
       </div>
 
-      {/* Overlay + Drawer mobile */}
-      <button
-        aria-hidden={!isDrawerOpen}
-        onClick={closeDrawer}
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity lg:hidden ${
-          isDrawerOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      />
-      <aside
-        data-open={isDrawerOpen}
-        className={`fixed top-0 bottom-0 ${sideClass} z-50 w-80 max-w-[85vw] bg-gradient-to-b from-purple-800 to-blue-800 text-white p-4 pt-5 transition-transform lg:hidden`}
-        dir={isAr ? "rtl" : "ltr"}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <button onClick={closeDrawer} className="p-2 rounded-md hover:bg-white/10" aria-label="Fermer">
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-
-        <div className="flex flex-col space-y-2">
-
-        <NavLink href={`/${localeKey}/`} active={isActive(`/${localeKey}`)}>
-                <Home className="h-5 w-5" />
-                {t("nav.home")}
-        </NavLink>
-
-          <NavLink href={`/${localeKey}/my/list`} active={isActive(`/${localeKey}/my/list`)} onClick={closeDrawer}>
-            <ListIcon className="h-5 w-5" />
-            {t("nav.myListings")}
-          </NavLink>
-
-          <NavLink href={`/${localeKey}/my/add`} active={isActive(`/${localeKey}/my/add`)} onClick={closeDrawer}>
-            <Plus className="h-5 w-5" />
-            {t("nav.addListing")}
-          </NavLink>
-
-          <NavLink href={`/${localeKey}/my/favorite`} active={isActive(`/${localeKey}/my/favorite`)} onClick={closeDrawer}>
-            <Heart className="h-5 w-5" />
-            {t("nav.favorites") ?? "Favoris"}
-          </NavLink>
-
-
-
-           {/* === About us mobile === */}
-           <NavLink href={`/${localeKey}/about`} active={isActive(`/${localeKey}/about`)} onClick={closeDrawer}>
-           <Info />
-             {t("nav.about") ?? "About us"}
-          </NavLink>
-
-          <button
-            onClick={() => {
-              handleLogout();
-              closeDrawer();
-            }}
-            className="mt-2 flex items-center gap-2 hover:bg-purple-500 px-3 py-2 rounded-md transition"
-          >
-            <LogOut className="h-5 w-5" />
-            {t("nav.logout")}
-          </button>
-
-          <div className="pt-4">
-            <LanguageSelectFlags
-              currentLocale={localeKey}
-              onChange={(code) => {
-                switchLocale(code);
-                closeDrawer();
-              }}
-            />
-          </div>
-        </div>
-      </aside>
+      <BottomNav lang={lang} isAuthenticated={true} />
     </nav>
   );
 };
@@ -341,26 +306,51 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const localeKey = (lang || "fr").split("-")[0] as "fr" | "ar";
   const isAr = localeKey === "ar";
   const t = useI18n();
-  const [isOpen, setIsOpen] = useState(false);
   const switchLocale = useLocaleSwitch();
 
-  const close = () => setIsOpen(false);
-  const sideClass = isAr
-    ? "left-0 -translate-x-full data-[open=true]:translate-x-0"
-    : "right-0 translate-x-full data-[open=true]:translate-x-0";
   const whatsapp = localeKey == "ar" ? "واتساب" : "WhatsApp";
 
   return (
     <nav className="relative sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
-      {/* ===== Fond animé Prism (full width) ===== */}
       <div className="absolute inset-0 -z-10 pointer-events-none opacity-70">
         <PrismBG />
       </div>
 
-      <div dir={isAr ? "rtl" : "ltr"} className="mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
+      {/* ==================== GUEST MOBILE HEADER ==================== */}
+      <div dir={isAr ? "rtl" : "ltr"} className="lg:hidden mx-auto max-w-screen-2xl px-3 w-full">
+         <div className="flex items-center justify-between py-3">
+             <Link
+              href={`/${localeKey}`}
+              className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
+            >
+                <Image
+                  src="/images/logeddeyar.png"
+                  alt="Rim Ijar"
+                  width={90}
+                  height={90}
+                  className="h-16 w-auto object-contain"
+                  priority
+                />
+            </Link>
+
+            <div className="flex items-center gap-3">
+                 <Link
+                  href="https://wa.me/22241862698"
+                  target="_blank"
+                  className="flex items-center justify-center w-9 h-9 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md transition"
+                >
+                  <FaWhatsapp className="h-5 w-5" />
+                </Link>
+
+                 <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
+            </div>
+         </div>
+      </div>
+
+      {/* ==================== GUEST DESKTOP HEADER ==================== */}
+      <div dir={isAr ? "rtl" : "ltr"} className="hidden lg:block mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
         <div className="flex items-center justify-between py-3 gap-2">
 
-          {/* === Groupe Logo === */}
           <Link
             href={`/${localeKey}`}
             className="text-xl sm:text-2xl font-bold hover:text-yellow-300 transition flex items-center gap-2"
@@ -377,7 +367,6 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             </div>
           </Link>
 
-          {/* === Groupe Actions (menu + langue) === */}
           <div className="flex items-center gap-2">
             <Link
               href="https://wa.me/22241862698"
@@ -386,17 +375,8 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             >
               <FaWhatsapp className="h-6 w-6" />
               {whatsapp}
-          </Link>
-            {/* Burger visible uniquement en mobile */}
-            <button
-              onClick={() => setIsOpen(v => !v)}
-              className="inline-flex p-2 rounded-md hover:bg-white/10 sm:hidden"
-              aria-label="Menu"
-            >
-              <Menu className="h-7 w-7" />
-            </button>
+            </Link>
 
-            {/* Lien Connexion visible uniquement en desktop */}
             <Link
               id="connexion"
               data-cy="connexion"
@@ -417,81 +397,12 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
               <span className="hidden md:inline">{t("nav.signup")}</span>
             </Link>
 
-            
-
-            {/* Sélecteur de langue */}
             <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
           </div>
         </div>
       </div>
-
-      {/* Overlay + Drawer mobile */}
-      <button
-        aria-hidden={!isOpen}
-        onClick={close}
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity sm:hidden ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      /> 
-      <aside
-        data-open={isOpen}
-        className={`fixed top-0 bottom-0 ${sideClass} z-50 w-80 max-w-[85vw] bg-gradient-to-b from-purple-800 to-blue-800 text-white p-4 pt-5 transition-transform sm:hidden`}
-        dir={isAr ? "rtl" : "ltr"}
-      >
-        <div className="flex items-center justify-between mb-4">
-              <Image 
-                  src="/images/logeddeyar.png"
-                  alt="Rim Ijar"
-                  width={120}               // largeur augmentée
-                  height={120}              // hauteur augmentée
-                  className="h-24 w-auto object-contain"  // h-24 = 6rem = 96px
-                  priority
-                />
-          <button onClick={close} className="p-2 rounded-md hover:bg-white/10" aria-label="Fermer">
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-
-        <div className="flex flex-col gap-3">
-
-        <Link
-            href={`/${localeKey}/about`}
-            onClick={close}
-            className="flex items-center gap-2 hover:bg-blue-600 px-3 py-2 rounded-md transition"
-          >
-             <Info />
-             {t("nav.about") ?? "About us"}
-        </Link>
-
-          <Link
-            id="connexion-mobile"
-            href={`/${localeKey}/p/users/connexion`}
-            onClick={close}
-            className="flex items-center gap-2 justify-center hover:bg-green-500 px-3 py-2 text-black bg-white rounded-lg transition"
-          >
-            <LogIn className="h-5 w-5" />
-            {t("nav.login")}
-          </Link>
-
-          <Link
-            id="connexion-mobile"
-            href={`/${localeKey}/p/users/register`}
-            onClick={close}
-            className="flex items-center gap-2 justify-center hover:bg-green-500 px-3 py-2 text-black bg-white rounded-lg transition"
-          >
-            <LogIn className="h-5 w-5" />
-            {t("nav.signup")}
-          </Link>
-
-
-          <div className="pt-2">
-            <LanguageSelectFlags
-              currentLocale={localeKey}
-              onChange={(code) => { switchLocale(code); close(); }}
-            />
-          </div>
-        </div>
-      </aside>
+      
+      <BottomNav lang={lang} isAuthenticated={false} />
     </nav>
   );
 };

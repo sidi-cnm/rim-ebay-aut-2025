@@ -47,3 +47,10 @@ next-env.d.ts
 __cmd
 
 *storybook.log
+
+#backups
+/backups
+
+
+#scripts
+/script
