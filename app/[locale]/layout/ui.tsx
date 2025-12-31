@@ -5,7 +5,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../locales/client";
-import { Home, List as ListIcon, Plus, Menu, X, LogIn, LogOut, Heart, Info } from "lucide-react";
+import { Home, List as ListIcon, Plus, Menu, X, LogIn, LogOut, Heart, Info, ChevronDown, Check } from "lucide-react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
@@ -57,6 +57,7 @@ const NavLink = ({
 );
 
 /* ---------- Sélecteur de langue (drapeaux) ---------- */
+/* ---------- Sélecteur de langue (dropdown) ---------- */
 function LanguageSelectFlags({
   currentLocale = "fr",
   onChange,
@@ -66,53 +67,90 @@ function LanguageSelectFlags({
   onChange: (code: "fr" | "ar") => void;
   compact?: boolean;
 }) {
-  const btnBase =
-    "relative inline-flex items-center justify-center rounded-full bg-white text-lg leading-none shadow ring-1 ring-gray-300 hover:ring-blue-400 hover:scale-105 transition";
-  const size = compact ? "h-9 w-9" : "h-10 w-10";
-  const inactive = "opacity-60 grayscale";
-  const activeRing = "ring-2 ring-white outline outline-2 outline-blue-600 drop-shadow";
+  const [isOpen, setIsOpen] = useState(false);
 
-  const Flag = ({
-    code,
-    emoji,
-    label,
-  }: { code: "fr" | "ar"; emoji: string; label: string }) => {
-    const active = currentLocale === code;
-    return (
-      <button
-        type="button"
-        title={label}
-        aria-label={label}
-        aria-pressed={active}
-        aria-current={active ? "page" : undefined}
-        onClick={() => onChange(code)}
-        className={`${btnBase} ${size} ${active ? activeRing : inactive}`}
-      >
-        <span aria-hidden>{emoji}</span>
-        {active && (
-          <>
-            <span
-              aria-hidden
-              className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 grid place-items-center ring-2 ring-white"
-            >
-              <svg viewBox="0 0 20 20" className="h-3 w-3 text-white" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-7.25 7.25a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.414l2.293 2.293 6.543-6.543a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </span>
-          </>
-        )}
-      </button>
-    );
+  // Mapping des langues
+  const languages = [
+    { code: "ar", label: "AR", emoji: "🇲🇷", title: "العربية — موريتانيا" },
+    { code: "fr", label: "FR", emoji: "🇫🇷", title: "Français — France" },
+  ] as const;
+
+  const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
+
+  const handleSelect = (code: "fr" | "ar") => {
+    onChange(code);
+    setIsOpen(false);
   };
 
+  // MODE: DROPDOWN (Mobile / Compact)
+  if (compact) {
+    return (
+      <div className="relative inline-block text-left">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition text-white font-bold text-sm`}
+        >
+          <span>{activeLang.label}</span>
+          <span className="text-lg leading-none">{activeLang.emoji}</span>
+          <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        </button>
+
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-30 cursor-default" onClick={() => setIsOpen(false)} />
+            <div className="absolute right-0 mt-2 w-40 z-40 origin-top-right rounded-xl bg-white text-gray-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
+              <div className="flex flex-col gap-1">
+                {languages.map((lang) => {
+                  const isActive = currentLocale === lang.code;
+                  return (
+                    <button
+                      key={lang.code}
+                      onClick={() => handleSelect(lang.code)}
+                      className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                        isActive ? "bg-blue-50 text-blue-600" : "hover:bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-bold">{lang.label}</span>
+                        <span className="text-xl leading-none">{lang.emoji}</span>
+                      </div>
+                      {isActive && <Check className="h-4 w-4" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // MODE: FLAGS BUTTONS (Desktop / Standard)
   return (
-    <div role="tablist" aria-label="Language selector" className={`flex items-center gap-2`}>
-      <Flag code="ar" emoji="🇲🇷" label="العربية — موريتانيا" />
-      <Flag code="fr" emoji="🇫🇷" label="Français — France" />
+    <div className="flex items-center gap-2">
+      {languages.map((lang) => {
+        const isActive = currentLocale === lang.code;
+        return (
+          <button
+            key={lang.code}
+            type="button"
+            title={lang.title}
+            onClick={() => onChange(lang.code)}
+            className={`relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-white text-lg leading-none shadow transition hover:scale-105 ${
+               isActive ? "ring-2 ring-white outline outline-2 outline-blue-600 drop-shadow scale-105" : "opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
+            }`}
+          >
+            <span aria-hidden>{lang.emoji}</span>
+            {isActive && (
+              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 grid place-items-center ring-2 ring-white">
+                <Check className="h-2.5 w-2.5 text-white" strokeWidth={4} />
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -235,7 +273,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
               <FaWhatsapp className="h-6 w-6" />
               {whatsapp}
             </Link>
-            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
+            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact={false} />
             
             {/* Desktop Logout */}
             <button
@@ -258,9 +296,9 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                 <Image
                   src="/images/logeddeyar.png"
                   alt="Rim Ijar"
-                  width={90}
-                  height={90}
-                  className="h-16 w-auto object-contain"
+                  width={120}
+                  height={120}
+                  className="h-20 w-auto object-contain"
                   priority
                 />
             </Link>
@@ -326,9 +364,9 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                 <Image
                   src="/images/logeddeyar.png"
                   alt="Rim Ijar"
-                  width={90}
-                  height={90}
-                  className="h-16 w-auto object-contain"
+                  width={120}
+                  height={120}
+                  className="h-20 w-auto object-contain"
                   priority
                 />
             </Link>
@@ -397,7 +435,8 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
               <span className="hidden md:inline">{t("nav.signup")}</span>
             </Link>
 
-            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
+            {/* Sélecteur de langue */}
+            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact={false} />
           </div>
         </div>
       </div>
