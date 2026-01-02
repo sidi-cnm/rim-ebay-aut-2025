@@ -208,6 +208,7 @@ export default function AnnonceItemUI({
         <div className="border-t border-gray-200" />
 
         {/* Prix */}
+        {a.isPriceHidden === false && (
         <div className="flex items-center justify-between pt-2 w-full">
           <span className="text-sm text-gray-500">{t("card.price")}</span>
           <span className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">
@@ -215,6 +216,7 @@ export default function AnnonceItemUI({
             <span className="text-sm font-semibold">{t("card.currency")}</span>
           </span>
         </div>
+        )}
 
         {/* ✅ Affichage période de location en mode “draft” */}
 

@@ -101,6 +101,7 @@ export default {
       CDD: "CDD",
     },
     search: "Recherche...",
+    hidePrice: "Cacher le prix",
   },
   pagination: {
     next: "Suivant",

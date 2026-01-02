@@ -108,6 +108,7 @@ export default async function Home({
     rentalPeriodAr: a.rentalPeriodAr ?? "",
     isSponsored: a.isSponsored,
     isFavorite: Boolean(a.isFavorite ?? false),
+    isPriceHidden: Boolean(a.isPriceHidden ?? false),
     updatedAt: a.updatedAt ? new Date(a.updatedAt) : undefined,
     createdAt: a.createdAt ? new Date(a.createdAt) : undefined,
   }));

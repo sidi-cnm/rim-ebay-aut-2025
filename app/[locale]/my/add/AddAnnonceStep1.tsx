@@ -33,6 +33,7 @@ type Props = {
     isSamsar: boolean;
     rentalPeriod?: RentalPeriod | null;
     rentalPeriodAr?: string | null; // ✅ nouveau
+    isPriceHidden?: boolean;
   }) => void;
   initial?: {
     typeAnnonceId?: string;
@@ -51,6 +52,7 @@ type Props = {
     isSamsar?: boolean;
     rentalPeriod?: RentalPeriod | null;
     rentalPeriodAr?: string | null; // ✅ nouveau
+    isPriceHidden?: boolean;
   };
 };
 
@@ -74,6 +76,7 @@ export default function AddAnnonceStep1({
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>(initial?.subcategorieId ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [price, setPrice] = useState<string>(initial?.price != null ? String(initial.price) : "");
+  const [isPriceHidden, setIsPriceHidden] = useState<boolean>(initial?.isPriceHidden ?? false);
 
   // Nouveaux états
   const [position, setPosition] = useState<Position>(initial?.position ?? (isSamsar ? "broker" : "owner"));
@@ -218,6 +221,7 @@ const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
       typeAnnonceNameAr: typeObj?.nameAr,
       categorieName: catObj?.name,
       categorieNameAr: catObj?.nameAr,
+      isPriceHidden,
     });
   };
 
@@ -336,6 +340,35 @@ const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
             onChange={(e) => setPrice(e.target.value)}
             min={0}
           />
+          <div className="mt-3">
+            <label className="inline-flex items-center cursor-pointer group select-none">
+              <div className="relative flex items-center">
+                <input
+                  type="checkbox"
+                  className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-gray-300 bg-white transition-all checked:border-blue-900 checked:bg-blue-900 hover:border-blue-700"
+                  checked={isPriceHidden}
+                  onChange={(e) => setIsPriceHidden(e.target.checked)}
+                />
+                <svg
+                  className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  width="14"
+                  height="14"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <span className="ml-3 text-sm font-medium text-gray-700 group-hover:text-blue-900 transition-colors">
+                {t("addAnnonce.hidePrice") ?? "Cacher le prix"}
+              </span>
+            </label>
+          </div>
         </div>
 
         {/* Période de location (seulement pour les annonces de location) */}

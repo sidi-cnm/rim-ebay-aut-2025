@@ -36,6 +36,7 @@ type Draft = {
   position?: Position;
   directNegotiation?: boolean | null;
   rentalPeriod?: RentalPeriod | null;
+  isPriceHidden?: boolean;
 
   // step 2
   images?: File[];
@@ -82,6 +83,7 @@ export default function AddAnnonceWizard({
     directNegotiation?: boolean | null;
     rentalPeriod?: RentalPeriod | null;
     rentalPeriodAr?: string | null;
+    isPriceHidden?: boolean;
     typeAnnonceName?: string;
     categorieName?: string;
     typeAnnonceNameAr?: string;

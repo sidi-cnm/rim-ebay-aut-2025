@@ -164,6 +164,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const moughataaStr = String(form.get("moughataaStr") ?? "");
       const moughataaStrAr = String(form.get("moughataaStrAr") ?? "");
       const status      = String(form.get("status") ?? "active");
+      const isPriceHidden = String(form.get("isPriceHidden") ?? "false") === "true";
 
       // files
       const files = [
@@ -222,6 +223,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         directNegotiation,  
         isSponsored:false,      // bool | null
         firstImagePath: '',
+        isPriceHidden,
         createdAt: now,
         updatedAt: now,
       };

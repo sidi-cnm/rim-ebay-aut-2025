@@ -119,6 +119,7 @@ export interface Annonce {
   subcategorieId?: string; // Identifiant de la sous-catégorie (optionnel)
   isFavorite?: boolean;
   isSponsored?: boolean;
+  isPriceHidden?: boolean;
 
   classificationFr?: string; // Classification en français (optionnel)
   classificationAr?: string; // Classification en arabe (optionnel)

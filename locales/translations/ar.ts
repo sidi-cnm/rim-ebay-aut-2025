@@ -57,6 +57,7 @@ export default {
     monthly: "شهري",
     submitButton: "إضافة الإعلان",
     search: "...",
+    hidePrice: "إخفاء السعر",
   },
   pagination: {
     next: "التالي",
