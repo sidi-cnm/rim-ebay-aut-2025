@@ -99,7 +99,11 @@ function LanguageSelectFlags({
         {isOpen && (
           <>
             <div className="fixed inset-0 z-30 cursor-default" onClick={() => setIsOpen(false)} />
-            <div className="absolute right-0 mt-2 w-40 z-40 origin-top-right rounded-xl bg-white text-gray-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
+            <div
+              className={`absolute mt-2 w-40 z-40 rounded-xl bg-white text-gray-800 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none p-1 ${
+                currentLocale === "ar" ? "left-0 origin-top-left" : "right-0 origin-top-right"
+              }`}
+            >
               <div className="flex flex-col gap-1">
                 {languages.map((lang) => {
                   const isActive = currentLocale === lang.code;
