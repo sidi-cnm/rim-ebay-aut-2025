@@ -37,6 +37,7 @@ type Draft = {
   directNegotiation?: boolean | null;
   rentalPeriod?: RentalPeriod | null;
   isPriceHidden?: boolean;
+  privateDescription?: string;
 
   // step 2
   images?: File[];
@@ -88,6 +89,7 @@ export default function AddAnnonceWizard({
     categorieName?: string;
     typeAnnonceNameAr?: string;
     categorieNameAr?: string;
+    privateDescription?: string;
   }) => {
     setDraft((d) => ({ ...d, ...payload }));
     setStep(2);
@@ -189,6 +191,7 @@ export default function AddAnnonceWizard({
               categorieName: draft.categorieName,
               typeAnnonceNameAr: draft.typeAnnonceNameAr,
               categorieNameAr: draft.categorieNameAr,
+              privateDescription: draft.privateDescription,
             }}
           />
         )}

@@ -102,6 +102,8 @@ export default {
     },
     search: "Recherche...",
     hidePrice: "Cacher le prix",
+    privateDescription: "Description privée",
+    privateDescriptionPlaceholder: "Notes privées pour moi-même...",
   },
   pagination: {
     next: "Suivant",

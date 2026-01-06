@@ -58,6 +58,8 @@ export default {
     submitButton: "إضافة الإعلان",
     search: "...",
     hidePrice: "إخفاء السعر",
+    privateDescription: "وصف خاص",
+    privateDescriptionPlaceholder: "ملاحظات خاصة لنفسي...",
   },
   pagination: {
     next: "التالي",

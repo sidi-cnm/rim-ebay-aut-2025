@@ -138,6 +138,7 @@ export interface Annonce {
   description: string; // Description de l'annonce
   price?: number; // Prix de l'annonce
   contact: string; // Numéro de téléphone
+  privateDescription?: string; // Description privée (visible uniquement par le propriétaire)
 
   haveImage?: boolean; // Indique si l'annonce a une image
   firstImagePath?: string; // Chemin vers la première image liée à cette annonce

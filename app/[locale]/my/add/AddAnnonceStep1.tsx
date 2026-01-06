@@ -34,6 +34,7 @@ type Props = {
     rentalPeriod?: RentalPeriod | null;
     rentalPeriodAr?: string | null; // ✅ nouveau
     isPriceHidden?: boolean;
+    privateDescription?: string;
   }) => void;
   initial?: {
     typeAnnonceId?: string;
@@ -53,6 +54,7 @@ type Props = {
     rentalPeriod?: RentalPeriod | null;
     rentalPeriodAr?: string | null; // ✅ nouveau
     isPriceHidden?: boolean;
+    privateDescription?: string;
   };
 };
 
@@ -77,6 +79,7 @@ export default function AddAnnonceStep1({
   const [description, setDescription] = useState(initial?.description ?? "");
   const [price, setPrice] = useState<string>(initial?.price != null ? String(initial.price) : "");
   const [isPriceHidden, setIsPriceHidden] = useState<boolean>(initial?.isPriceHidden ?? false);
+  const [privateDescription, setPrivateDescription] = useState<string>(initial?.privateDescription ?? "");
 
   // Nouveaux états
   const [position, setPosition] = useState<Position>(initial?.position ?? (isSamsar ? "broker" : "owner"));
@@ -222,6 +225,7 @@ const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
       categorieName: catObj?.name,
       categorieNameAr: catObj?.nameAr,
       isPriceHidden,
+      privateDescription,
     });
   };
 
@@ -326,6 +330,20 @@ const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
           {errors.description && (
             <p className="text-red-500 text-xs mt-1">{t("errors.requiredDescription")}</p>
           )}
+        </div>
+
+        {/* Description Privée (Optionnel) */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+             {t("addAnnonce.privateDescription") ?? "Description privée (visible par vous uniquement)"} <span className="text-gray-400 text-xs">{lang === "ar" ? "(اختياري)" : "(optionnel)"}</span>
+          </label>
+          <textarea
+            rows={3}
+            placeholder={t("addAnnonce.privateDescriptionPlaceholder") ?? "Notes privées pour moi-même..."}
+            className="w-full rounded border p-2 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            value={privateDescription}
+            onChange={(e) => setPrivateDescription(e.target.value)}
+          />
         </div>
 
         {/* Prix (optionnel) */}

@@ -165,6 +165,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const moughataaStrAr = String(form.get("moughataaStrAr") ?? "");
       const status      = String(form.get("status") ?? "active");
       const isPriceHidden = String(form.get("isPriceHidden") ?? "false") === "true";
+      const privateDescription = String(form.get("privateDescription") ?? "");
 
       // files
       const files = [
@@ -224,6 +225,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         isSponsored:false,      // bool | null
         firstImagePath: '',
         isPriceHidden,
+        privateDescription,
         createdAt: now,
         updatedAt: now,
       };

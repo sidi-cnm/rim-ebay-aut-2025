@@ -77,6 +77,7 @@ export default async function Home({
     description: a.description,
     price: a.price != null ? Number(a.price) : undefined,
     contact: a.contact,
+    privateDescription: a.privateDescription,
     haveImage: !!a.haveImage,
     firstImagePath: a.firstImagePath ? String(a.firstImagePath) : undefined,
     images: a.annonceImages ?? [],

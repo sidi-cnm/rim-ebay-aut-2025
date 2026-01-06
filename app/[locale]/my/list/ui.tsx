@@ -106,6 +106,16 @@ function AnnonceItemUI({
 
           <div className="mt-5">
             <div className="border-t border-green-800  my-2"></div>
+
+            {annonce.privateDescription && (
+              <div className="mb-2 p-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600">
+                 <p className="font-semibold text-xs text-gray-400 uppercase tracking-wider mb-1">
+                   {t("addAnnonce.privateDescription")}
+                 </p>
+                 {annonce.privateDescription}
+              </div>
+            )}
+            
             <div className="flex justify-between">
               <p className="font-bold">{t("filter.price")}</p>
               <p className="text-lg text-green-700 font-bold">

@@ -38,6 +38,7 @@ type Props = {
     typeAnnonceNameAr?: string;
     categorieNameAr?: string;
     isPriceHidden?: boolean;
+    privateDescription?: string;
   };
 };
 
@@ -166,6 +167,7 @@ export default function AddAnnonceStep3({
       if(draft.categorieNameAr) fd.append("categorieNameAr", String(draft.categorieNameAr));
       if(draft.typeAnnonceNameAr) fd.append("typeAnnonceNameAr", String(draft.typeAnnonceNameAr));
       if (draft.isPriceHidden) fd.append("isPriceHidden", "true");
+      if (draft.privateDescription) fd.append("privateDescription", draft.privateDescription);
       
       // step3 (lieu)
       fd.append("lieuId", String(selectedWilayaId));
