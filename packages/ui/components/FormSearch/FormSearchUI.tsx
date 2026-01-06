@@ -19,6 +19,7 @@ interface Filters {
   // 👇 nouveaux
   wilayaId?: string;
   moughataaId?: string;
+  aiQuery?: string;
 }
 
 interface InputProps {
@@ -32,6 +33,7 @@ interface InputProps {
   selectWilayaLabel?: string;
   moughataaLabel?: string;
   selectMoughataaLabel?: string;
+  aiSearchPlaceholder?: string; // New prop for placeholder
 
   mobile?: boolean;
   annonceTypeLabel?: string;
@@ -54,6 +56,7 @@ export function FormSearchUI({
   selectWilayaLabel ,
   moughataaLabel ,
   selectMoughataaLabel ,
+  aiSearchPlaceholder,
   mobile = false,
   annonceTypeLabel,
   selectTypeLabel,
@@ -71,6 +74,9 @@ export function FormSearchUI({
 
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // State for AI Search
+  const [aiQuery, setAiQuery] = useState(searchParams?.get("aiQuery") || "");
 
   const currentUrlKey = useMemo(
     () => `${pathname}?${searchParams?.toString() || ""}`,
@@ -101,6 +107,7 @@ export function FormSearchUI({
       "wilayaId",
       "moughataaId",
       "description",
+      "aiQuery",
     ];
     managedKeys.forEach((k) => params.delete(k));
   
@@ -136,6 +143,7 @@ export function FormSearchUI({
 
   const isRTL = lang.startsWith("ar");
 
+
   // --- MOBILE ---
   if (mobile) {
 
@@ -149,7 +157,7 @@ export function FormSearchUI({
             >
               <FontAwesomeIcon icon={faSearch} />
               <span>{t("filter.search")}</span>
-        </button>
+            </button>
       </div>
 
         {modalOpen && (
@@ -208,6 +216,8 @@ export function FormSearchUI({
           lang={lang}
           onSubmit={handleSearchSubmit}
           typeAnnoncesEndpoint={typeAnnoncesEndpoint}
+
+
           categoriesEndpoint={categoriesEndpoint}
           subCategoriesEndpoint={subCategoriesEndpoint}
           // 👇 nouveaux
