@@ -11,6 +11,15 @@ export const metadata: Metadata = {
   description: "trouver des maisons,appartement, voiture, engine a louer",
 };
 
+import { Inter, Almarai } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const almarai = Almarai({
+  subsets: ["arabic"],
+  weight: ["300", "400", "700", "800"], // Added weights for better hierarchy
+  variable: "--font-almarai",
+});
+
 export default async function RootLayout(
   props: Readonly<{
     children: React.ReactNode;
@@ -22,11 +31,16 @@ export default async function RootLayout(
   const params = await props.params;
   const { children } = props;
 
-  let dir = "ltr"; // Default direction
+  let dir = "ltr"; 
+  let fontClass = inter.variable;
+
   try {
     if (params.locale) {
       const locale = new Locale(params.locale);
       dir = locale.textInfo.direction;
+      if (dir === "rtl" || params.locale.startsWith("ar")) {
+        fontClass = almarai.variable;
+      }
     }
   } catch (error) {
     console.error("Invalid locale provided:", params.locale, error);
@@ -54,7 +68,7 @@ export default async function RootLayout(
 
         
       </head>
-      <body className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      <body className={`${fontClass} ${dir === "rtl" ? "font-arabic" : "font-sans"} bg-gray-50 text-gray-900 min-h-screen antialiased pb-24 lg:pb-0`}>
         <Providers locale={params.locale}>
           <ConditionalNav lang={params.locale} isAuthenticated={hasSession} />
           {children}

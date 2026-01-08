@@ -45,7 +45,8 @@ export async function POST(request: NextRequest, ctx: any) {
     }
 
     // Params (ne PAS typer le 2e arg, Next 15 n'aime pas)
-    const { annonceId } = ctx.params as { locale?: string; annonceId: string };
+    const params = await ctx.params;
+    const { annonceId } = params as { locale?: string; annonceId: string };
 
     if (!ObjectId.isValid(annonceId)) {
       return NextResponse.json({ error: "annonceId invalide" }, { status: 400 });
@@ -146,7 +147,8 @@ export async function POST(request: NextRequest, ctx: any) {
 export async function GET(_request: NextRequest, ctx: any) {
   try {
     const db = await getDb();
-    const { annonceId } = ctx.params as { locale?: string; annonceId: string };
+    const params = await ctx.params;
+    const { annonceId } = params as { locale?: string; annonceId: string };
 
     if (!ObjectId.isValid(annonceId)) {
       return NextResponse.json({ error: "annonceId invalide" }, { status: 400 });
@@ -195,7 +197,8 @@ export async function GET(_request: NextRequest, ctx: any) {
 export async function DELETE(req: NextRequest, ctx: any) {
   try {
     const db = await getDb();
-    const { annonceId } = ctx.params as { locale?: string; annonceId: string };
+    const params = await ctx.params;
+    const { annonceId } = params as { locale?: string; annonceId: string };
 
     // Auth
     const cookieUser = await getUserFromCookies();

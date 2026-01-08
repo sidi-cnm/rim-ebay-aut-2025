@@ -132,26 +132,28 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
           <div>
             <label
               htmlFor="phone"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5"
             >
               هاتف
             </label>
             <input
-              type="phone"
+              type="tel"
               id="phone"
               value={phone}
               onChange={(e) => setphone(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all duration-200 text-gray-900 font-medium placeholder-gray-400"
+              placeholder="Ex: 36000000"
+              dir="ltr"
               required
             />
             {errors.phone && (
-              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+              <p className="text-red-500 text-xs font-bold mt-1.5">{errors.phone}</p>
             )}
           </div>
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5"
             >
               {t("connexion.passwordLabel")}
             </label>
@@ -161,28 +163,30 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+                className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all duration-200 text-gray-900 font-medium pr-10"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary-600 transition-colors"
               >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                {showPassword ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
               </button>
             </div>
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              <p className="text-red-500 text-xs font-bold mt-1.5">{errors.password}</p>
             )}
           </div>
-          <div>
+          <div className="pt-2">
             <button
               id="submit"
               type="submit"
-              className={`w-full font-bold py-2 px-4 rounded-md transition-colors duration-300 
-                ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"}`}
-              disabled={isLoading} // Disable button while loading
+              className={`w-full flex justify-center items-center font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98]
+                ${isLoading 
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                  : "bg-primary-600 hover:bg-primary-700 text-white shadow-primary-600/30 hover:shadow-primary-600/40"}`}
+              disabled={isLoading} 
             >
               {isLoading ? (
                 <div className="loader"></div>
@@ -191,27 +195,29 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
               )}
             </button>
             {submitStatus && (
-              <p className="mt-4 text-center text-sm">{submitStatus}</p>
+              <p className="mt-4 text-center text-sm font-medium text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">{submitStatus}</p>
             )}
           </div>
         </form>
         
-        <div className="mt-4 flex justify-between text-sm">
-          <div
+        <div className="mt-8 flex flex-col sm:flex-row justify-between items-center text-sm gap-4">
+          <button
             id="register"
+            type="button"
             onClick={handleNavigate}
-            className="text-blue-600 font-medium cursor-pointer hover:text-blue-700 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-colors duration-200"
+            className="text-primary-600 font-bold hover:text-primary-700 hover:underline transition-colors"
           >
             {t("connexion.registerLink")}
-          </div>
+          </button>
           
-          <div
+          <button
             id="forget-password"
+            type="button"
             onClick={handleNavigateToForgetPassword}
-            className="text-blue-600 font-medium cursor-pointer hover:text-blue-700 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded transition-colors duration-200"
+            className="text-gray-500 hover:text-gray-700 font-medium transition-colors"
           >
             {t("connexion.forgotLink")}
-          </div>
+          </button>
         </div>
 
 

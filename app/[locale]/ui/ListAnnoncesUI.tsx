@@ -87,129 +87,89 @@ export default function ListAnnoncesUI({
         </button>
         {/* Filtres affichés seulement sur la page principale */}
         {isMainPage && (
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            {/* MainChoice */}
-            <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden shadow-sm flex-1 sm:flex-none w-full sm:w-auto">
-            <button
-              className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm ${
-                mainChoice === "Location"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
-              onClick={() =>
-                updateChoice("mainChoice", mainChoice === "Location" ? null : "Location")
-              }
-            >
-              <FaMapMarkerAlt
-                className={`w-5 h-5 ${
-                  mainChoice === "Location" ? "text-white" : "text-blue-500"
-                }`}
-              />
-              <span>{t("card.location")}</span>
-            </button>
-
-            <span className="w-px bg-gray-300" />
-            <button
-              className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${
-                mainChoice === "Vente"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
-              onClick={() =>
-                updateChoice("mainChoice", mainChoice === "Vente" ? null : "Vente")
-              }
-            >
-              <FaMoneyBillWave
-                className={`w-5 h-5 ${
-                  mainChoice === "Vente" ? "text-white" : "text-green-500"
-                }`}
-              />
-              <span>{t("card.sale")}</span>
-            </button>
-          </div>
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            
+            {/* MainChoice Toggle */}
+            <div className="inline-flex p-1 bg-gray-100 rounded-2xl shadow-inner w-full sm:w-auto">
+              {["Location", "Vente"].map((type) => {
+                const isActive = mainChoice === type;
+                return (
+                  <button
+                    key={type}
+                    onClick={() => updateChoice("mainChoice", isActive ? null : type)}
+                    className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
+                      isActive
+                        ? "bg-white text-primary-600 shadow-sm ring-1 ring-black/5"
+                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                    }`}
+                  >
+                    {type === "Location" ? (
+                      <FaMapMarkerAlt className={isActive ? "text-primary-500" : "text-gray-400"} />
+                    ) : (
+                      <FaMoneyBillWave className={isActive ? "text-emerald-500" : "text-gray-400"} />
+                    )}
+                    <span>{type === "Location" ? t("card.location") : t("card.sale")}</span>
+                  </button>
+                );
+              })}
+            </div>
 
             {/* SubChoice (si mainChoice) */}
             {mainChoice && (
-              <div className="inline-flex rounded-xl border border-gray-300 overflow-hidden shadow-sm flex-1 sm:flex-none w-full sm:w-auto">
-              <button
-                className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm ${
-                  subChoice === "voitures"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-                onClick={() =>
-                  updateChoice("subChoice", subChoice === "voitures" ? null : "voitures")
-                }
-              >
-                <FaCar
-                  className={`w-5 h-5 ${
-                    subChoice === "voitures" ? "text-white" : "text-blue-500"
-                  }`}
-                />
-                <span>{t("card.voiture")}</span>
-              </button>
-
-              <span className="w-px bg-gray-300" />
-            
-              <button
-                className={`flex items-center gap-2 flex-1 px-3 py-1.5 text-sm border-l border-gray-300 ${
-                  subChoice === "Maisons"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-                onClick={() =>
-                  updateChoice("subChoice", subChoice === "Maisons" ? null : "Maisons")
-                }
-              >
-                <FaHome
-                  className={`w-5 h-5 ${
-                    subChoice === "Maisons" ? "text-white" : "text-green-500"
-                  }`}
-                />
-                <span>{t("card.maison")}</span>
-              </button>
-            </div>
-            
+               <div className="inline-flex p-1 bg-gray-100 rounded-2xl shadow-inner w-full sm:w-auto animate-in fade-in slide-in-from-left-4 duration-300">
+                {["voitures", "Maisons"].map((sub) => {
+                  const isActive = subChoice === sub;
+                  return (
+                    <button
+                      key={sub}
+                      onClick={() => updateChoice("subChoice", isActive ? null : sub)}
+                      className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
+                        isActive
+                          ? "bg-white text-primary-600 shadow-sm ring-1 ring-black/5"
+                          : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                      }`}
+                    >
+                      {sub === "voitures" ? (
+                         <FaCar className={isActive ? "text-primary-500" : "text-gray-400"} />
+                      ) : (
+                         <FaHome className={isActive ? "text-emerald-500" : "text-gray-400"} />
+                      )}
+                      <span>{sub === "voitures" ? t("card.voiture") : t("card.maison")}</span>
+                    </button>
+                  );
+                })}
+              </div>
             )}
 
-            {/* Samsar */}
+            {/* Samsar Toggle */}
             {showSamsarToggle && (
-              <div className="flex items-center gap-3 mt-2 sm:mt-0 flex-wrap">
-                <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+              <div className="flex items-center gap-3 bg-white border border-gray-100 px-4 py-2 rounded-2xl shadow-sm">
+                <label className="inline-flex items-center gap-3 cursor-pointer select-none">
                   <input type="checkbox" className="sr-only peer" checked={samsarChecked} onChange={onToggleSamsar} />
-                  <span className="relative inline-block w-10 h-6 rounded-full bg-gray-300 transition peer-checked:bg-blue-600">
-                    <span className="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
-                  </span>
-                  <span className="text-xs sm:text-sm text-gray-700">{t("filter.samsarOnly")}</span>
+                  <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                  <span className="text-sm font-semibold text-gray-700">{t("filter.samsarOnly")}</span>
                 </label>
 
                 {samsarChecked && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="hidden sm:inline text-xs text-gray-600">{t("filter.directNegotiation")}</span>
-                    <div className="inline-flex overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm">
-                      <button
-                        type="button"
-                        onClick={() => setDirect("any")}
-                        className={`px-3 py-1.5 text-xs sm:text-sm transition ${dnState === "any" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                      >
-                        {t("filter.any")}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDirect("true")}
-                        className={`px-3 py-1.5 text-xs sm:text-sm border-l border-gray-300 transition ${dnState === "true" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                      >
-                        {t("filter.yes")}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDirect("false")}
-                        className={`px-3 py-1.5 text-xs sm:text-sm border-l border-gray-300 transition ${dnState === "false" ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
-                      >
-                        {t("filter.no")}
-                      </button>
-                    </div>
-                  </div>
+                   <div className="h-6 w-px bg-gray-200 mx-2" />
+                )}
+
+                {samsarChecked && (
+                   <div className="flex bg-gray-100 p-0.5 rounded-lg">
+                      {["any", "true", "false"].map((opt) => (
+                        <button
+                          key={opt}
+                          onClick={() => setDirect(opt as any)}
+                          className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                            dnState === opt
+                              ? "bg-white text-primary-700 shadow-sm"
+                              : "text-gray-500 hover:text-gray-700"
+                          }`}
+                        >
+                          {opt === "any" ? t("filter.any") : opt === "true" ? t("filter.yes") : t("filter.no")}
+                        </button>
+                      ))}
+                   </div>
                 )}
               </div>
             )}
@@ -220,13 +180,12 @@ export default function ListAnnoncesUI({
       {/* Liste annonces */}
       {hasItems ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
             {annonces.map((a) => (
               <AnnonceItemUI
                 key={a.id}
                 {...a}
                 lang={lang}
-                imageServiceUrl={imageServiceUrl}
                 href={`/${lang}/p/annonces/details/${a.id}`}
                 isFavorite={favoriteIds.includes(String(a.id))}
               />

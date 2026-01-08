@@ -1,12 +1,22 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Image from "next/image";
 import { Annonce } from "../../../../../../packages/mytypes/types";
+import { FaMapMarkerAlt, FaTag, FaPhoneAlt, FaWhatsapp, FaShareAlt, FaCalendarAlt, FaShieldAlt, FaInfoCircle } from "react-icons/fa";
+import { useI18n } from "../../../../../../locales/client";
 
 const FALLBACK_IMG = "/noimage.jpg";
 const HOST_IMAGES = "https://picsum.photos";
+
+// Réponse minimale de /api/images/:id
+type ImgDoc = { imagePath: string };
+
+// Images toujours sous forme de tableau (jamais undefined)
+type ImageItem = { id: string; imagePath: string };
+type ImagesArray = NonNullable<Annonce["images"]>;
 
 // Utilitaire: construit une URL d'image propre
 function buildImageUrl(path: string) {
@@ -29,66 +39,128 @@ export default function AnnonceDetailUI({
   annonce,
   lang = "fr", // facultatif si tu veux formatter en fr/ar
 }: {
-  annonceId: string;   // ✅ en général tes ids sont des strings
+  annonceId: string;
   annonce: Annonce;
   lang?: string;
 }) {
-  const imgFromPath = (imagePath: string, alt = "") => {
-    const src = imagePath ? buildImageUrl(imagePath) : FALLBACK_IMG;
-    return (
-      <div className="relative h-40 sm:h-60 w-full">
-        <Image
-          src={src}
-          alt={alt || "image"}
-          fill
-          unoptimized
-          style={{ objectFit: "cover" }}
-          className="rounded-lg"
-        />
-      </div>
-    );
+  const isAr = lang.startsWith("ar");
+  const dir = isAr ? "rtl" : "ltr";
+  const t = useI18n();
+
+  // Copie locale de l’annonce pour merger les images chargées côté client
+  const [localAnnonce, setLocalAnnonce] = useState<Annonce>(annonce);
+
+  // Normalise ImgDoc[] -> ImagesArray (toujours un tableau)
+  const normalizeImages = (arr?: ImgDoc[]): ImagesArray => {
+    if (!Array.isArray(arr) || arr.length === 0) return [];
+    return arr.map((im, i): ImageItem => ({
+      id: String(i),
+      imagePath: String(im.imagePath || ""),
+    }));
   };
 
+  // Charge toutes les images si haveImage vrai et que l'état ne les a pas encore
+  useEffect(() => {
+    let ignore = false;
+
+    (async () => {
+      try {
+        if (!localAnnonce?.haveImage) return;
+        if (Array.isArray(localAnnonce?.images) && localAnnonce.images.length > 0) return;
+
+        const url = `/${lang}/api/images/${annonceId}`;
+        const res = await fetch(url, { cache: "no-store" });
+        const data: {
+          images?: ImgDoc[];
+          firstImagePath?: string | null;
+          haveImage?: boolean;
+        } = await res.json().catch(() => ({} as any));
+
+        if (!res.ok || !data || ignore) return;
+
+        const normalized: ImagesArray = normalizeImages(data.images);
+
+        // Fallback : si pas de liste mais une image principale, on crée une entrée
+        const fallbackArray: ImagesArray =
+          normalized.length === 0 && data.firstImagePath
+            ? [{ id: "0", imagePath: String(data.firstImagePath) }]
+            : normalized;
+
+        setLocalAnnonce((prev): Annonce => {
+          const prevImages: ImagesArray = Array.isArray(prev.images) ? (prev.images as ImagesArray) : [];
+          return {
+            ...prev,
+            haveImage: data.haveImage ?? prev.haveImage,
+            firstImagePath: String(data.firstImagePath ?? prev.firstImagePath ?? ""),
+            images: fallbackArray.length > 0 ? fallbackArray : prevImages,
+          };
+        });
+      } catch {
+        // silencieux
+      }
+    })();
+
+    return () => {
+      ignore = true;
+    };
+  }, [annonceId, lang]);
+
+  // Helper: retourne l'URL telle quelle
+  const getImageUrl = (imagePath: string) => String(imagePath || "");
+
   const NoImage = () => (
-    <div className="relative h-40 sm:h-60 w-full">
-      <Image
-        src={FALLBACK_IMG}
-        alt="no image uploaded by user"
-        fill
-        unoptimized
-        style={{ objectFit: "cover" }}
-        className="rounded-lg"
-      />
+    <div className="relative h-64 sm:h-80 md:h-96 w-full bg-gray-100 flex items-center justify-center text-gray-400">
+       <span className="flex flex-col items-center gap-2">
+         <FaInfoCircle className="w-8 h-8 opacity-50"/>
+         No Image
+       </span>
     </div>
   );
 
   // ✅ parse sécurisé
-  const createdAt = parseDateSafe(annonce?.createdAt);
-
-  // ✅ formatage uniquement si la date est valide
+  const createdAt = parseDateSafe(localAnnonce?.createdAt);
   const formattedDate = createdAt
-    ? createdAt.toLocaleDateString(lang.startsWith("ar") ? "ar-MR" : "fr-FR")
+    ? createdAt.toLocaleDateString(isAr ? "ar-MR" : "fr-FR", { day: 'numeric', month: 'long', year: 'numeric' })
     : "";
 
-  const formattedTime = createdAt
-    ? createdAt.toLocaleTimeString(lang.startsWith("ar") ? "ar-MR" : "fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "";
+  const location = isAr
+      ? `${localAnnonce.lieuStrAr || ""} - ${localAnnonce.moughataaStrAr || ""}`
+      : `${localAnnonce.lieuStr || ""} - ${localAnnonce.moughataaStr || ""}`;
 
+  const classification = isAr
+      ? `${localAnnonce.classificationAr || ""}`
+      : `${localAnnonce.classificationFr || ""}`;
+
+  const category = isAr 
+    ? `${localAnnonce.typeAnnonceNameAr || ""} / ${localAnnonce.categorieNameAr || ""}`
+    : `${localAnnonce.typeAnnonceName || ""} / ${localAnnonce.categorieName || ""}`;
+
+  
   return (
-    <article className="flex flex-col gap-4 bg-white shadow-lg rounded-xl p-4 max-w-lg mx-auto my-6 sm:max-w-2xl sm:p-6 md:my-8">
-      <h2 className="text-2xl font-bold mb-4 text-blue-600 text-center">
-        Détails de l’annonce
-      </h2>
-
-      <div className="space-y-2 h-40 sm:h-60 w-full">
-        {annonce?.haveImage && Array.isArray(annonce.images) && annonce.images.length > 0 ? (
-          <Carousel className="rounded-xl" infiniteLoop autoPlay showThumbs={false}>
-            {annonce.images.map((item, idx) => (
-              <div className="h-40 sm:h-60" key={item.id ?? idx}>
-                {imgFromPath(item.imagePath, annonce.title ?? "image")}
+    <article dir={dir} className="max-w-4xl mx-auto px-4 pb-24 sm:pb-12 pt-4">
+      
+      {/* --- Image Gallery Section --- */}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-6" dir="ltr">
+        {localAnnonce?.haveImage && Array.isArray(localAnnonce.images) && localAnnonce.images.length > 0 ? (
+          <Carousel 
+            showThumbs={false} 
+            showStatus={false}
+            infiniteLoop 
+            autoPlay 
+            interval={5000}
+            key={`carousel-${lang}-${localAnnonce.images.length}`} 
+            className="rounded-t-3xl overflow-hidden detail-carousel"
+          >
+            {localAnnonce.images.map((item, idx) => (
+              <div key={item.id ?? idx} className="w-full">
+                <div className="relative w-full h-64 sm:h-80 lg:h-[500px] overflow-hidden bg-gray-50">
+                    <img
+                        src={getImageUrl(item.imagePath)}
+                        alt={localAnnonce.title ?? `image-${idx}`}
+                        className="w-full h-full object-contain"
+                        loading="lazy"
+                    />
+                </div>
               </div>
             ))}
           </Carousel>
@@ -97,58 +169,118 @@ export default function AnnonceDetailUI({
         )}
       </div>
 
-      <div className="p-2">
-        <span className="inline-block bg-green-800 rounded-md px-2 py-1 text-xs sm:text-sm font-semibold text-white">
-          {annonce.typeAnnonceNameAr || annonce.typeAnnonceName} /{" "}
-          {annonce.categorieNameAr || annonce.categorieName}
-        </span>
+      {/* --- Content Section --- */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        
+        {/* Main Info */}
+        <div className="flex-1 w-full space-y-6">
+            
+            {/* Header: Title, Price, Date */}
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
+                        {localAnnonce.title}
+                    </h1>
+                     {localAnnonce.price && (
+                        <div className="bg-primary-50 px-4 py-2 rounded-2xl flex items-baseline gap-1 shrink-0">
+                             <span className="text-2xl font-extrabold text-primary-700">{localAnnonce.price.toLocaleString()}</span>
+                             <span className="text-sm font-bold text-primary-500">UM</span>
+                        </div>
+                     )}
+                </div>
 
-        <h1 className="text-xl sm:text-2xl font-bold my-2">{annonce.title}</h1>
+                <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-gray-500">
+                     {formattedDate && (
+                         <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg">
+                             <FaCalendarAlt className="text-gray-400"/>
+                             <span>{formattedDate}</span>
+                         </div>
+                     )}
+                     <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg text-gray-700">
+                          <FaTag className="text-gray-400"/>
+                          <span>{classification}</span>
+                     </div>
+                </div>
+            </div>
 
-        <p className="text-gray-600 text-sm sm:text-base mb-4">
-          {annonce.description}
-        </p>
+            {/* Details: Location, Type, Description */}
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-6">
+                
+                {/* Location & Type Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-500 shadow-sm">
+                            <FaMapMarkerAlt size={18} />
+                        </div>
+                        <div>
+                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                                {isAr ? "الموقع" : "Localisation"}
+                             </p>
+                             <p className="font-bold text-gray-900">{location}</p>
+                        </div>
+                    </div>
 
-        <div className="hover:bg-gray-100 rounded-md p-0">
-          <div className="border-t border-green-800 my-2" />
-          <div className="flex justify-between items-center">
-            <span className="text-sm sm:text-base font-bold">PRIX</span>
-            <p className="text-base sm:text-lg text-green-800 font-bold">
-              {annonce.price} UMR / jour
-            </p>
-          </div>
-          <div className="border-t border-green-800 my-2" />
+                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                         <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-emerald-500 shadow-sm">
+                            <FaTag size={18} />
+                         </div>
+                        <div>
+                             <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                                {isAr ? "الفئة" : "Catégorie"}
+                             </p>
+                             <p className="font-bold text-gray-900">{category}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr className="border-gray-100"/>
+
+                {/* Description */}
+                <div className="prose prose-blue max-w-none">
+                     <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        {isAr ? "الوصف" : "Description"}
+                     </h3>
+                     <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                         {localAnnonce.description}
+                     </p>
+                </div>
+            </div>
+
+             {/* Disclaimer */}
+            <div className="bg-amber-50 rounded-2xl p-4 flex gap-3 text-amber-800 text-xs sm:text-sm leading-relaxed border border-amber-100">
+                 <FaShieldAlt className="shrink-0 mt-0.5 text-amber-600" size={16}/>
+                 <p>{t("detail.disclaimer")}</p>
+            </div>
+
         </div>
 
-        <div className="hover:bg-gray-100 rounded-md p-0 mt-2">
-          <div className="border-t border-green-800 my-2" />
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-bold text-gray-800 mb-1">Contact</h2>
-            <p className="text-md font-semibold text-blue-600">
-              {annonce.contact || "—"}
-            </p>
-          </div>
-          <div className="border-t border-green-800 my-2" />
+        {/* Sidebar / Actions */}
+        <div className="w-full lg:w-80 shrink-0 space-y-4 lg:sticky lg:top-24">
+            <div className="bg-white rounded-3xl p-6 shadow-lg shadow-gray-200/50 border border-gray-100 space-y-4">
+                <h3 className="font-bold text-gray-900 text-lg">{t("detail.contact")}</h3>
+                
+                {localAnnonce.contact && (
+                     <div className="flex items-center justify-center gap-3 w-full py-3.5 bg-white border-2 border-primary-100 text-primary-700 font-bold rounded-xl transition-colors">
+                        <FaPhoneAlt />
+                        <span dir="ltr">{localAnnonce.contact}</span>
+                     </div>
+                )}
+            </div>
+
+            {/* Share or other actions could go here */}
         </div>
 
-        {createdAt && (
-          <div className="mt-4">
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-700">
-              {formattedDate} {formattedTime ? `| ${formattedTime}` : ""}
-            </span>
-          </div>
-        )}
-
-        <div className="mt-6 p-4 font-bold bg-gray-100 rounded-lg">
-          <p className="text-xs sm:text-sm text-gray-600">
-            Notre plateforme n'est pas responsable de ce produit ou service.
-            Toutes les informations sont fournies par l'annonceur, et nous ne
-            garantissons pas leur exactitude ou leur qualité. Veuillez effectuer
-            vos propres vérifications avant de procéder à tout achat ou
-            réservation.
-          </p>
-        </div>
       </div>
+
+      {/* Styles carrousel */}
+      <style jsx global>{`
+        .carousel .slide {
+          background: transparent !important;
+        }
+        .carousel .control-dots {
+          bottom: 8px;
+        }
+      `}</style>
     </article>
   );
 }

@@ -5,6 +5,7 @@ import { Annonce } from "../../../../../../packages/mytypes/types";
 import { getDb } from "../../../../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { Metadata } from "next";
+import AnnonceDetailUI from "../[id]/ui";
 
 type PageParams = { id: string; locale: string };
 
@@ -94,6 +95,9 @@ export default async function AnnonceDetail({
     lieuId: doc.lieuId ?? "",
     lieuStr: doc.lieuStr ?? "",
     lieuStrAr: doc.lieuStrAr ?? "",
+    moughataaId: doc.moughataaId ?? "",
+    moughataaStr: doc.moughataaStr ?? "",
+    moughataaStrAr: doc.moughataaStrAr ?? "",
     userId: doc.userId ?? "",
     title: doc.title ?? "",
     description: doc.description ?? "",
@@ -113,7 +117,12 @@ export default async function AnnonceDetail({
       <div className="md:ml-32 lg:ml-44">
         <BackButton />
       </div>
-      <AnnonceDetailCompo
+      {/* <AnnonceDetailCompo
+        lang={locale || "fr"}
+        annonceId={String(formattedAnnonce.id)}
+        annonce={formattedAnnonce}
+      /> */}
+      <AnnonceDetailUI
         lang={locale || "fr"}
         annonceId={String(formattedAnnonce.id)}
         annonce={formattedAnnonce}

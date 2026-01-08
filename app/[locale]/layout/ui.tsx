@@ -7,11 +7,6 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../locales/client";
 import { Home, List as ListIcon, Plus, Menu, X, LogIn, LogOut, Heart, Info, ChevronDown, Check } from "lucide-react";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-
-const PrismBG = dynamic(() => import("../../../packages/ui/components/Prism"), {
-  ssr: false,
-});
 
 import BottomNav from "./BottomNav";
 
@@ -48,8 +43,8 @@ const NavLink = ({
   <Link
     href={href}
     onClick={onClick}
-    className={`flex items-center gap-2 px-3 py-2 rounded-md transition duration-200 text-sm md:text-base ${
-      active ? "bg-white text-black" : "hover:bg-blue-600"
+    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-bold text-[15px] ${
+      active ? "bg-primary-50 text-primary-600" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
     } ${className}`}
   >
     {children}
@@ -89,7 +84,7 @@ function LanguageSelectFlags({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition text-white font-bold text-sm`}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition text-gray-700 font-medium text-sm shadow-sm`}
         >
           <span>{activeLang.label}</span>
           <span className="text-lg leading-none">{activeLang.emoji}</span>
@@ -142,13 +137,13 @@ function LanguageSelectFlags({
             type="button"
             title={lang.title}
             onClick={() => onChange(lang.code)}
-            className={`relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-white text-lg leading-none shadow transition hover:scale-105 ${
-               isActive ? "ring-2 ring-white outline outline-2 outline-blue-600 drop-shadow scale-105" : "opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
+            className={`relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-white text-lg leading-none shadow-sm ring-1 ring-gray-200 transition hover:ring-gray-300 ${
+               isActive ? "ring-2 ring-blue-500" : "opacity-70 grayscale hover:grayscale-0 hover:opacity-100"
             }`}
           >
             <span aria-hidden>{lang.emoji}</span>
             {isActive && (
-              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 grid place-items-center ring-2 ring-white">
+              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-blue-500 grid place-items-center ring-2 ring-white">
                 <Check className="h-2.5 w-2.5 text-white" strokeWidth={4} />
               </span>
             )}
@@ -186,29 +181,20 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
     }
   };
 
-  const sideClass = isAr
-    ? "left-0 -translate-x-full data-[open=true]:translate-x-0"
-    : "right-0 translate-x-full data-[open=true]:translate-x-0";
   const whatsapp = localeKey == "ar" ? "واتساب" : "WhatsApp";
 
   return (
-    <nav className="relative sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
-      <div className="mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
+    <>
+    <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
+      <div className="mx-auto max-w-screen-2xl px-4 sm:px-6">
         {/* ===== Ligne principale ===== */}
 
-
-
-        <div className="absolute inset-0 -z-10 pointer-events-none opacity-70">
-        <PrismBG
-        />
-      </div>
         <div
-          className={`hidden lg:flex items-center justify-between py-8 gap-6`}
+          className={`hidden lg:flex items-center justify-between py-3 gap-6`}
         >
           {/* Bloc gauche ou droit : logo + liens */}
-          <div className={`hidden lg:flex items-center gap-6`}>
+          <div className={`hidden lg:flex items-center gap-8`}>
             
-            {/* Logo */}
             <Link
               href={`/${localeKey}`}
               className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
@@ -217,82 +203,68 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                 <Image
                   src="/images/logeddeyar.png"
                   alt="Rim Ijar"
-                  width={120}               // largeur augmentée
-                  height={120}              // hauteur augmentée
-                  className="h-24 w-auto object-contain"  // h-24 = 6rem = 96px
+                  width={140}
+                  height={140}
+                  className="h-10 w-auto object-contain"
                   priority
                 />
               </div>
             </Link>
-
-
-
-
-            <div className="hidden lg:flex items-center gap-2">
-            {/* <Link
-              href="https://wa.me/22241862698"
-              target="_blank"
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
-            >
-              <FaWhatsapp className="h-6 w-6" />
-              {whatsapp}
-          </Link>  */}
+            <div className="hidden lg:flex items-center gap-1">
 
             <NavLink href={`/${localeKey}/`} active={isActive(`/${localeKey}`)}>
-                <Home />
                 {t("nav.home")}
               </NavLink>
 
 
               <NavLink href={`/${localeKey}/my/list`} active={isActive(`/${localeKey}/my/list`)}>
-                <ListIcon className="h-5 w-5" />
                 {t("nav.myListings")}
               </NavLink>
 
               <NavLink href={`/${localeKey}/my/add`} active={isActive(`/${localeKey}/my/add`)}>
-                <Plus className="h-5 w-5" />
                 {t("nav.addListing")}
               </NavLink>
 
               <NavLink href={`/${localeKey}/my/favorite`} active={isActive(`/${localeKey}/my/favorite`)}>
-                <Heart className="h-5 w-5" />
                 {t("nav.favorites") ?? "Favoris"}
               </NavLink>
 
                {/* === Nouveau lien About us === */}
                <NavLink href={`/${localeKey}/about`} active={isActive(`/${localeKey}/about`)}>
-               <Info />
                  {t("nav.about") ?? "About us"}
               </NavLink>
             </div>
           </div>
 
           {/* Bloc opposé : actions (logout + langue) */}
-          <div className={`flex items-center gap-2 sm:gap-3 ${isAr ? "order-1" : "order-2"}`}>
+          <div className={`flex items-center gap-4 ${isAr ? "order-1" : "order-2"}`}>
             <Link
               href="https://wa.me/22241862698"
               target="_blank"
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
+              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5"
             >
-              <FaWhatsapp className="h-6 w-6" />
+              <FaWhatsapp className="h-5 w-5" />
               {whatsapp}
             </Link>
-            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact={false} />
+            
+            <div className="h-6 w-px bg-gray-200"></div>
+
+            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
             
             {/* Desktop Logout */}
             <button
               onClick={handleLogout}
-              className="hidden lg:flex items-center gap-2 hover:bg-purple-500/80 bg-white/10 px-3 py-2 rounded-md transition"
+              className="hidden lg:flex items-center gap-2 hover:bg-red-50 text-gray-500 hover:text-red-600 px-3 py-2 rounded-xl transition-colors font-medium"
+              title={t("nav.logout")}
             >
               <LogOut className="h-5 w-5" />
-              <span className="hidden md:inline">{t("nav.logout")}</span>
             </button>
             
           </div>
         </div>
 
         {/* ==================== LOGIN MOBILE HEADER USERS ==================== */}
-        <div className="flex lg:hidden items-center justify-between pb-3">
+        <div className="flex lg:hidden items-center justify-between py-3">
              <Link
               href={`/${localeKey}`}
               className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
@@ -302,7 +274,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                   alt="Rim Ijar"
                   width={120}
                   height={120}
-                  className="h-20 w-auto object-contain"
+                  className="h-9 w-auto object-contain"
                   priority
                 />
             </Link>
@@ -311,14 +283,14 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                  <Link
                   href="https://wa.me/22241862698"
                   target="_blank"
-                  className="flex items-center justify-center w-9 h-9 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md transition"
+                  className="flex items-center justify-center w-10 h-10 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-md transition-colors"
                 >
                   <FaWhatsapp className="h-5 w-5" />
                 </Link>
 
                  <button
                   onClick={handleLogout}
-                  className="flex items-center justify-center w-9 h-9 bg-red-500/10 text-red-100 hover:bg-red-500 hover:text-white rounded-full transition"
+                  className="flex items-center justify-center w-10 h-10 bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors"
                   title={t("nav.logout")}
                 >
                   <LogOut className="h-5 w-5" />
@@ -330,17 +302,14 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
         {/* ==================== END MOBILE HEADER ==================== */}
 
       </div>
-
-      <BottomNav lang={lang} isAuthenticated={true} />
     </nav>
+    <BottomNav lang={lang} isAuthenticated={true} />
+    </>
   );
 };
 
 
 
-/* =======================================================================
-   NAV non connecté
-======================================================================= */
 /* =======================================================================
    NAV non connecté
 ======================================================================= */
@@ -353,13 +322,11 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const whatsapp = localeKey == "ar" ? "واتساب" : "WhatsApp";
 
   return (
-    <nav className="relative sticky top-0 z-40 w-full bg-gradient-to-r from-blue-800 to-purple-800 text-white shadow-lg">
-      <div className="absolute inset-0 -z-10 pointer-events-none opacity-70">
-        <PrismBG />
-      </div>
+    <>
+    <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
 
       {/* ==================== GUEST MOBILE HEADER ==================== */}
-      <div dir={isAr ? "rtl" : "ltr"} className="lg:hidden mx-auto max-w-screen-2xl px-3 w-full">
+      <div dir={isAr ? "rtl" : "ltr"} className="lg:hidden mx-auto max-w-screen-2xl px-4 w-full">
          <div className="flex items-center justify-between py-3">
              <Link
               href={`/${localeKey}`}
@@ -370,7 +337,7 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                   alt="Rim Ijar"
                   width={120}
                   height={120}
-                  className="h-20 w-auto object-contain"
+                  className="h-9 w-auto object-contain"
                   priority
                 />
             </Link>
@@ -379,7 +346,7 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                  <Link
                   href="https://wa.me/22241862698"
                   target="_blank"
-                  className="flex items-center justify-center w-9 h-9 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md transition"
+                  className="flex items-center justify-center w-10 h-10 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-md transition-colors"
                 >
                   <FaWhatsapp className="h-5 w-5" />
                 </Link>
@@ -390,63 +357,70 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
       </div>
 
       {/* ==================== GUEST DESKTOP HEADER ==================== */}
-      <div dir={isAr ? "rtl" : "ltr"} className="hidden lg:block mx-auto max-w-screen-2xl px-3 sm:px-4 md:px-6">
-        <div className="flex items-center justify-between py-3 gap-2">
+      <div dir={isAr ? "rtl" : "ltr"} className="hidden lg:block mx-auto max-w-screen-2xl px-4 sm:px-6">
+        <div className="flex items-center justify-between py-3 gap-4">
 
           <Link
             href={`/${localeKey}`}
-            className="text-xl sm:text-2xl font-bold hover:text-yellow-300 transition flex items-center gap-2"
+            className="flex items-center gap-2 hover:opacity-80 transition shrink-0"
           >
-            <div>
-              <Image
-                src="/images/logeddeyar.png"
-                alt="Rim Ijar"
-                width={120}
-                height={120}
-                className="h-24 w-auto object-contain sm:h-20"
-                priority
-              />
-            </div>
+            <Image
+              src="/images/logeddeyar.png"
+              alt="Rim Ijar"
+              width={140}
+              height={140}
+              className="h-11 w-auto object-contain"
+              priority
+            />
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+             <div className="flex items-center gap-1 mr-4 text-sm font-semibold text-gray-500">
+               <Link href={`/${localeKey}`} className="hover:text-primary-600 px-3 py-2 transition-colors">{t("nav.home")}</Link>
+               <Link href={`/${localeKey}/about`} className="hover:text-primary-600 px-3 py-2 transition-colors">{t("nav.about") ?? "À propos"}</Link>
+             </div>
+
             <Link
               href="https://wa.me/22241862698"
               target="_blank"
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition shadow-md"
+              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5"
             >
-              <FaWhatsapp className="h-6 w-6" />
+              <FaWhatsapp className="h-5 w-5" />
               {whatsapp}
             </Link>
+
+            <div className="h-6 w-px bg-gray-200"></div>
 
             <Link
               id="connexion"
               data-cy="connexion"
               href={`/${localeKey}/p/users/connexion`}
-              className="hidden sm:flex items-center gap-2 hover:bg-green-500 px-3 py-2 text-black bg-white rounded-lg transition"
+              className="flex items-center gap-2 px-5 py-2.5 text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-all font-bold hover:shadow-sm"
             >
               <LogIn className="h-5 w-5" />
-              <span className="hidden md:inline">{t("nav.login")}</span>
+              <span>{t("nav.login")}</span>
             </Link>
 
             <Link
               id="register"
               data-cy="register"
               href={`/${localeKey}/p/users/register`}
-              className="hidden sm:flex items-center gap-2 hover:bg-green-500 px-3 py-2 text-black bg-white rounded-lg transition"
+              className="flex items-center gap-2 px-5 py-2.5 text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all font-bold shadow-lg shadow-primary-600/20 hover:-translate-y-0.5"
             >
-              <LogIn className="h-5 w-5" />
-              <span className="hidden md:inline">{t("nav.signup")}</span>
+              <span>{t("nav.signup")}</span>
             </Link>
 
             {/* Sélecteur de langue */}
-            <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact={false} />
+            <div className="ml-2">
+               <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
+            </div>
           </div>
         </div>
       </div>
       
-      <BottomNav lang={lang} isAuthenticated={false} />
     </nav>
+    <BottomNav lang={lang} isAuthenticated={false} />
+    </>
   );
 };
 
