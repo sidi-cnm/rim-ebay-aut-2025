@@ -1,10 +1,6 @@
-/*
-File: app/[locale]/p/users/forgot-password/page.tsx
-Description: Page for users to request a password reset link.
-*/
-
 import ForgotPasswordForm from './ui';
 import { Metadata } from "next";
+import { getI18n } from '../../../../../locales/server';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -28,21 +24,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage({ params }: { params: { locale: string } }) {
+  const locale = params?.locale || "fr";
+  const t = await getI18n();
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
-        <h1 className="text-2xl font-semibold text-center mb-6">Mot de passe oublié</h1>
+      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+        <h1 className="text-2xl font-bold text-center mb-8 text-gray-900">{t('forgotPassword.title')}</h1>
 
-        {/* Client Component */}
-        <ForgotPasswordForm />
-
-        <p className="mt-6 text-center text-sm">
-          <a href="/login" className="text-blue-600 hover:underline">
-            Retour à la connexion
-          </a>
-        </p>
+        <ForgotPasswordForm locale={locale} />
       </div>
     </div>
   );
 }
+

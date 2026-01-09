@@ -6,40 +6,56 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const { token, password } = await req.json();
+    const { contact, otp, password } = await req.json();
 
-    if (!token || !password) {
+    if (!contact || !otp || !password) {
       return NextResponse.json(
-        { error: "Token et nouveau mot de passe requis." },
+        { error: "Numéro de téléphone, code OTP et nouveau mot de passe requis." },
         { status: 400 }
       );
     }
 
-    console.log("test")
+    // Basic password validation
+    if (password.length < 4) {
+      return NextResponse.json(
+        { error: "Le mot de passe doit contenir au moins 4 caractères." },
+        { status: 400 }
+      );
+    }
+
     const db = await getDb();
 
-    // 1) Retrouver la demande de reset via le token
-    const reset = await db.collection("password_resets").findOne({ token });
+    // 1) Find the reset request by contact and OTP
+    const reset = await db.collection("password_resets").findOne({
+      contact,
+      otpCode: otp,
+      used: false,
+    });
+
     if (!reset) {
       return NextResponse.json(
-        { error: "Token invalide." },
+        { error: "Code OTP invalide." },
         { status: 400 }
       );
     }
 
-    // 2) Vérifier l’expiration
+    // 2) Check expiration
     if (reset.expiresAt && reset.expiresAt < new Date()) {
+      // Mark as used to prevent reuse
+      await db.collection("password_resets").updateOne(
+        { _id: reset._id },
+        { $set: { used: true, expiredAt: new Date() } }
+      );
       return NextResponse.json(
-        { error: "Token expiré." },
+        { error: "Code OTP expiré. Veuillez demander un nouveau code." },
         { status: 400 }
       );
     }
 
-    // 3) Hasher le nouveau mot de passe
+    // 3) Hash the new password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4) Mettre à jour le mot de passe de l'utilisateur
-    //    Dans ton schéma, userId est stocké comme string de l'ObjectId
+    // 4) Update user password
     const userFilter = { _id: new ObjectId(String(reset.userId)) };
 
     const updateRes = await db.collection("users").updateOne(
@@ -54,8 +70,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // 5) Supprimer la demande de reset (évite la réutilisation)
-    await db.collection("password_resets").deleteOne({ _id: reset._id });
+    // 5) Mark the reset request as used
+    await db.collection("password_resets").updateOne(
+      { _id: reset._id },
+      { $set: { used: true, usedAt: new Date() } }
+    );
 
     return NextResponse.json(
       { message: "Mot de passe réinitialisé avec succès." },
