@@ -104,7 +104,6 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
-      console.log("Chinguisoft response:", resp);
 
       const chinguJson = await resp.json();
       // Chinguisoft returns: { code: 654321, balance: 95 }

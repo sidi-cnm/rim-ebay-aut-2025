@@ -24,8 +24,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ForgotPasswordPage({ params }: { params: { locale: string } }) {
-  const locale = params?.locale || "fr";
+export default async function ForgotPasswordPage({ params }: { params: Promise<{ locale: string }> }) {
+  const resolvedParams = await params;
+  const locale = resolvedParams?.locale || "fr";
   const t = await getI18n();
 
   return (
