@@ -181,7 +181,7 @@ export default function AnnonceDetailUI({
                     <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
                         {localAnnonce.title}
                     </h1>
-                     {localAnnonce.price && (
+                     {localAnnonce.price && !localAnnonce.isPriceHidden && (
                         <div className="bg-primary-50 px-4 py-2 rounded-2xl flex items-baseline gap-1 shrink-0">
                              <span className="text-2xl font-extrabold text-primary-700">{localAnnonce.price.toLocaleString()}</span>
                              <span className="text-sm font-bold text-primary-500">UM</span>
