@@ -4,13 +4,19 @@ import { getDb } from "../../../../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcryptjs";
 
+// Force dynamic to prevent caching in production
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   try {
     const { contact, otp, password } = await req.json();
 
     if (!contact || !otp || !password) {
       return NextResponse.json(
-        { error: "Numéro de téléphone, code OTP et nouveau mot de passe requis." },
+        {
+          error:
+            "Numéro de téléphone, code OTP et nouveau mot de passe requis.",
+        },
         { status: 400 }
       );
     }
@@ -42,10 +48,12 @@ export async function POST(req: Request) {
     // 2) Check expiration
     if (reset.expiresAt && reset.expiresAt < new Date()) {
       // Mark as used to prevent reuse
-      await db.collection("password_resets").updateOne(
-        { _id: reset._id },
-        { $set: { used: true, expiredAt: new Date() } }
-      );
+      await db
+        .collection("password_resets")
+        .updateOne(
+          { _id: reset._id },
+          { $set: { used: true, expiredAt: new Date() } }
+        );
       return NextResponse.json(
         { error: "Code OTP expiré. Veuillez demander un nouveau code." },
         { status: 400 }
@@ -58,10 +66,11 @@ export async function POST(req: Request) {
     // 4) Update user password
     const userFilter = { _id: new ObjectId(String(reset.userId)) };
 
-    const updateRes = await db.collection("users").updateOne(
-      userFilter,
-      { $set: { password: hashedPassword, updatedAt: new Date() } }
-    );
+    const updateRes = await db
+      .collection("users")
+      .updateOne(userFilter, {
+        $set: { password: hashedPassword, updatedAt: new Date() },
+      });
 
     if (updateRes.matchedCount === 0) {
       return NextResponse.json(
@@ -71,10 +80,12 @@ export async function POST(req: Request) {
     }
 
     // 5) Mark the reset request as used
-    await db.collection("password_resets").updateOne(
-      { _id: reset._id },
-      { $set: { used: true, usedAt: new Date() } }
-    );
+    await db
+      .collection("password_resets")
+      .updateOne(
+        { _id: reset._id },
+        { $set: { used: true, usedAt: new Date() } }
+      );
 
     return NextResponse.json(
       { message: "Mot de passe réinitialisé avec succès." },

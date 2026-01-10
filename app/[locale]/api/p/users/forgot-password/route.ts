@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../../../../lib/mongodb";
 
+// Force dynamic to prevent caching in production
+export const dynamic = "force-dynamic";
+
 const CHINGUI_KEY = process.env.CHINGUISOFT_VALIDATION_KEY;
 const CHINGUI_TOKEN = process.env.CHINGUISOFT_VALIDATION_TOKEN;
 

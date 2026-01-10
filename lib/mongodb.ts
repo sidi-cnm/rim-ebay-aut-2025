@@ -13,16 +13,13 @@ let clientPromise: Promise<MongoClient>;
 
 const globalForMongo = global as unknown as { _mongoClientPromise?: Promise<MongoClient> };
 
-if (process.env.NODE_ENV === "development") {
-  if (!globalForMongo._mongoClientPromise) {
-    client = new MongoClient(uri);
-    globalForMongo._mongoClientPromise = client.connect();
-  }
-  clientPromise = globalForMongo._mongoClientPromise;
-} else {
-  client = new MongoClient(uri,options);
-  clientPromise = client.connect();
+// Cache the MongoDB client in both development and production
+// This prevents connection exhaustion in serverless environments
+if (!globalForMongo._mongoClientPromise) {
+  client = new MongoClient(uri, options);
+  globalForMongo._mongoClientPromise = client.connect();
 }
+clientPromise = globalForMongo._mongoClientPromise;
 
 export async function getDb(): Promise<Db> {
   const c = await clientPromise;
