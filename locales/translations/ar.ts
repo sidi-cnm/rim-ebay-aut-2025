@@ -60,6 +60,7 @@ export default {
     hidePrice: "إخفاء السعر",
     privateDescription: "وصف خاص",
     privateDescriptionPlaceholder: "ملاحظات خاصة لنفسي...",
+    fillDetails: "املأ تفاصيل إعلانك",
   },
   pagination: {
     next: "التالي",
@@ -372,5 +373,6 @@ export default {
     createdAt: " تم الإنشاء في",
     perDay: " أوقية / اليوم",
     noImageAlt: "لا توجد صورة",
+    details:"تفاصيل",
   },
 } as const;

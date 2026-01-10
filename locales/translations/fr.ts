@@ -104,6 +104,7 @@ export default {
     hidePrice: "Cacher le prix",
     privateDescription: "Description privée",
     privateDescriptionPlaceholder: "Notes privées pour moi-même...",
+    fillDetails: "Remplissez les détails de votre annonce",
   },
   pagination: {
     next: "Suivant",
@@ -225,7 +226,8 @@ export default {
     finish:"fini",
     createdAt: "Créé le",
     perDay: "/ jour",
-    noImageAlt: "Pas d'image"
+    noImageAlt: "Pas d'image",
+    details:"Details"
   },
   footer: {
     aboutUs: "À propos de nous",

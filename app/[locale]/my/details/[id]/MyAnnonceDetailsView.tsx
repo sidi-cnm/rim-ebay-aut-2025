@@ -35,6 +35,7 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
 }) => {
   const d = annonce?.createdAt ? new Date(annonce.createdAt as any) : new Date();
   const t = useI18n();
+  const isAr = lang === "ar";
 
   const ImageBox: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
     <div className="relative w-full h-64 sm:h-80 lg:h-[500px] overflow-hidden rounded-xl bg-gray-50">
@@ -43,111 +44,145 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
   );
 
   return (
-    <article className="flex flex-col gap-4 bg-white shadow-lg rounded-xl p-4 w-full max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[60%] xl:max-w-[50%] mx-auto my-6">
-      <h2 className="text-2xl font-bold mb-2 text-blue-600 text-center">{i18nAnnonce}</h2>
-
-      {/* 👇 Forcer LTR pour éviter le bug du carrousel en RTL */}
-      <div className="w-full overflow-hidden rounded-xl" dir="ltr">
+    <article className="max-w-4xl mx-auto px-4 pb-24 sm:pb-12 pt-4">
+      
+      {/* 1) Carrousel */}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-6" dir="ltr">
         {annonce?.haveImage && Array.isArray(annonce.images) && annonce.images.length > 0 ? (
           <Carousel
-            className="rounded-xl"
+            className="rounded-t-3xl overflow-hidden detail-carousel"
             infiniteLoop
             autoPlay
             showThumbs={false}
             showStatus={false}
-            dynamicHeight={false}
-            swipeable
-            emulateTouch
+            interval={5000}
             key={`my-carousel-${lang}-${annonce.images.length}`}
           >
             {annonce.images.map((item, idx) => (
               <div className="w-full" key={item.id ?? idx}>
-                <ImageBox src={getImageUrl(item.imagePath)} alt={annonce?.title || "image"} />
+                <div className="relative w-full h-64 sm:h-80 lg:h-[500px] overflow-hidden bg-gray-50">
+                    <img
+                        src={getImageUrl(item.imagePath)}
+                        alt={annonce?.title || "image"}
+                        className="w-full h-full object-contain"
+                        loading="lazy"
+                    />
+                </div>
               </div>
             ))}
           </Carousel>
         ) : (
-          <ImageBox src={annonce?.firstImagePath || fallbackImageUrl} alt="no image uploaded by user" />
+             <div className="relative w-full h-64 sm:h-80 lg:h-[500px] bg-gray-50 flex items-center justify-center text-gray-400">
+                <div className="flex flex-col items-center gap-2">
+                    <svg className="w-12 h-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>No Image</span>
+                </div>
+             </div>
         )}
       </div>
 
-      <div className="mt-2" />
+      {/* 2) Contenu principal */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+         <div className="flex-1 w-full space-y-6">
+            
+            {/* Header */}
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
+                 <div className="flex flex-wrap items-start justify-between gap-4">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
+                        {annonce?.title ?? "Sans titre"}
+                    </h1>
+                     {annonce?.price && (
+                        <div className="bg-primary-50 px-4 py-2 rounded-2xl flex items-baseline gap-1 shrink-0">
+                             <span className="text-2xl font-extrabold text-primary-700">{annonce.price.toLocaleString()}</span>
+                             <span className="text-sm font-bold text-primary-500">UM</span>
+                        </div>
+                     )}
+                </div>
+                 <div className="flex items-center gap-3 text-sm font-medium text-gray-500">
+                     <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg">
+                         <span>📅</span>
+                         <span>{d.toLocaleDateString(isAr ? "ar-MR" : "fr-FR")}</span>
+                     </div>
+                 </div>
+            </div>
 
-      <div className="p-0">
-        <div className="flex justify-between items-center">
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-semibold text-gray-700">
-            {d.getDate()}-{d.getMonth() + 1}-{d.getFullYear()} | {d.getHours()}h : {d.getMinutes()}min |
-          </span>
-        </div>
+            {/* Détails */}
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-6">
+                 {/* Metadata Grid */}
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Localisation</p>
+                         <p className="font-bold text-gray-900">
+                             {isAr ? `${annonce?.lieuStrAr ?? ""} - ${annonce?.moughataaStrAr ?? ""}` : `${annonce?.lieuStr ?? ""} - ${annonce?.moughataaStr ?? ""}`}
+                         </p>
+                     </div>
+                      <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Type</p>
+                         <p className="font-bold text-gray-900">
+                            {isAr ? `${annonce?.typeAnnonceNameAr ?? ""} / ${annonce?.categorieNameAr ?? ""}` : `${annonce?.typeAnnonceName ?? ""} / ${annonce?.categorieName ?? ""}`}
+                         </p>
+                     </div>
+                 </div>
 
-        <h1 className="text-xl sm:text-2xl font-bold my-2">{t("detail.description")}</h1>
+                 <hr className="border-gray-100"/>
+                 
+                 <div className="prose prose-blue max-w-none">
+                     <h3 className="text-lg font-bold text-gray-900 mb-2">{t("detail.description")}</h3>
+                     <p className="text-gray-600 leading-relaxed whitespace-pre-line">{annonce?.description}</p>
+                 </div>
 
-        <p className="text-gray-600 text-sm sm:text-base mb-4">{annonce?.description}</p>
+                 {annonce?.privateDescription && (
+                    <div className="mt-4 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+                        <div className="flex items-center gap-2 mb-2 text-amber-800">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            <h4 className="font-bold text-sm uppercase tracking-wide">{t("addAnnonce.privateDescription")}</h4>
+                        </div>
+                        <p className="text-gray-700 text-sm">{annonce.privateDescription}</p>
+                    </div>
+                 )}
+            </div>
 
-        {/* Prix */}
-        <div className="hover:bg-gray-100 rounded-md p-0">
-          <div className="border-t border-green-800 my-2"></div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm sm:text-base font-bold">{i18nPrix}</span>
-            <p className="text-base sm:text-lg text-green-800 font-bold">
-              {annonce?.price} {t("detail.perDay")}
-            </p>
-          </div>
-          <div className="border-t border-green-800 my-2"></div>
-        </div>
-
-        {/* Contact */}
-        <div className="hover:bg-gray-100 rounded-md p-0 mt-2">
-          <div className="border-t border-green-800 my-2"></div>
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-bold text-gray-800 mb-1">{i18nContact}</h2>
-            <p className="text-md font-semibold text-blue-600">{parseInt(String(annonce?.contact || 0))}</p>
-          </div>
-          <div className="border-t border-green-800 my-2"></div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row justify-between mt-4 gap-2">
-          <button
-            onClick={handleDelte}
-            disabled={isDeleting}
-            className="bg-red-500 w-full sm:w-44 h-10 hover:bg-red-600 rounded-lg text-white font-bold"
-          >
-            {isDeleting ? <div className="loader"></div> : <span>{t("detail.delete")}</span>}
-          </button>
-          <button
-            data-cy="edit-button"
-            onClick={handleEdit}
-            className="bg-green-500 w-full sm:w-44 h-10 rounded-lg hover:bg-green-600 text-white font-bold"
-          >
-            {lang === "ar" ? "حرر" : "Edit"}
-          </button>
-        </div>
+             {/* Actions Bar */}
+             <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-gray-200/50">
+                  <button
+                    onClick={handleEdit}
+                    className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold h-12 rounded-xl transition-all shadow-lg shadow-primary-200 flex items-center justify-center gap-2"
+                  >
+                    <span>✏️</span>
+                    <span>{lang === "ar" ? "تعديل" : "Modifier"}</span>
+                  </button>
+                  
+                  <button
+                    onClick={handleDelte}
+                    disabled={isDeleting}
+                    className="flex-1 bg-white border-2 border-red-100 text-red-600 font-bold h-12 rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                     {isDeleting ? <span className="loader scale-75 border-red-500 border-t-transparent"></span> : (
+                        <>
+                            <span>🗑️</span>
+                            <span>{t("detail.delete")}</span>
+                        </>
+                     )}
+                  </button>
+             </div>
+         </div>
       </div>
 
       <style jsx global>{`
-        /* évite un fond blanc qui masque après hydration */
-        .carousel .slide {
-          background: transparent !important;
-        }
-        .carousel .control-dots {
-          bottom: 8px;
-        }
+        .carousel .slide { background: transparent !important; }
+        .carousel .control-dots { bottom: 8px; }
       `}</style>
 
-      <style jsx>{`
+       <style jsx>{`
         .loader {
           border: 4px solid #f3f3f3;
-          border-top: 4px solid #3498db;
+          border-top: 4px solid currentColor;
           border-radius: 50%;
-          width: 20px;
-          height: 20px;
+          width: 24px;
+          height: 24px;
           animation: spin 1s linear infinite;
-          margin: auto;
         }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
       `}</style>
     </article>
   );

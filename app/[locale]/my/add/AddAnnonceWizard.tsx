@@ -109,60 +109,75 @@ export default function AddAnnonceWizard({
   return (
     <main className="min-h-screen bg-gray-50" dir={isRTL ? "rtl" : "ltr"}>
       {/* ------------ Stepper ------------ */}
-      <div className="mx-auto max-w-5xl px-4 pt-6" dir={isRTL ? "rtl" : "ltr"}>
-        <div className="bg-white border border-gray-200 shadow-sm rounded-2xl">
-          <div className="px-4 py-4 border-b border-gray-100">
-            <h2 className="text-lg md:text-xl font-semibold text-gray-800">
+      <div className="mx-auto max-w-4xl px-4 pt-4 sm:pt-8" dir={isRTL ? "rtl" : "ltr"}>
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-4 py-4 sm:px-6 sm:py-5 border-b border-gray-50 bg-gray-50/50">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900">
               {t("wizard.title")}
             </h2>
-            <p className="text-sm text-gray-500 mt-1">{t("wizard.subtitle")}</p>
+            <p className="text-gray-500 text-sm sm:text-base mt-1">{t("wizard.subtitle")}</p>
           </div>
 
-          <div className={["p-4 w-full", isRTL ? "md:flex md:justify-end" : "md:flex md:justify-center"].join(" ")}>
-            <div className="w-full overflow-x-auto">
+          <div className="p-4 sm:p-6">
+            <div className="w-full">
               <ol
-                className={[
-                  "flex items-center",
-                  isRTL ? "flex-row-reverse justify-end pr-2" : "flex-row",
-                  "gap-2 sm:gap-3 md:gap-5",
-                  "whitespace-nowrap min-w-max mx-auto",
-                ].join(" ")}
+                className="flex items-center w-full justify-between"
                 aria-label={t("wizard.title")}
               >
-                {visualSteps.map((s, idx) => {
+                {steps.map((s, idx) => {
                   const isCurrent = step === s.key;
                   const isCompleted = step > s.key;
-                  const isLast = idx === visualSteps.length - 1;
+                  const isLast = idx === steps.length - 1;
+                  
                   return (
-                    <li key={s.key} className={`flex items-center ${isRTL ? "flex-row-reverse" : ""}`}>
-                      <div
-                        className={[
-                          "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium",
-                          isCurrent
-                            ? "bg-blue-900 text-white"
-                            : isCompleted
-                            ? "bg-blue-700 text-white"
-                            : "bg-gray-200 text-gray-700",
-                        ].join(" ")}
-                      >
-                        <span className={isRTL ? "text-right" : "text-left"}>{s.label}</span>
+                    <li key={s.key} className={`flex-1 flex items-center min-w-0 ${isLast ? "flex-none" : ""}`}>
+                      <div className="flex flex-col items-center gap-2 relative z-10 group cursor-default">
+                          <div
+                            className={[
+                              "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-300 ring-4 ring-white",
+                              isCurrent
+                                ? "bg-primary-600 text-white shadow-lg shadow-primary-200 scale-110"
+                                : isCompleted
+                                ? "bg-green-500 text-white shadow-md shadow-green-100"
+                                : "bg-gray-100 text-gray-400",
+                            ].join(" ")}
+                          >
+                            {isCompleted ? (
+                                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                            ) : (
+                                <span>{s.key}</span>
+                            )}
+                          </div>
+                          <span className={[
+                              "text-[10px] sm:text-xs font-bold uppercase tracking-wider whitespace-nowrap absolute -bottom-6 transition-colors duration-300",
+                              isCurrent ? "text-primary-700" : isCompleted ? "text-green-600" : "text-gray-400"
+                          ].join(" ")}>
+                              {s.label}
+                          </span>
                       </div>
+                      
                       {!isLast && (
-                        <div
-                          className={[
-                            "h-[2px]",
-                            isCompleted ? "bg-blue-900" : isCurrent ? "bg-blue-300" : "bg-gray-200",
-                            isRTL ? "ml-2 sm:ml-3 md:ml-4" : "mr-2 sm:mr-3 md:mr-4",
-                          ].join(" ")}
-                          style={{ width: "2.5rem" }}
-                          aria-hidden="true"
-                        />
+                        <div className="flex-1 h-1 mx-2 rounded-full bg-gray-100 relative overflow-hidden">
+                             <div 
+                                className={[
+                                    "absolute top-0 bottom-0 transition-all duration-500 ease-out",
+                                     isCompleted 
+                                        ? "bg-green-500 w-full" 
+                                        : isCurrent 
+                                            ? (isRTL ? "bg-gradient-to-l" : "bg-gradient-to-r") + " from-green-500 to-gray-100 w-1/2" 
+                                            : "w-0"
+                                ].join(" ")}
+                                style={{ [isRTL ? 'right' : 'left']: 0 }}
+                             />
+                        </div>
                       )}
                     </li>
                   );
                 })}
               </ol>
             </div>
+            {/* Spacer for labels */}
+            <div className="h-5"></div>
           </div>
         </div>
       </div>

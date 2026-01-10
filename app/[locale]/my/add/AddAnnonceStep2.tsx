@@ -93,25 +93,29 @@ export default function AddAnnonceStep2({
 
   return (
     <div className="mx-auto max-w-4xl" dir={isRTL ? "rtl" : "ltr"}>
-      <h2 className="text-2xl font-semibold mb-1 text-gray-800">
+      <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+      <h2 className="text-2xl font-bold mb-2 text-gray-900">
         {lang === "ar" ? "إضافة الصور" : "Ajouter des photos"}
       </h2>
-      <p className="text-sm text-gray-500 mb-4">
-        {lang === "ar" ? "(اختياري)" : "(optionnel)"}
+      <p className="text-gray-500 mb-6">
+        {lang === "ar" ? "أضف صوراً واضحة لزيادة فرص البيع (اختياري)" : "Ajoutez des photos claires pour augmenter vos chances de vente (optionnel)"}
       </p>
 
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
-        className="rounded-xl border-2 border-dashed border-gray-300 bg-white p-6 text-center"
+        className="group relative rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 p-8 text-center transition-all hover:bg-primary-50/50 hover:border-primary-300"
       >
-        <p className="mb-3 text-gray-600">
+        <div className="mb-4 flex justify-center">
+            <span className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm text-3xl">📸</span>
+        </div>
+        <p className="mb-4 text-gray-600 font-medium group-hover:text-primary-700">
           {lang === "ar" ? "اسحب وافلت الصور هنا" : "Glissez & déposez vos images ici"}
         </p>
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="rounded bg-blue-900 px-4 py-2 text-white hover:bg-blue-700"
+          className="inline-flex items-center justify-center rounded-xl bg-primary-600 px-6 py-3 font-bold text-white shadow-lg shadow-primary-200 transition-all hover:bg-primary-700 hover:shadow-xl hover:-translate-y-0.5"
         >
           {lang === "ar" ? "اختيار الصور" : "Choisir des images"}
         </button>
@@ -126,44 +130,66 @@ export default function AddAnnonceStep2({
       </div>
 
       {images.length > 0 && (
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {images.map((im, i) => (
-            <div key={i} className="relative rounded-lg overflow-hidden border">
-              <img src={im.url} alt={`img-${i}`} className="h-40 w-full object-cover" />
-              <div className="absolute inset-x-0 bottom-0 bg-black/50 text-white text-xs flex items-center justify-between px-2 py-1">
-                <button
-                  onClick={() => setMain(i)}
-                  className={`px-2 py-0.5 rounded ${im.isMain ? "bg-green-600" : "bg-white/20"}`}
-                >
-                  {lang === "ar" ? "الرئيسية" : "Principale"}
-                </button>
-                <button
-                  onClick={() => removeImage(i)}
-                  className="px-2 py-0.5 bg-red-600 rounded"
-                >
-                  {lang === "ar" ? "حذف" : "Suppr."}
-                </button>
+            <div key={i} className={`relative group rounded-2xl overflow-hidden border-2 transition-all ${im.isMain ? 'border-green-500 ring-2 ring-green-500/20' : 'border-gray-100 hover:border-gray-300'}`}>
+              <div className="aspect-square relative">
+                  <img src={im.url} alt={`img-${i}`} className="absolute inset-0 w-full h-full object-cover" />
               </div>
+              
+              {/* Overlay with actions */}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
+                 <div className="flex justify-end">
+                    <button
+                      onClick={() => removeImage(i)}
+                      className="bg-white/90 text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                      title={lang === "ar" ? "حذف" : "Supprimer"}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                 </div>
+                 
+                 <button
+                    onClick={() => setMain(i)}
+                    className={`w-full py-1.5 text-xs font-bold rounded-lg backdrop-blur-sm transition-colors ${
+                        im.isMain 
+                        ? "bg-green-500 text-white cursor-default"
+                        : "bg-white/90 text-gray-700 hover:bg-white"
+                    }`}
+                  >
+                    {im.isMain 
+                        ? (lang === "ar" ? "الرئيسية" : "Image principale") 
+                        : (lang === "ar" ? "تعيين كرئيسية" : "Définir principale")}
+                  </button>
+              </div>
+              
+              {/* Badge for main image always visible */}
+              {im.isMain && (
+                  <div className="absolute top-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm">
+                      ★ {lang === "ar" ? "الرئيسية" : "Principale"}
+                  </div>
+              )}
             </div>
           ))}
         </div>
       )}
 
-      <div className="mt-6 flex justify-between">
+      <div className="mt-8 flex justify-between pt-6 border-t border-gray-100">
         <button
           type="button"
           onClick={onBack}
-          className="rounded border px-4 py-2 hover:bg-gray-50"
+          className="rounded-xl border border-gray-200 px-6 py-3 font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all"
         >
           {lang === "ar" ? "رجوع" : "Retour"}
         </button>
         <button
           type="button"
           onClick={handleNext}
-          className="rounded bg-blue-900 px-5 py-2 font-semibold text-white hover:bg-blue-700"
+          className="rounded-xl bg-primary-600 px-8 py-3 font-bold text-white shadow-lg shadow-primary-200 transition-all hover:bg-primary-700 hover:shadow-xl hover:-translate-y-0.5"
         >
           {lang === "ar" ? "التالي" : "Suivant"}
         </button>
+      </div>
       </div>
     </div>
   );

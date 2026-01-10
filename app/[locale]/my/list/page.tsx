@@ -131,7 +131,7 @@ export default async function Home({
             />
           ) : (
             <div className="flex justify-center items-center">
-              <div>Aucun Annouce pour le moment .</div>
+              <div>{locale === "fr" ? "Aucun annonce pour le moment ." : "لا يوجد إعلانات حاليا."}</div>
             </div>
           )}
         </section>
