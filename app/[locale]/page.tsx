@@ -71,7 +71,7 @@ export default async function Home({
   const t = await getI18n();
 
   const currentPage = Number(sp.page) || 1;
-  const itemsPerPage = 6;
+  const itemsPerPage = 16;
   const skip = (currentPage - 1) * itemsPerPage;
 
   // ----- Query Mongo -----
@@ -92,7 +92,7 @@ export default async function Home({
         .map((id) => new ObjectId(id));
 
       if (objectIds.length > 0) {
-         query._id = { $in: objectIds };
+        query._id = { $in: objectIds };
       } else {
          // Search returned IDs but none were valid ObjectIds, or empty?
          // If AI found nothing useful, maybe force empty result?
