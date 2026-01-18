@@ -5,7 +5,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Image from "next/image";
 import { Annonce } from "../../../../../../packages/mytypes/types";
-import { FaMapMarkerAlt, FaTag, FaPhoneAlt, FaWhatsapp, FaShareAlt, FaCalendarAlt, FaShieldAlt, FaInfoCircle } from "react-icons/fa";
+import { FaMapMarkerAlt, FaTag, FaPhoneAlt, FaWhatsapp, FaShareAlt, FaCalendarAlt, FaShieldAlt, FaInfoCircle, FaCopy, FaExternalLinkAlt } from "react-icons/fa";
 import { useI18n } from "../../../../../../locales/client";
 
 const FALLBACK_IMG = "/noimage.jpg";
@@ -49,6 +49,21 @@ export default function AnnonceDetailUI({
 
   // Copie locale de l’annonce pour merger les images chargées côté client
   const [localAnnonce, setLocalAnnonce] = useState<Annonce>(annonce);
+  
+  // État pour afficher le message de succès après copie du lien
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  // Fonction pour copier le lien et afficher le message de succès
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setLinkCopied(true);
+      // Masquer le message après 2 secondes
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+    }
+  };
 
   // Normalise ImgDoc[] -> ImagesArray (toujours un tableau)
   const normalizeImages = (arr?: ImgDoc[]): ImagesArray => {
@@ -260,10 +275,21 @@ export default function AnnonceDetailUI({
                 <h3 className="font-bold text-gray-900 text-lg">{t("detail.contact")}</h3>
                 
                 {localAnnonce.contact && (
-                     <div className="flex items-center justify-center gap-3 w-full py-3.5 bg-white border-2 border-primary-100 text-primary-700 font-bold rounded-xl transition-colors">
-                        <FaPhoneAlt />
-                        <span dir="ltr">{localAnnonce.contact}</span>
-                     </div>
+                    <div className="flex items-center justify-center gap-3 w-full py-3.5 bg-white border-2 border-primary-100 text-primary-700 font-bold rounded-xl transition-colors">
+                      <FaPhoneAlt />
+                      <span dir="ltr">{localAnnonce.contact}</span>
+                    </div>
+                )}
+            </div>
+            <div  className="bg-white rounded-3xl p-6 shadow-lg shadow-gray-200/50 border border-gray-100 space-y-4">
+                <h3 className="font-bold text-gray-900 text-lg">{isAr ? "مشاركة الإعلان" : "Partage de l’annonce"}</h3>
+                <button onClick={handleCopyLink} className="flex items-center justify-center gap-3 w-full py-3.5 bg-white border-2 border-primary-100 text-primary-700 font-bold rounded-xl transition-colors hover:bg-primary-50">
+                  <FaCopy />
+                  <span dir="ltr">{isAr ? "نسخ الرابط" : "Copier le lien"}</span>
+                </button>
+                {/* Message de succès de copie */}
+                {linkCopied && (
+                  <span className="text-green-600 text-sm font-medium animate-pulse">{isAr ? "تم نسخ الرابط" : "Lien copié"}</span>
                 )}
             </div>
 
