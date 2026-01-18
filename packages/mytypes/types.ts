@@ -120,6 +120,7 @@ export interface Annonce {
   isFavorite?: boolean;
   isSponsored?: boolean;
   isPriceHidden?: boolean;
+  isPublished?: boolean;
 
   classificationFr?: string; // Classification en français (optionnel)
   classificationAr?: string; // Classification en arabe (optionnel)

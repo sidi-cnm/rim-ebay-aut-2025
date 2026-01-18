@@ -4,6 +4,8 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Annonce } from "../../../../../packages/mytypes/types";
 import { useI18n } from "../../../../../locales/client";
+import { useState } from "react";
+import { FaCopy } from "react-icons/fa";
 
 const fallbackImageUrl = "/noimage.jpg";
 
@@ -36,6 +38,30 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
   const d = annonce?.createdAt ? new Date(annonce.createdAt as any) : new Date();
   const t = useI18n();
   const isAr = lang === "ar";
+  // État pour afficher le message de succès après copie du lien
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [notPublished, setNotPublished] = useState(false);
+  const isPublished = annonce?.isPublished;
+  // Fonction pour copier le lien et afficher le message de succès
+  const handleCopyLink = async () => {
+    try {
+      // retourne le lien de l'annonce en format public
+      if (isPublished){
+        const domainName = process.env.NODE_ENV === "production" ? "https://www.eddeyar.com" : "http://localhost:3000";
+        await navigator.clipboard.writeText(domainName + "/" + lang + "/p/annonces/details/" + annonce?.id);
+        setLinkCopied(true);
+        // Masquer le message après 2 secondes
+        setTimeout(() => setLinkCopied(false), 2000);
+      } else {
+        setNotPublished(true);
+        // Masquer le message après 2 secondes
+        setTimeout(() => setNotPublished(false), 2000);
+      }
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+    }
+  };
+  
 
   const ImageBox: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
     <div className="relative w-full h-64 sm:h-80 lg:h-[500px] overflow-hidden rounded-xl bg-gray-50">
@@ -164,6 +190,19 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
                         </>
                      )}
                   </button>
+                  <div  className="flex-1">
+                      <button onClick={handleCopyLink} className="flex items-center justify-center gap-3 w-full py-3.5 bg-white border-2 border-primary-100 text-primary-700 font-bold rounded-xl transition-colors hover:bg-primary-50">
+                        <FaCopy />
+                        <span dir="ltr">{isAr ? "نسخ الرابط" : "Copier le lien"}</span>
+                      </button>
+                        {/* Message de succès de copie */}
+                        {linkCopied && (
+                          <span className="text-green-600 text-sm font-medium animate-pulse">{isAr ? "تم نسخ الرابط" : "Lien copié"}</span>
+                        )}
+                        {notPublished && (
+                          <span className="text-red-600 text-sm font-medium animate-pulse">{isAr ? "الإعلان غير منشور" : "L'annonce n'est pas publiée"}</span>
+                        )}
+                  </div>
              </div>
          </div>
       </div>
