@@ -199,17 +199,18 @@ export default async function Home({
     const userIndb = await db.collection("users").findOne({ _id: new ObjectId(user.id) });
     if (userIndb?.samsar) isSamsar = true;
   }
-  //sqlite api endpoints
-  let lieuxEndpoint = `/${locale}/p/api/sqlite/lieux`;
-  let optionsEndpoint = `/${locale}/p/api/sqlite/options`;
-  // si on est en production alors on utilise les endpoints turso
-  console.log("NODE_ENV:", process.env.NODE_ENV);
-  if (process.env.NODE_ENV === "production") {
-    // turso api endpoints
-    optionsEndpoint = `/${locale}/p/api/tursor/options`;
-    lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
-  }
-
+  // //sqlite api endpoints
+  // let lieuxEndpoint = `/${locale}/p/api/sqlite/lieux`;
+  // let optionsEndpoint = `/${locale}/p/api/sqlite/options`;
+  // // si on est en production alors on utilise les endpoints turso
+  // console.log("NODE_ENV:", process.env.NODE_ENV);
+  // if (process.env.NODE_ENV === "production") {
+  //   // turso api endpoints
+  //   optionsEndpoint = `/${locale}/p/api/tursor/options`;
+  //   lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
+  // }
+  const optionsEndpoint = `/${locale}/p/api/tursor/options`;
+  const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
 
   const isRTL = locale.startsWith("ar");
 
@@ -217,7 +218,7 @@ export default async function Home({
     <main className="min-h-screen bg-gray-100">
       
       {/* Search Header Section */}
-      <div className="bg-gray-100 px-4 py-4 md:py-6 mb-6">
+      <div className="hidden md:block bg-gray-100 px-4">
         <div className="max-w-screen-2xl mx-auto flex flex-col items-center text-center space-y-4">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
              {t("filter.title")}
@@ -257,7 +258,7 @@ export default async function Home({
         {/* Sidebar Desktop */}
         <aside className="hidden md:block w-80 xl:w-96 flex-shrink-0 self-start">
           <div className="sticky top-6 h-[calc(100vh-3rem)]">
-            <div className="h-full bg-white rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 overflow-y-auto">
+            <div>
               <FormSearchUI
                 lang={locale}
                 typeAnnoncesEndpoint={optionsEndpoint}

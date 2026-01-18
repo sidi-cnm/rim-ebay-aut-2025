@@ -237,7 +237,7 @@ export default {
     time: "الوقت",
   },
   filter: {
-    title: "البحث عن إعلان",
+    title: "بحث متقدم",
     directNegotiation: "تفاوض مباشر",
     samsarOnly: "السمسار فقط",
     any: "مباشر أو لا",

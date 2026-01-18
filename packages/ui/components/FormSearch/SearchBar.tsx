@@ -33,7 +33,7 @@ export default function SearchBar({ placeholder, isRTL = false }: SearchBarProps
 
   return (
     <div className="w-full max-w-2xl mx-4 md:mx-auto mb-6">
-      <div className="relative flex items-center bg-white shadow-md rounded-xl ring-1 ring-gray-200 p-1.5">
+      <div className="relative flex items-center bg-white rounded-xl shadow-sm border border-gray-200 mb-3 overflow-hidden">
         {/* Input Field */}
         <input
           type="text"
@@ -41,19 +41,13 @@ export default function SearchBar({ placeholder, isRTL = false }: SearchBarProps
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder || "Je cherche..."}
-          className={`flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400 text-base px-3 py-2.5 ${isRTL ? "text-right" : "text-left"}`}
+          className={`w-full py-3 px-4 text-gray-700 outline-none h-12 ${isRTL ? "pl-14 text-right" : "pr-14 text-left"}`}
         />
 
         {/* Search Button */}
         <button
           onClick={handleSearch}
-          className={`
-            flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white 
-            rounded-lg transition-colors
-            ${isRTL ? "order-first mr-1.5" : "order-last ml-1.5"}
-            flex items-center justify-center
-            w-12 h-12
-          `}
+          className={`flex items-center justify-center bg-blue-600 text-white w-12 h-12 absolute top-0 ${isRTL ? "left-0" : "right-0"}`}
         >
           <FontAwesomeIcon icon={faSearch} className="w-8 h-8" />
         </button>

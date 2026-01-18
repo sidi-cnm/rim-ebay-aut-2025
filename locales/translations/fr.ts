@@ -113,7 +113,7 @@ export default {
     of: "sur",
   },
   filter: {
-    title: "Rechercher",
+    title: "Recherche avancée",
     directNegotiation: "Négociation directe",
     samsarOnly: "Samsar uniquement",
     any: "Direct ou No",

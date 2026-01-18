@@ -92,7 +92,7 @@ export default function FormSearchView({
           e.preventDefault();
           onSearch();
         }}
-        className="bg-white border border-gray-100 rounded-3xl shadow-xl shadow-gray-200/50 p-6 space-y-5"
+        className="space-y-5"
         dir={isRTL ? "rtl" : "ltr"}
       >
         {/* Type */}

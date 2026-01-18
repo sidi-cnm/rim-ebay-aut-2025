@@ -3,12 +3,12 @@
 
 import { useState, useEffect, useMemo, startTransition } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faFilter, faXmark, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../../locales/client";
 import FormSearch from "./FormSearchdDynamicOptions";
 import { Search } from "lucide-react";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+
 
 interface Filters {
   typeAnnonceId?: string;
@@ -144,33 +144,87 @@ export function FormSearchUI({
   const isRTL = lang.startsWith("ar");
 
 
+  // Scroll lock effect
+  useEffect(() => {
+    if (modalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [modalOpen]);
+
   // --- MOBILE ---
   if (mobile) {
+    const alignClass = isRTL ? "text-right" : "text-left";
+    const [mobileQuery, setMobileQuery] = useState(searchParams?.get("aiQuery") || "");
 
-    const alignClass = isRTL ? "justify-end" : "justify-start";
+    const handleMobileSearch = () => {
+       const params = new URLSearchParams();
+       if (mobileQuery.trim()) {
+         params.set("aiQuery", mobileQuery.trim());
+       }
+       router.push(`${pathname}?${params.toString()}`);
+    };
+
     return (
-      <>
-         <div className={`w-full flex mb-4`}>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="flex items-center gap-2 bg-blue-800 text-white rounded-xl px-4 py-2 shadow hover:bg-blue-700"
-            >
-              <FontAwesomeIcon icon={faSearch} />
-              <span>{t("filter.search")}</span>
-            </button>
-      </div>
+      <div className="w-full px-4 mb-4 pt-4">
+        {/* Row 1: Search Input */}
+        <div className="relative flex items-center bg-white rounded-xl shadow-sm border border-gray-200 mb-3 overflow-hidden">
+             <button 
+                onClick={handleMobileSearch}
+                className={`flex items-center justify-center bg-blue-600 text-white w-12 h-12 absolute top-0 ${isRTL ? "left-0" : "right-0"}`}
+             >
+                <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
+             </button>
+             <input 
+                type="text"
+                value={mobileQuery}
+                onChange={(e) => setMobileQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleMobileSearch()}
+                placeholder={t("filter.search") + "..."}
+                className={`w-full py-3 px-4 text-gray-700 outline-none h-12 ${isRTL ? "pl-14 text-right" : "pr-14 text-left"}`}
+             />
+        </div>
 
+        {/* Row 2: Action Buttons */}
+        <div className="flex gap-3">
+             {/* Advanced Search Button - Blue */}
+             <button 
+                onClick={() => setModalOpen(true)}
+                className="flex-1 text-white bg-blue-600 rounded-lg shadow-sm flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors h-12"
+             >
+                {/* Using valid 'faFilter' icon for settings/advanced */}
+                <span className="font-bold">{t("filter.title")}</span>
+                <FontAwesomeIcon icon={faFilter} /> 
+             </button>
+        </div>
+
+        {/* Modal Logic (Existing) */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="fixed inset-0 z-[100] overflow-y-auto">
+            {/* ... keeping modal content same ... */}
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
             <div className="flex min-h-full items-center justify-center p-4">
-              <div className="relative w-[94vw] max-w-[420px] bg-white rounded-2xl shadow-2xl p-4 sm:p-5 max-h-[80vh] overflow-y-auto text-sm space-y-3">
+              <div 
+              style={{
+                width: "-webkit-fill-available",
+              }}
+              className="relative w-[94vw] max-w-[420px] bg-white rounded-2xl shadow-2xl p-2 sm:p-2 max-h-[85vh] overflow-y-auto text-sm space-y-3"
+              >
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="absolute top-2 right-3 text-xl text-gray-500 hover:text-red-600"
+                  style={{
+                    background: "#2563eb",
+                    top: "8px",
+                    right: "8px",
+                  }}
+                  className="rounded-full inline-flex items-center justify-center text-white absolute top-1 right-1 p-1 w-8 h-8 focus:outline-none"
                   aria-label={t("filter.close")}
                 >
-                  &times;
+                  <FontAwesomeIcon icon={faXmark} className="w-5 h-5" />
                 </button>
 
                 <FormSearch
@@ -179,7 +233,6 @@ export function FormSearchUI({
                   typeAnnoncesEndpoint={typeAnnoncesEndpoint}
                   categoriesEndpoint={categoriesEndpoint}
                   subCategoriesEndpoint={subCategoriesEndpoint}
-                  // 👇 nouveaux
                   lieuxEndpoint={lieuxEndpoint}
                   wilayaLabel={t("filter.wilayatyepe")}
                   selectWilayaLabel={t("filter.selectWilayaLabel")}
@@ -195,13 +248,12 @@ export function FormSearchUI({
                   priceLabel={priceLabel ?? t("filter.price")}
                   searchButtonLabel={searchButtonLabel ?? t("filter.search")}
                   loading={loading}
-                  
                 />
               </div>
             </div>
           </div>
         )}
-      </>
+      </div>
     );
   }
 
