@@ -44,7 +44,7 @@ const NavLink = ({
     href={href}
     onClick={onClick}
     className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-bold text-[15px] ${
-      active ? "bg-primary-50 text-primary-600" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+      active ? "bg-white/20 text-white" : "text-white/70 hover:text-white hover:bg-white/10"
     } ${className}`}
   >
     {children}
@@ -185,7 +185,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 
   return (
     <>
-    <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
+    <nav className="sticky top-0 z-50 w-full bg-[#2563eb] backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-6">
         {/* ===== Ligne principale ===== */}
 
@@ -254,7 +254,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             {/* Desktop Logout */}
             <button
               onClick={handleLogout}
-              className="hidden lg:flex items-center gap-2 hover:bg-red-50 text-gray-500 hover:text-red-600 px-3 py-2 rounded-xl transition-colors font-medium"
+              className="hidden lg:flex items-center gap-2 hover:bg-white/10 text-white/70 hover:text-white px-3 py-2 rounded-xl transition-colors font-medium"
               title={t("nav.logout")}
             >
               <LogOut className="h-5 w-5" />
@@ -290,7 +290,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 
                  <button
                   onClick={handleLogout}
-                  className="flex items-center justify-center w-10 h-10 bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors"
+                  className="flex items-center justify-center w-10 h-10 bg-white/20 text-white hover:bg-white/30 rounded-full transition-colors"
                   title={t("nav.logout")}
                 >
                   <LogOut className="h-5 w-5" />
@@ -323,7 +323,7 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 
   return (
     <>
-    <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
+    <nav className="sticky top-0 z-50 w-full bg-[#2563eb] backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
 
       {/* ==================== GUEST MOBILE HEADER ==================== */}
       <div dir={isAr ? "rtl" : "ltr"} className="lg:hidden mx-auto max-w-screen-2xl px-4 w-full">
@@ -375,9 +375,9 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
           </Link>
 
           <div className="flex items-center gap-4">
-             <div className="flex items-center gap-1 mr-4 text-sm font-semibold text-gray-500">
-               <Link href={`/${localeKey}`} className="hover:text-primary-600 px-3 py-2 transition-colors">{t("nav.home")}</Link>
-               <Link href={`/${localeKey}/about`} className="hover:text-primary-600 px-3 py-2 transition-colors">{t("nav.about") ?? "À propos"}</Link>
+             <div className="flex items-center gap-1 mr-4 text-sm font-semibold text-white/70">
+               <Link href={`/${localeKey}`} className="hover:text-white px-3 py-2 transition-colors">{t("nav.home")}</Link>
+               <Link href={`/${localeKey}/about`} className="hover:text-white px-3 py-2 transition-colors">{t("nav.about") ?? "À propos"}</Link>
              </div>
 
             <Link

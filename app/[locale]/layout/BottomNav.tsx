@@ -18,15 +18,15 @@ export default function BottomNav({ lang, isAuthenticated }: BottomNavProps) {
 
   const isActive = (path: string) => pathname === path;
 
- // Base styling for items
+ // Base styling for items - colors match blue bg-[#2563eb] background
   const itemClass = (active: boolean) =>
     `relative flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200 ${
-      active ? "text-primary-600" : "text-gray-400 hover:text-gray-600"
+      active ? "text-white" : "text-white/60 hover:text-white"
     }`;
 
   if (isAuthenticated) {
     return (
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[4.5rem] bg-white/90 backdrop-blur-xl border-t border-gray-200/50 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.05)] pb-safe">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[4.5rem] bg-[#2563eb] text-white backdrop-blur-xl border-t border-gray-200/50 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.05)] pb-safe">
         <div className="grid grid-cols-5 h-full max-w-lg mx-auto items-center">
           <Link href={`/${localeKey}`} className={itemClass(isActive(`/${localeKey}`))}>
              <Home className={`w-6 h-6 ${isActive(`/${localeKey}`) ? "fill-current" : ""}`} strokeWidth={isActive(`/${localeKey}`) ? 2.5 : 2} />
@@ -63,7 +63,7 @@ export default function BottomNav({ lang, isAuthenticated }: BottomNavProps) {
 
   // Guest Navigation
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[4.5rem] bg-white/90 backdrop-blur-xl border-t border-gray-200/50 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.05)] pb-safe">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] h-[4.5rem] bg-[#2563eb] text-white backdrop-blur-xl border-t border-gray-200/50 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.05)] pb-safe">
       <div className="grid grid-cols-4 h-full max-w-lg mx-auto px-2 items-center">
         <Link href={`/${localeKey}`} className={itemClass(isActive(`/${localeKey}`))}>
           <Home className={`w-6 h-6 ${isActive(`/${localeKey}`) ? "fill-current" : ""}`} strokeWidth={isActive(`/${localeKey}`) ? 2.5 : 2} />
@@ -83,13 +83,13 @@ export default function BottomNav({ lang, isAuthenticated }: BottomNavProps) {
         <Link
           href={`/${localeKey}/p/users/register`}
            className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${
-              isActive(`/${localeKey}/p/users/register`) ? "text-primary-600" : "text-gray-500"
+              isActive(`/${localeKey}/p/users/register`) ? "text-white" : "text-white/60"
            }`}
         >
-          <div className="bg-primary-50 p-2 rounded-full active:bg-primary-100 transition-colors">
-             <User className="w-5 h-5 text-primary-600" strokeWidth={2.5} />
+          <div className="bg-white/20 p-2 rounded-full active:bg-white/30 transition-colors">
+             <User className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>
-          <span className="text-[10px] font-bold text-primary-600">{t("nav.signup")}</span>
+          <span className="text-[10px] font-bold text-white">{t("nav.signup")}</span>
         </Link>
       </div>
     </div>
