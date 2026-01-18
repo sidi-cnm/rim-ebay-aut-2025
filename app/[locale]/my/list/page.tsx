@@ -95,7 +95,7 @@ export default async function Home({
     <main className="min-h-screen bg-gray-100">
       {/* Mobile filters - largeur fixe */}
       <div className="md:hidden pt-4 flex justify-center">
-        <div style={{ maxWidth: 340, width: "90%" }}>
+        {/* <div style={{ maxWidth: 340, width: "90%" }}>
           <FormSearchUI
             lang={locale}                                 // <-- utilise locale
             typeAnnoncesEndpoint={`/fr/p/api/${apiBase}/options`}
@@ -104,7 +104,7 @@ export default async function Home({
             subCategoriesEndpoint={`/fr/p/api/${apiBase}/options`}
             mobile
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="flex flex-col md:flex-row min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
