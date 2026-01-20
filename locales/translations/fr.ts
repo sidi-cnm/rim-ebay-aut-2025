@@ -102,7 +102,7 @@ export default {
     },
     search: "Recherche...",
     hidePrice: "Cacher le prix",
-    privateDescription: "Description privée",
+    privateDescription: "Informations privées",
     privateDescriptionPlaceholder: "Notes privées pour moi-même...",
     fillDetails: "Remplissez les détails de votre annonce",
   },

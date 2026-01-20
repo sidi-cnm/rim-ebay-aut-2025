@@ -58,7 +58,7 @@ export default {
     submitButton: "إضافة الإعلان",
     search: "...",
     hidePrice: "إخفاء السعر",
-    privateDescription: "وصف خاص",
+    privateDescription: "معلومات خاصة",
     privateDescriptionPlaceholder: "ملاحظات خاصة لنفسي...",
     fillDetails: "املأ تفاصيل إعلانك",
   },
