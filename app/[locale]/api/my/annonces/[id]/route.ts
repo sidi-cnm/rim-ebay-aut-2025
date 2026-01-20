@@ -70,9 +70,14 @@ export async function PUT(req: Request, ctx: any) {
       categorieId?: string;
       subcategorieId?: string;
       description?: string;
+      privateDescription?: string;
       price?: number | null;
       lieuId?: string; // wilaya
       moughataaId?: string;
+      lieuStr?: string;
+      lieuStrAr?: string;
+      moughataaStr?: string;
+      moughataaStrAr?: string;
       issmar?: boolean;
       directNegotiation?: boolean | null;
       rentalPeriod?: string | null;
@@ -91,10 +96,17 @@ export async function PUT(req: Request, ctx: any) {
       update.subcategorieId = body.subcategorieId;
     if (typeof body.description === "string")
       update.description = body.description;
+    if (typeof body.privateDescription === "string")
+      update.privateDescription = body.privateDescription;
     if (typeof body.price === "number" || body.price === null)
       update.price = body.price ?? null;
     if ("lieuId" in body) update.lieuId = norm(body.lieuId);
     if ("moughataaId" in body) update.moughataaId = norm(body.moughataaId);
+    // Location string names
+    if (typeof body.lieuStr === "string") update.lieuStr = body.lieuStr;
+    if (typeof body.lieuStrAr === "string") update.lieuStrAr = body.lieuStrAr;
+    if (typeof body.moughataaStr === "string") update.moughataaStr = body.moughataaStr;
+    if (typeof body.moughataaStrAr === "string") update.moughataaStrAr = body.moughataaStrAr;
     if (typeof body.issmar === "boolean") update.issmar = body.issmar;
 
     if (

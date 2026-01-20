@@ -20,6 +20,7 @@ export interface EditFormProps {
     categorieId: string;
     subcategorieId: string;
     description: string;
+    privateDescription: string;
     price: number;
     wilayaId: string;
     moughataaId: string;
@@ -61,6 +62,7 @@ const EditForm: React.FC<EditFormProps> = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(initialData.categorieId);
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>(initialData.subcategorieId);
   const [description, setDescription] = useState(initialData.description);
+  const [privateDescription, setPrivateDescription] = useState(initialData.privateDescription);
   const [price, setPrice] = useState(initialData.price.toString());
   
 
@@ -177,14 +179,24 @@ useEffect(() => {
 
     const toastId = toast.loading(t("editForm.notifications.updating"));
     try {
+      // Find selected location objects to get their names
+      const selectedWilaya = wilayas.find((w: any) => String(w.id) === String(selectedWilayaId));
+      const selectedMoughataa = moughataas.find((m: any) => String(m.id) === String(selectedMoughataaId));
+
       const annonceData = {
         typeAnnonceId: selectedTypeId,
         categorieId: selectedCategoryId,
         subcategorieId: selectedSubCategoryId,
         description,
+        privateDescription,
         price: Number(price),
         lieuId: selectedWilayaId,
         moughataaId: selectedMoughataaId,
+        // Include location string names
+        lieuStr: selectedWilaya?.name ?? "",
+        lieuStrAr: selectedWilaya?.nameAr ?? "",
+        moughataaStr: selectedMoughataa?.name ?? "",
+        moughataaStrAr: selectedMoughataa?.nameAr ?? "",
         rentalPeriod,
         rentalPeriodAr,
         issmar,
@@ -235,6 +247,8 @@ useEffect(() => {
         setSelectedSubCategoryId={setSelectedSubCategoryId}
         description={description}
         setDescription={setDescription}
+        privateDescription={privateDescription}
+        setPrivateDescription={setPrivateDescription}
         price={price}
         setPrice={setPrice}
         rentalPeriod={rentalPeriod}

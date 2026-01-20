@@ -40,6 +40,9 @@ interface EditFormDisplayProps {
   description: string;
   setDescription: (v: string) => void;
 
+  privateDescription: string;
+  setPrivateDescription: (v: string) => void;
+
   price: string;
   setPrice: (v: string) => void;
 
@@ -90,6 +93,8 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
   setSelectedMoughataaId,
   description,
   setDescription,
+  privateDescription,
+  setPrivateDescription,
   price,
   submitting,
   setPrice,
@@ -215,6 +220,21 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
             rows={4}
             required
           />
+        </div>
+
+        {/* Private Description */}
+        <div>
+          <label className="block mb-1 font-medium">{t("addAnnonce.privateDescription")}</label>
+          <textarea
+            value={privateDescription}
+            onChange={(e) => setPrivateDescription(e.target.value)}
+            className="border rounded w-full p-2 bg-amber-50 border-amber-200"
+            rows={3}
+            placeholder={isRTL ? "ملاحظات خاصة (اختياري)" : "Notes privées (optionnel)"}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            {isRTL ? "هذه المعلومات لن تظهر للعموم" : "Ces informations ne seront pas visibles publiquement"}
+          </p>
         </div>
 
         {/* Wilaya */}

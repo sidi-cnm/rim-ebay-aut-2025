@@ -29,7 +29,7 @@ type Search = {
 async function fetchSimilarAnnonces(queryText: string): Promise<string[]> {
   try {
     const API_URL = process.env.SMART_SEARCH_API_URL || "https://eddeyarrag-1.onrender.com/api/v1/query_annonces";
-    console.log("Fetching AI search:", API_URL, queryText);
+    // console.log("Fetching AI search:", API_URL, queryText);
     
     // Using fetch with cache: 'no-store' to ensure fresh results or default behavior
     const res = await fetch(API_URL, {
@@ -130,7 +130,7 @@ export default async function Home({
       query.categorieName = "voitures";
     }
     if (sp.subChoice === "Maisons") {
-      console.log("filtering maisons");
+      // console.log("filtering maisons");
       query.typeAnnonceName = sp.mainChoice; // location ou vente
       query.categorieName = "Maisons";
     }

@@ -90,7 +90,7 @@ export default function AnnonceItemUI({
     }
   };
 
-  console.log("sponsored:", a.isSponsored);
+  // console.log("sponsored:", a.isSponsored);
 
   const hasLocation = a.lieuStr && a.lieuStrAr && a.moughataaStr && a.moughataaStrAr;
 
