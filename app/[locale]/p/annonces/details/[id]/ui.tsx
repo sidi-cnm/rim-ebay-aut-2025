@@ -7,6 +7,16 @@ import Image from "next/image";
 import { Annonce } from "../../../../../../packages/mytypes/types";
 import { FaMapMarkerAlt, FaTag, FaPhoneAlt, FaWhatsapp, FaShareAlt, FaCalendarAlt, FaShieldAlt, FaInfoCircle, FaCopy, FaExternalLinkAlt } from "react-icons/fa";
 import { useI18n } from "../../../../../../locales/client";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  TelegramShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  WhatsappIcon,
+  TelegramIcon
+} from "next-share";
 
 const FALLBACK_IMG = "/noimage.jpg";
 const HOST_IMAGES = "https://picsum.photos";
@@ -52,7 +62,7 @@ export default function AnnonceDetailUI({
   
   // État pour afficher le message de succès après copie du lien
   const [linkCopied, setLinkCopied] = useState(false);
-
+  const url = window.location.href;
   // Fonction pour copier le lien et afficher le message de succès
   const handleCopyLink = async () => {
     try {
@@ -291,6 +301,23 @@ export default function AnnonceDetailUI({
                 {linkCopied && (
                   <span className="text-green-600 text-sm font-medium animate-pulse">{isAr ? "تم نسخ الرابط" : "Lien copié"}</span>
                 )}
+                    <div className="flex gap-4 items-center justify-around" >
+                      <FacebookShareButton url={url}>
+                        <FacebookIcon size={32} round />
+                      </FacebookShareButton>
+
+                      <TwitterShareButton url={url}>
+                        <TwitterIcon size={32} round />
+                      </TwitterShareButton>
+
+                      <WhatsappShareButton url={url}>
+                        <WhatsappIcon size={32} round />
+                      </WhatsappShareButton>
+
+                      <TelegramShareButton url={url}>
+                        <TelegramIcon size={32} round />
+                      </TelegramShareButton>
+                    </div>
             </div>
 
             {/* Share or other actions could go here */}

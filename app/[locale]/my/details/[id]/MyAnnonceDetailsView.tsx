@@ -6,6 +6,16 @@ import { Annonce } from "../../../../../packages/mytypes/types";
 import { useI18n } from "../../../../../locales/client";
 import { useState } from "react";
 import { FaCopy } from "react-icons/fa";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  TelegramShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  WhatsappIcon,
+  TelegramIcon
+} from "next-share";
 
 const fallbackImageUrl = "/noimage.jpg";
 
@@ -42,6 +52,7 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
   const [linkCopied, setLinkCopied] = useState(false);
   const [notPublished, setNotPublished] = useState(false);
   const isPublished = annonce?.isPublished;
+  const url = process.env.NODE_ENV === "production" ? "https://www.eddeyar.com" : "http://localhost:3000";
   // Fonction pour copier le lien et afficher le message de succès
   const handleCopyLink = async () => {
     try {
@@ -172,7 +183,7 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
              <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-gray-200/50">
                   <button
                     onClick={handleEdit}
-                    className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold h-12 rounded-xl transition-all shadow-lg shadow-primary-200 flex items-center justify-center gap-2"
+                    className="p-4 flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold h-12 rounded-xl transition-all shadow-lg shadow-primary-200 flex items-center justify-center gap-2"
                   >
                     <span>✏️</span>
                     <span>{lang === "ar" ? "تعديل" : "Modifier"}</span>
@@ -181,7 +192,7 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
                   <button
                     onClick={handleDelte}
                     disabled={isDeleting}
-                    className="flex-1 bg-white border-2 border-red-100 text-red-600 font-bold h-12 rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+                    className="p-4 flex-1 bg-white border-2 border-red-100 text-red-600 font-bold h-12 rounded-xl hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
                   >
                      {isDeleting ? <span className="loader scale-75 border-red-500 border-t-transparent"></span> : (
                         <>
@@ -190,7 +201,8 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
                         </>
                      )}
                   </button>
-                  <div  className="flex-1">
+                  {isPublished && (
+                  <div  className="flex-1 bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
                       <button onClick={handleCopyLink} className="flex items-center justify-center gap-3 w-full py-3.5 bg-white border-2 border-primary-100 text-primary-700 font-bold rounded-xl transition-colors hover:bg-primary-50">
                         <FaCopy />
                         <span dir="ltr">{isAr ? "نسخ الرابط" : "Copier le lien"}</span>
@@ -202,7 +214,25 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
                         {notPublished && (
                           <span className="text-red-600 text-sm font-medium animate-pulse">{isAr ? "الإعلان غير منشور" : "L'annonce n'est pas publiée"}</span>
                         )}
+                    <div className="flex gap-4 items-center justify-around" >
+                      <FacebookShareButton url={url}>
+                        <FacebookIcon size={32} round />
+                      </FacebookShareButton>
+
+                      <TwitterShareButton url={url}>
+                        <TwitterIcon size={32} round />
+                      </TwitterShareButton>
+
+                      <WhatsappShareButton url={url}>
+                        <WhatsappIcon size={32} round />
+                      </WhatsappShareButton>
+
+                      <TelegramShareButton url={url}>
+                        <TelegramIcon size={32} round />
+                      </TelegramShareButton>
+                    </div>
                   </div>
+                  )}
              </div>
          </div>
       </div>
