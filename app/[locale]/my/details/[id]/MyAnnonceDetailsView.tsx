@@ -52,7 +52,8 @@ const MyAnnonceDetailsView: React.FC<MyAnnonceDetailsViewProps> = ({
   const [linkCopied, setLinkCopied] = useState(false);
   const [notPublished, setNotPublished] = useState(false);
   const isPublished = annonce?.isPublished;
-  const url = process.env.NODE_ENV === "production" ? "https://www.eddeyar.com" : "http://localhost:3000";
+  const domainName = process.env.NODE_ENV === "production" ? "https://www.eddeyar.com" : "http://localhost:3000";
+  const url = domainName + "/" + lang + "/p/annonces/details/" + annonce?.id;
   // Fonction pour copier le lien et afficher le message de succès
   const handleCopyLink = async () => {
     try {
