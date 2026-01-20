@@ -62,7 +62,8 @@ export default function AnnonceDetailUI({
   
   // État pour afficher le message de succès après copie du lien
   const [linkCopied, setLinkCopied] = useState(false);
-  const url = window.location.href;
+  const domainName = process.env.NODE_ENV === "production" ? "https://www.eddeyar.com" : "http://localhost:3000";
+  const url = domainName + "/" + lang + "/p/annonces/details/" + annonce?.id;
   // Fonction pour copier le lien et afficher le message de succès
   const handleCopyLink = async () => {
     try {
