@@ -69,6 +69,7 @@ export async function PUT(req: Request, ctx: any) {
       typeAnnonceId?: string;
       categorieId?: string;
       subcategorieId?: string;
+      title?: string;
       description?: string;
       privateDescription?: string;
       price?: number | null;
@@ -94,6 +95,8 @@ export async function PUT(req: Request, ctx: any) {
       update.categorieId = body.categorieId;
     if (typeof body.subcategorieId === "string")
       update.subcategorieId = body.subcategorieId;
+    if (typeof body.title === "string")
+      update.title = body.title;
     if (typeof body.description === "string")
       update.description = body.description;
     if (typeof body.privateDescription === "string")

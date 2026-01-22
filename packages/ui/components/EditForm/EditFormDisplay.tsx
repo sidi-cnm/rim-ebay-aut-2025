@@ -37,6 +37,9 @@ interface EditFormDisplayProps {
   selectedSubCategoryId: string;
   setSelectedSubCategoryId: (id: string) => void;
 
+  title: string;
+  setTitle: (v: string) => void;
+
   description: string;
   setDescription: (v: string) => void;
 
@@ -86,6 +89,8 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
   setSelectedCategoryId,
   selectedSubCategoryId,
   setSelectedSubCategoryId,
+  title,
+  setTitle,
   userFromDB,
   selectedWilayaId,
   setSelectedWilayaId,
@@ -208,6 +213,19 @@ const EditFormDisplay: React.FC<EditFormDisplayProps> = ({
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Title */}
+        <div>
+          <label className="block mb-1 font-medium">{t("editForm.titleLabel")}</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="border rounded w-full p-2"
+            placeholder={isRTL ? "عنوان الإعلان" : "Titre de l'annonce"}
+            required
+          />
         </div>
 
         {/* Description */}

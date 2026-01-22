@@ -19,6 +19,7 @@ export interface EditFormProps {
     typeAnnonceId: string;
     categorieId: string;
     subcategorieId: string;
+    title: string;
     description: string;
     privateDescription: string;
     price: number;
@@ -61,6 +62,7 @@ const EditForm: React.FC<EditFormProps> = ({
   const [selectedTypeId, setSelectedTypeId] = useState<string>(initialData.typeAnnonceId);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(initialData.categorieId);
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>(initialData.subcategorieId);
+  const [title, setTitle] = useState(initialData.title);
   const [description, setDescription] = useState(initialData.description);
   const [privateDescription, setPrivateDescription] = useState(initialData.privateDescription);
   const [price, setPrice] = useState(initialData.price.toString());
@@ -187,6 +189,7 @@ useEffect(() => {
         typeAnnonceId: selectedTypeId,
         categorieId: selectedCategoryId,
         subcategorieId: selectedSubCategoryId,
+        title,
         description,
         privateDescription,
         price: Number(price),
@@ -245,6 +248,8 @@ useEffect(() => {
         setSelectedCategoryId={setSelectedCategoryId}
         selectedSubCategoryId={selectedSubCategoryId}
         setSelectedSubCategoryId={setSelectedSubCategoryId}
+        title={title}
+        setTitle={setTitle}
         description={description}
         setDescription={setDescription}
         privateDescription={privateDescription}

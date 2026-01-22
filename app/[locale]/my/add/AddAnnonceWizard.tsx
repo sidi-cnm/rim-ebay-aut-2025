@@ -21,7 +21,8 @@ type Draft = {
   typeAnnonceId?: string;
   categorieId?: string;        // optionnel
   subcategorieId?: string;     // optionnel
-  title?: string;
+  title?: string;              // user-provided or auto-generated
+  userProvidedTitle?: string;  // original user input (to restore when going back)
   description?: string;
   price?: number | null;
   classificationFr?: string;
@@ -78,6 +79,7 @@ export default function AddAnnonceWizard({
     categorieId?: string;
     subcategorieId?: string;
     title: string;
+    userProvidedTitle?: string;
     description: string;
     price: number | null;
     position: Position;
@@ -194,6 +196,7 @@ export default function AddAnnonceWizard({
               typeAnnonceId: draft.typeAnnonceId ?? "",
               categorieId: draft.categorieId ?? "",
               subcategorieId: draft.subcategorieId ?? "",
+              title: draft.userProvidedTitle ?? "",
               description: draft.description ?? "",
               price: draft.price ?? undefined,
 

@@ -23,6 +23,7 @@ type Props = {
 
     subcategorieId?: string;
     title: string;
+    userProvidedTitle?: string; // Original user input to restore when going back
     description: string;
     price: number | null;
 
@@ -44,6 +45,7 @@ type Props = {
     categorieName?: string;
     categorieNameAr?: string;
     subcategorieId?: string;
+    title?: string;
     description?: string;
     price?: number | null | undefined;
 
@@ -76,6 +78,7 @@ export default function AddAnnonceStep1({
   const [selectedTypeId, setSelectedTypeId] = useState<string>(initial?.typeAnnonceId ?? "");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(initial?.categorieId ?? "");
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string>(initial?.subcategorieId ?? "");
+  const [title, setTitle] = useState(initial?.title ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [price, setPrice] = useState<string>(initial?.price != null ? String(initial.price) : "");
   const [isPriceHidden, setIsPriceHidden] = useState<boolean>(initial?.isPriceHidden ?? false);
@@ -204,13 +207,15 @@ const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
     const classificationFr = [typeObj?.name, catObj?.name, subObj?.name].filter(Boolean).join("/");
     const classificationAr = [typeObj?.nameAr, catObj?.nameAr, subObj?.nameAr].filter(Boolean).join("/");
 
-    const title = description.substring(0, 50);
+    // Use user-provided title or fallback to auto-generated (first 50 chars of description)
+    const finalTitle = title.trim() || description.substring(0, 50);
 
     onNext({
       typeAnnonceId: selectedTypeId,
       ...(selectedCategoryId ? { categorieId: selectedCategoryId } : {}),
       ...(selectedSubCategoryId ? { subcategorieId: selectedSubCategoryId } : {}),
-      title,
+      title: finalTitle,
+      userProvidedTitle: title.trim() || undefined, // Store original user input
       description,
       price: price === "" ? null : Number(price),
       position,
@@ -363,6 +368,24 @@ const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
             )}
         </div>
 
+        {/* Title (Optional) */}
+        <div className="space-y-2">
+          <label className="block text-sm font-bold text-gray-700">
+            {t("addAnnonce.titleInput")} <span className="text-gray-400 font-normal text-xs ml-1">{lang === "ar" ? "(اختياري)" : "(optionnel)"}</span>
+          </label>
+          <input
+            type="text"
+            placeholder={lang === "ar" ? "عنوان الإعلان (سيتم إنشاؤه تلقائياً إذا تُرك فارغاً)" : "Titre de l'annonce (généré automatiquement si vide)"}
+            className="w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-gray-700 focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all outline-none"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={100}
+          />
+          <p className="text-xs text-gray-500">
+            {lang === "ar" ? "إذا تركته فارغاً، سيتم استخدام أول 50 حرفاً من الوصف كعنوان" : "Si laissé vide, les 50 premiers caractères de la description seront utilisés"}
+          </p>
+        </div>
+
         {/* Description */}
         <div className="space-y-2">
           <label className="block text-sm font-bold text-gray-700">
@@ -370,7 +393,7 @@ const [rentalPeriodAr, setRentalPeriodAr] = useState<string | null>(
           </label>
           <textarea
             rows={5}
-            placeholder="Décrivez votre bien en détail..."
+            placeholder={lang === "ar" ? "صف عقارك بالتفصيل..." : "Décrivez votre bien en détail..."}
             className={`w-full rounded-xl border-gray-200 bg-gray-50 p-3 text-gray-700 focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all outline-none resize-none ${errors.description ? "border-red-300 ring-2 ring-red-50" : ""}`}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
