@@ -14,7 +14,9 @@
     "mongo:migrate": "tsx script/migrate.ts",
     "backup:atlas": "tsx script/backup-atlas.ts",
     "backup:db": "tsx script/backup-db.ts",
-    "restore:temp": "tsx script/restore-temp-db.ts"
+    "restore:temp": "tsx script/restore-temp-db.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -68,6 +70,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "^1.58.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.1.0",
     "@types/nodemailer": "^6.4.17",
