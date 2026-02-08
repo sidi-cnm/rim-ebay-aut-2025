@@ -50,7 +50,7 @@ export default async function AddAnnonce(props: {
 
   // console.log("Locale from params:", params);
 
-  const relavieUrlAnnonce = `/${params.locale}/api/my/annonces`;
+  const relavieUrlAnnonce = `/api/my/annonces`;
   let relavieUrlOptionsModel = `/${params.locale}/p/api/tursor`;
 //   if (process.env.NEXT_PUBLIC_OPTIONS_API_MODE === "sqlite") {
 //     relavieUrlOptionsModel = `/${params.locale}/p/api/sqlite`;

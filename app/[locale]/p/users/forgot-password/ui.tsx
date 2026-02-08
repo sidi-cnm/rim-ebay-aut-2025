@@ -35,7 +35,7 @@ export default function ForgotPasswordForm({ locale }: ForgotPasswordFormProps) 
     setIsLoading(true);
 
     try {
-      const res = await fetch(`/${locale}/api/p/users/forgot-password`, {
+      const res = await fetch(`/api/p/users/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contact }),

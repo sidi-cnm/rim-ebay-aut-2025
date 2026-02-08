@@ -174,7 +174,7 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const isActive = (path: string) => pathname === path;
 
   const handleLogout = async () => {
-    const response = await fetch(`/${localeKey}/api/p/users/logout`, { method: "POST" });
+    const response = await fetch(`/api/p/users/logout`, { method: "POST" });
     if (response.ok) {
       router.push(`/${localeKey}`);
       router.refresh();

@@ -57,7 +57,7 @@ export default function RegisterFormEmail({ lang = "ar" , urlboot}: { lang?: str
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`/${lang}/api/p/users/register`, {
+      const response = await axios.post(`/api/p/users/register`, {
         email,
         contact,
         password,

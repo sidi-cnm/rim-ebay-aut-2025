@@ -51,8 +51,8 @@ export default async function AnnonceDetail({
   const categoriesEndpoint = `${baseApiOptions}/options`;
   const subCategoriesEndpoint = `${baseApiOptions}/options`;
 
-  const getAnnonceUrl = `/${locale}/api/my/annonces/${annonceDbId}`;
-  const updateAnnonceEndpoint = `/${locale}/api/my/annonces/${annonceDbId}`;
+  const getAnnonceUrl = `/api/my/annonces/${annonceDbId}`;
+  const updateAnnonceEndpoint = `/api/my/annonces/${annonceDbId}`;
 
   return (
     <div className="p-4 sm:p-6 md:p-9 overflow-hidden">

@@ -21,7 +21,7 @@ export default function PageAnnonceImages({ lang, annonceId }: PageProps) {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await fetch(`/${lang}/api/images/${annonceId}`, { cache: "no-store" });
+        const res = await fetch(`/api/images/${annonceId}`, { cache: "no-store" });
         console.log("Fetch response:", res);
         if (!res.ok) throw new Error("Erreur API");
         const data = await res.json();
@@ -56,7 +56,7 @@ export default function PageAnnonceImages({ lang, annonceId }: PageProps) {
       // mainIndex optionnel — ici on met la 1ère des nouvelles en principale
       fd.append("mainIndex", "0");
 
-      const res = await fetch(`/${lang}/api/images/${annonceId}`, {
+      const res = await fetch(`/api/images/${annonceId}`, {
         method: "POST",
         body: fd,
         // credentials: "include", // si besoin de cookies
@@ -88,7 +88,7 @@ export default function PageAnnonceImages({ lang, annonceId }: PageProps) {
 
     const loadingId = toast.loading("Suppression...");
     try {
-      const res = await fetch(`/${lang}/api/images/${annonceId}?url=${encodeURIComponent(url)}`, {
+      const res = await fetch(`/api/images/${annonceId}?url=${encodeURIComponent(url)}`, {
         method: "DELETE",
         credentials: "include",
       });

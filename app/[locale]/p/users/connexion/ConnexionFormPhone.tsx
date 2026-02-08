@@ -81,7 +81,7 @@ export default function ConnexionFormPhone({ lang = "ar" }) {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`/${lang}/api/p/users/connexion/phone`, {
+      const response = await axios.post(`/api/p/users/connexion/phone`, {
         phone,
         password,
       });

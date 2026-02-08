@@ -55,7 +55,7 @@ export default function RegisterFormPhone({ lang = "ar", urlboot }: { lang?: str
     const email = `tel${contact}@phone.eddeyar.com`;
 
     try {
-      const response = await axios.post(`/${lang}/api/p/users/register/phone`, {
+      const response = await axios.post(`/api/p/users/register/phone`, {
         email,
         contact,
         password,

@@ -34,7 +34,7 @@ export default function VerifyOtpPageUi() {
 
     setIsLoading(true);                     
     try {
-      const res = await axios.post(`/${lang}/api/otp/verify`, {
+      const res = await axios.post(`/api/otp/verify`, {
         userId,
         code: otp,
       });
@@ -58,7 +58,7 @@ export default function VerifyOtpPageUi() {
     setCooldown(60);
 
     try {
-      const res = await axios.post(`/${lang}/api/otp/re-send`, { userId });
+      const res = await axios.post(`/api/otp/re-send`, { userId });
       setMsg("OTP sent!");
     } catch (err: any) {
       setMsg(err.response?.data?.error || "Error sending OTP.");

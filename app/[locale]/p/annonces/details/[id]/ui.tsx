@@ -94,7 +94,7 @@ export default function AnnonceDetailUI({
         if (!localAnnonce?.haveImage) return;
         if (Array.isArray(localAnnonce?.images) && localAnnonce.images.length > 0) return;
 
-        const url = `/${lang}/api/images/${annonceId}`;
+        const url = `/api/images/${annonceId}`;
         const res = await fetch(url, { cache: "no-store" });
         const data: {
           images?: ImgDoc[];

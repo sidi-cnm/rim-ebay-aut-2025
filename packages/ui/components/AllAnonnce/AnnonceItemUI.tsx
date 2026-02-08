@@ -61,7 +61,7 @@ export default function AnnonceItemUI({
     setFavLoading(true);
 
     try {
-      const res = await fetch(`/${lang}/api/my/annonces/${a.id}/favorite`, {
+      const res = await fetch(`/api/my/annonces/${a.id}/favorite`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

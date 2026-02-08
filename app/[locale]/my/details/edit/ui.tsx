@@ -16,7 +16,7 @@ export default function PageAnnonceImages({ lang, annonceId }: PageProps) {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await fetch(`/${lang}/api/images/${annonceId}`, { cache: "no-store" });
+        const res = await fetch(`/api/images/${annonceId}`, { cache: "no-store" });
         if (!res.ok) throw new Error("Erreur API");
         const data = await res.json();
 
