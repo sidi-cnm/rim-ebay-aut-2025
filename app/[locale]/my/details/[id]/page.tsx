@@ -1,10 +1,10 @@
-// app/[locale]/my/details/[id]/page.tsx
 import MyAnnonceDetailsUI from "./ui";
 import BackButton from "../../../../../packages/ui/components/Navigation";
 import { getI18n } from "../../../../../locales/server";
+import { getUserFromCookies } from "../../../../../utiles/getUserFomCookies";
+import { getUserStatus } from "../../../../../lib/services/annoncesService";
 import { getDb } from "../../../../../lib/mongodb";
 import { ObjectId } from "mongodb";
-import { getUserFromCookies } from "../../../../../utiles/getUserFomCookies";
 
 type PageParams = { locale: string; id: string };
 
@@ -26,12 +26,13 @@ export default async function AnnonceDetail({
   const db = await getDb();
 
   let userFromDB
+  let isSamsar = false;
 
   if (user?.id) {
-     userFromDB = await db.collection("users").findOne(
-      { _id: new ObjectId(user.id) }, // filtrer par ObjectId
-      { projection: { samsar: 1 } } // sélectionner uniquement ces champs
-    );
+     const status = await getUserStatus(String(user.id));
+     isSamsar = status.isSamsar;
+     userFromDB = { samsar: isSamsar }; // Adapter pour correspondre à l'usage existant
+  }
 
     console.log("User from DB:", userFromDB);
   let contact = "Contact non trouvé";
@@ -60,7 +61,7 @@ export default async function AnnonceDetail({
 
       <MyAnnonceDetailsUI
         lang={locale}
-        userFromDB={userFromDB?.samsar}
+        userFromDB={isSamsar}
         i18nAnnonce={t("filter.Annonces")}
         i18nContact={t("footer.contact")}
         i18nPrix={t("filter.price")}
@@ -76,4 +77,4 @@ export default async function AnnonceDetail({
       />
     </div>
   );
-}}
+}

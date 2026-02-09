@@ -1,12 +1,10 @@
 
 // app/[locale]/favorites/page.tsx
-import { getDb } from "../../../../lib/mongodb";
+import { getFavoriteAnnonces } from "../../../../lib/services/annoncesService";
 import { getI18n } from "../../../../locales/server";
 import { getUserFromCookies } from "../../../../utiles/getUserFomCookies";
 import ListAnnoncesUI from "../../ui/ListAnnoncesUI";
 import AnnoceTitle from "../../../../packages/ui/components/AnnoceTitle";
-import { Annonce } from "../../../../packages/mytypes/types";
-import { ObjectId } from "mongodb";
 
 type Params = { locale: string };
 type Search = { page?: string };
@@ -42,63 +40,11 @@ export default async function FavoritesPage({
   const itemsPerPage = 6;
   const skip = (currentPage - 1) * itemsPerPage;
 
-  const db = await getDb();
-
-  // 1) Récupérer les favoris de l’utilisateur (ids d’annonces)
-  const favRows = await db
-    .collection("favorites")
-    .find({ userId: String(user.id) }, { projection: { annonceId: 1, _id: 0 } })
-    .toArray();
-
-  const allAnnonceIds = favRows
-    .map((r: any) => r.annonceId)
-    .filter(Boolean) as ObjectId[];
-
-  const totalCount = allAnnonceIds.length;
-  const pageIds = allAnnonceIds.slice(skip, skip + itemsPerPage);
-
-  // 2) Charger les annonces correspondantes
-  const annoncesRows = pageIds.length
-    ? await db
-        .collection("annonces")
-        .find({ _id: { $in: pageIds } })
-        .sort({ updatedAt: -1 })
-        .toArray()
-    : [];
-
-  // 3) Mapper vers ton type `Annonce`
-  const annonces: Annonce[] = annoncesRows.map((a: any) => ({
-    id: String(a._id ?? a.id),
-    typeAnnonceId: a.typeAnnonceId,
-    typeAnnonceid: a.typeAnnonceId,
-    typeAnnonceName: a.type_annonce?.name ?? "",
-    typeAnnonceNameAr: a.type_annonce?.nameAr ?? "",
-    categorieId: a.categorieId,
-    categorieid: a.categorieId,
-    categorieName: a.categorie?.name ?? "",
-    categorieNameAr: a.categorie?.nameAr ?? "",
-    classificationAr: a.classificationAr ?? "",
-    classificationFr: a.classificationFr ?? "",
-    lieuId: a.lieuId,
-    lieuid: a.lieuId,
-    lieuStr: a.lieuStr ?? "",
-    lieuStrAr: a.lieuStrAr ?? "",
-    userId: a.userId,
-    userid: a.userId,
-    title: a.title,
-    description: a.description,
-    price: a.price != null ? Number(a.price) : undefined,
-    contact: a.contact,
-    haveImage: !!a.haveImage,
-    firstImagePath: a.firstImagePath ? String(a.firstImagePath) : "",
-    images: a.annonceImages ?? [],
-    status: a.status,
-    isFavorite: true, // ✅ forcément favori ici
-    updatedAt: a.updatedAt ? new Date(a.updatedAt) : undefined,
-    createdAt: a.createdAt ? new Date(a.createdAt) : undefined,
-  }));
-
-  const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
+  // 1) Récupérer les favoris via le service
+  const { annonces, totalPages, totalCount } = await getFavoriteAnnonces(
+    sp,
+    String(user.id)
+  );
 
   return (
     <main className="min-h-screen bg-gray-100">

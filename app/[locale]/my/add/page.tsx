@@ -32,8 +32,7 @@
 // app/[locale]/my/add/page.tsx
 import AddAnnonceWizard from "./AddAnnonceWizard";
 import { getUserFromCookies } from "../../../../utiles/getUserFomCookies";
-import { getDb } from "../../../../lib/mongodb";
-import { ObjectId } from "mongodb";
+import { getUserStatus } from "../../../../lib/services/annoncesService";
 
 
 
@@ -59,16 +58,10 @@ export default async function AddAnnonce(props: {
   let isSamsar;
 
   const user = await getUserFromCookies();
-  const db = await getDb();
-
+  
   if(user){
-    // console.log("user from cookie:", user.id);
-    const userIndb= await db.collection("users").findOne({_id: new ObjectId(user.id)});
-    // console.log("userIndb check:", userIndb);
-    if(userIndb){
-      // console.log("userIndb:", userIndb);
-      isSamsar = userIndb.samsar;
-    }
+    const status = await getUserStatus(String(user.id));
+    isSamsar = status.isSamsar;
   }
 
 

@@ -1,25 +1,16 @@
-// app/[locale]/my/list/page.tsx
 import { MyListAnnoncesUI } from "./ui";
 import { FormSearchUI } from "../../../../packages/ui/components/FormSearch/FormSearchUI";
-import { Annonce } from "../../../../packages/mytypes/types";
+import { getUserAnnonces, UserAnnoncesSearch } from "../../../../lib/services/annoncesService";
 import { getUserFromCookies } from "../../../../utiles/getUserFomCookies";
-import { getDb } from "../../../../lib/mongodb";
 
-type PageParams = { locale: string };
-type SP = {
-  page?: string;
-  typeAnnonceId?: string;
-  categorieId?: string;
-  subCategorieId?: string;
-  price?: string;
-};
+type Params = { locale: string };
 
 export default async function Home({
   params,
   searchParams,
 }: {
-  params: Promise<PageParams>;                // <-- Promises
-  searchParams?: Promise<SP>;
+  params: Promise<Params>;
+  searchParams?: Promise<UserAnnoncesSearch>;
 }) {
   const { locale } = await params;           // <-- await
   const sp = (await searchParams) ?? {};
@@ -29,64 +20,19 @@ export default async function Home({
   const userId = userData?.id ?? "";
 
   // 2) Filtres/pagination
-  const currentPage = Number(sp.page) || 1;
-  const typeAnnonceId = sp.typeAnnonceId;
-  const categorieId = sp.categorieId;
-  const subCategorieId = sp.subCategorieId;  // DB: subcategorieId
-  const price = sp.price;
+  // 2) Filtres/pagination
+  const spUser: UserAnnoncesSearch = {
+    page: sp.page,
+    typeAnnonceId: sp.typeAnnonceId,
+    categorieId: sp.categorieId,
+    subCategorieId: sp.subCategorieId,
+    price: sp.price
+  };
 
-  // 3) Query Mongo
-  const query: Record<string, any> = { status: "active" };
-  if (userId) query.userId = userId;
-  if (typeAnnonceId) query.typeAnnonceId = typeAnnonceId;
-  if (categorieId) query.categorieId = categorieId;
-  if (subCategorieId) query.subcategorieId = subCategorieId;
-  if (price && !isNaN(Number(price))) query.price = Number(price);
-
-  // 4) Mongo + pagination
-  const db = await getDb();
-  const coll = db.collection("annonces");
-  const itemsPerPage = 6;
-  const skip = (currentPage - 1) * itemsPerPage;
-
-  const [rows, totalCount] = await Promise.all([
-    coll.find(query).sort({ updatedAt: -1 }).skip(skip).limit(itemsPerPage).toArray(),
-    coll.countDocuments(query),
-  ]);
-
-  // 5) Mapping
-  const annonces: Annonce[] = rows.map((a: any) => ({
-    id: String(a._id ?? a.id),
-    typeAnnonceId: a.typeAnnonceId,
-    typeAnnonceid: a.typeAnnonceId,
-    typeAnnonceName: a.type_annonce?.name ?? "",
-    typeAnnonceNameAr: a.type_annonce?.nameAr ?? "",
-    categorieId: a.categorieId,
-    categorieid: a.categorieId,
-    categorieName: a.categorie?.name ?? "",
-    categorieNameAr: a.categorie?.nameAr ?? "",
-    lieuId: a.lieuId,
-    lieuid: a.lieuId,
-    lieuStr: a.lieuStr ?? "",
-    lieuStrAr: a.lieuStrAr ?? "",
-    userId: a.userId,
-    userid: a.userId,
-    classificationFr: a.classificationFr ?? "",
-    classificationAr: a.classificationAr ?? "",
-    title: a.title,
-    description: a.description,
-    price: a.price != null ? Number(a.price) : undefined,
-    contact: a.contact,
-    privateDescription: a.privateDescription,
-    haveImage: !!a.haveImage,
-    firstImagePath: a.firstImagePath ? String(a.firstImagePath) : undefined,
-    images: a.annonceImages ?? [],
-    status: a.status,
-    updatedAt: a.updatedAt ? new Date(a.updatedAt) : undefined,
-    createdAt: a.createdAt ? new Date(a.createdAt) : undefined,
-  }));
-
-  const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
+  const { annonces, totalPages, currentPage } = await getUserAnnonces(
+    spUser,
+    userId
+  );
   let apiBase = process.env.NEXT_PUBLIC_OPTIONS_API_MODE
   const lieuxEndpoint = `/${locale}/p/api/tursor/lieux`;
 
