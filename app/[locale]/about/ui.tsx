@@ -21,7 +21,7 @@ export default function AboutPage({ locale }: { locale: string }) {
           ainsi que de <span className="font-semibold text-blue-700">voitures</span> 🚗 en
           Mauritanie.  
           Notre mission est de simplifier vos recherches en vous connectant rapidement aux
-          meilleures offres près de chez vous. 🌍
+          meilleures offres près de chez vous. test en dehors de eddeyar 🌍
         </>
       ),
       contact: "Contactez-nous",
