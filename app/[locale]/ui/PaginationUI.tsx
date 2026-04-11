@@ -27,7 +27,7 @@ export default function PaginationUI(props: {
         disabled={props.currentPage === 1}
         className="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded disabled:opacity-50"
       >
-        {t("pagination.prev")}
+        {t("pagination.prev") test}
       </button>
       <button
         onClick={handleClickToNextPage}
