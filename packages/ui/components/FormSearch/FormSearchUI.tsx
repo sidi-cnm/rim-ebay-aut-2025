@@ -24,7 +24,7 @@ interface Filters {
 
 interface InputProps {
   lang: string;
-  typeAnnoncesEndpoint: string;
+  typeAnnoncesEndpoint?: string;
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
   // 👇 nouveaux

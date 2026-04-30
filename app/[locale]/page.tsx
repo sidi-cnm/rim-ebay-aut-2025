@@ -1,6 +1,7 @@
 // app/[locale]/page.tsx
 import ListAnnoncesUI from "./ui/ListAnnoncesUI";
 import { FormSearchUI } from "../../packages/ui/components/FormSearch/FormSearchUI";
+import CategoryTypesUI from "./ui/CategoryTypesUI";
 import { getI18n } from "../../locales/server";
 import { Annonce } from "../../packages/mytypes/types";
 import { getAnnonces, Search } from "../../lib/services/annoncesService";
@@ -43,7 +44,7 @@ export default async function Home({
     <main className="min-h-screen bg-gray-100">
       
       {/* Search Header Section */}
-      <div className="hidden md:block bg-gray-100 px-4">
+      {/* <div className="hidden md:block bg-gray-100 px-4">
         <div className="max-w-screen-2xl mx-auto flex flex-col items-center text-center space-y-4">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
              {t("filter.title")}
@@ -55,11 +56,11 @@ export default async function Home({
              />
           </div>
         </div>
-      </div>
+      </div> */}
 
 
       {/* Mobile */}
-      <div className="block md:hidden w-full px-2">
+      {/* <div className="block md:hidden w-full px-2">
         <FormSearchUI
           lang={locale}
           typeAnnoncesEndpoint={optionsEndpoint}
@@ -76,12 +77,17 @@ export default async function Home({
           searchButtonLabel={t("filter.search")}
           mobile
         />
+      </div> */}
+
+      {/* Category Grid UI */}
+      <div className="w-full max-w-screen-2xl mx-auto ">
+        <CategoryTypesUI locale={locale} />
       </div>
 
       {/* Desktop + Mobile wrapper */}
       <div className="flex flex-col md:flex-row items-center md:items-start min-h-screen max-w-screen-2xl mx-auto gap-6 px-2 md:px-4 py-4 md:py-8">
         {/* Sidebar Desktop */}
-        <aside className="hidden md:block w-80 xl:w-96 flex-shrink-0 self-start">
+        {/* <aside className="hidden md:block w-80 xl:w-96 flex-shrink-0 self-start">
           <div className="sticky top-6 h-[calc(100vh-3rem)]">
             <div>
               <FormSearchUI
@@ -101,7 +107,7 @@ export default async function Home({
               />
             </div>
           </div>
-        </aside>
+        </aside> */}
 
         {/* Section annonces */}
         <section className="w-full max-w-[720px] md:max-w-none md:flex-1 mx-auto bg-white rounded-2xl shadow-lg p-4 md:p-8 min-w-0">

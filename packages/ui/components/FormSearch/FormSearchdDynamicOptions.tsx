@@ -16,7 +16,7 @@ interface Filters {
 interface FormSearchProps {
   lang?: string;
   onSubmit: (filters: Filters) => void;
-  typeAnnoncesEndpoint: string;
+  typeAnnoncesEndpoint?: string;
   categoriesEndpoint: string;
   subCategoriesEndpoint: string;
 
@@ -45,7 +45,7 @@ interface FormSearchProps {
 export default function FormSearch({
   lang = "ar",
   onSubmit,
-  typeAnnoncesEndpoint,
+  typeAnnoncesEndpoint = "",
   categoriesEndpoint,
   subCategoriesEndpoint,
   lieuxEndpoint,
@@ -82,6 +82,10 @@ export default function FormSearch({
 
   // types
   useEffect(() => {
+    if (!typeAnnoncesEndpoint) {
+      setTypeAnnonces([]);
+      return;
+    }
     fetch(typeAnnoncesEndpoint)
       .then((res) => res.json())
       .then((data) => setTypeAnnonces(data))
