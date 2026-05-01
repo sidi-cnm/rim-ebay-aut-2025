@@ -79,18 +79,18 @@ export default function ListAnnoncesUI({
       {/* En-tête: Titre */}
       <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
         
-        <button
+        {/* <button
           onClick={() => router.push(`/${lang}/`)} // Retour à la page principale
           className="text-base md:text-lg font-semibold text-blue-600 hover:underline"
         >
           {title} 
-        </button>
+        </button> */}
         {/* Filtres affichés seulement sur la page principale */}
         {isMainPage && (
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             
             {/* MainChoice Toggle */}
-            <div className="inline-flex p-1 bg-gray-100 rounded-2xl shadow-inner w-full sm:w-auto">
+            {/* <div className="inline-flex p-1 bg-gray-100 rounded-2xl shadow-inner w-full sm:w-auto">
               {["Location", "Vente"].map((type) => {
                 const isActive = mainChoice === type;
                 return (
@@ -112,7 +112,7 @@ export default function ListAnnoncesUI({
                   </button>
                 );
               })}
-            </div>
+            </div> */}
 
             {/* SubChoice (si mainChoice) */}
             {mainChoice && (
