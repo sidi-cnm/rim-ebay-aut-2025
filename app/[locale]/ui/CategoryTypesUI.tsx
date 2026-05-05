@@ -13,6 +13,7 @@ import {
   faChevronUp,
   faTimes,
   faCheck,
+  faBriefcase,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useCallback, useRef } from "react";
 
@@ -112,9 +113,10 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
   // ── Categories ────────────────────────────────────────────────────────────
   const categories = [
     { id: "all", labelfr: "Accueil", labelar: "الرئيسية", icon: faHome, color: "text-blue-600" },
-    { id: "7", labelfr: "Voiture", labelar: "السيارات", icon: faCar, color: "text-blue-500" },
-    { id: "6", labelfr: "Immobilier", labelar: "العقارات", icon: faBuilding, color: "text-blue-800" },
+    { id: "6", labelfr: "Immobilier", labelar: "العقارات", icon: faBuilding, color: "text-gray-700" },
+    { id: "7", labelfr: "Voiture", labelar: "السيارات", icon: faCar, color: "text-gray-700" },
     { id: "5", labelfr: "Appareils", labelar: "الأجهزة", icon: faDesktop, color: "text-gray-700" },
+    { id: "3", labelfr: "Services", labelar: "خدمات", icon: faBriefcase, color: "text-gray-700" , typeAnnonceId: true },
   ];
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -165,7 +167,7 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
 
   const typeLabel = selectedType
     ? isRTL ? selectedType.nameAr : selectedType.name
-    : isRTL ? "بيع أو كراء" : "Vente ou location";
+    : isRTL ? "أنواع الاعلانات" : "Type d'annonces";
 
   // ── Shared dropdown item styles ───────────────────────────────────────────
   const dropdownItem = (active: boolean) =>
@@ -183,7 +185,7 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
           return (
             <button
               key={cat.id}
-              onClick={() => handleCategorySelect(cat.id)}
+              onClick={ cat.typeAnnonceId ?  () => handleTypeSelect(cat.id) : () => handleCategorySelect(cat.id)}
               className="flex flex-col items-center justify-center gap-2 group focus:outline-none"
             >
               <div
@@ -329,6 +331,10 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
 
                   {annonceTypes.map((at) => {
                     const active = String(at.id) === currentTypeAnnonceId;
+                    // if at.id is 3 then don't show it in the dropdown services in category types
+                    if (at.id === 3) {
+                      return null;
+                    }
                     return (
                       <button
                         key={at.id}
