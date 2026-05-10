@@ -14,6 +14,8 @@ import {
   faTimes,
   faCheck,
   faBriefcase,
+  faHandshake,
+  faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useCallback, useRef } from "react";
 
@@ -24,7 +26,7 @@ interface Lieu {
   nameAr: string;
 }
 
-interface AnnonceType {
+interface OptionItem {
   id: number | string;
   name: string;
   nameAr: string;
@@ -39,10 +41,9 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
 
   const isRTL = locale === "ar";
 
-  // ── URL param values ──────────────────────────────────────────────────────
-  const currentCategorieId = searchParams?.get("categorieId") || "all";
-  const currentWilayaId = searchParams?.get("wilayaId") || "";
   const currentTypeAnnonceId = searchParams?.get("typeAnnonceId") || "";
+  const currentCategorieId = searchParams?.get("categorieId") || "";
+  const currentWilayaId = searchParams?.get("wilayaId") || "";
 
   // ── Dropdown open state ───────────────────────────────────────────────────
   const [regionOpen, setRegionOpen] = useState(false);
@@ -67,7 +68,7 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
 
   // ── Data fetched from tursor ───────────────────────────────────────────────
   const [wilayas, setWilayas] = useState<Lieu[]>([]);
-  const [annonceTypes, setAnnonceTypes] = useState<AnnonceType[]>([]);
+  const [categorieOptions, setCategorieOptions] = useState<OptionItem[]>([]);
   const [loadingWilayas, setLoadingWilayas] = useState(false);
   const [loadingTypes, setLoadingTypes] = useState(false);
 
@@ -86,37 +87,37 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
     }
   }, [locale, wilayas.length]);
 
-  // Fetch annonce types from /{locale}/p/api/tursor/options (depth=1)
-  const fetchAnnonceTypes = useCallback(async () => {
-    if (annonceTypes.length > 0) return;
+  const fetchCategorieOptions = useCallback(async (parentId: string) => {
     setLoadingTypes(true);
     try {
-      const res = await fetch(`/${locale}/p/api/tursor/options`);
+      const res = await fetch(`/${locale}/p/api/tursor/options?parentId=${parentId}`);
       const json = await res.json();
-      setAnnonceTypes(Array.isArray(json) ? json : []);
+      setCategorieOptions(Array.isArray(json) ? json : []);
     } catch (err) {
-      console.error("Error fetching annonceTypes:", err);
+      console.error("Error fetching categorieOptions:", err);
     } finally {
       setLoadingTypes(false);
     }
-  }, [locale, annonceTypes.length]);
+  }, [locale]);
 
-  // Lazy-load on dropdown open
   useEffect(() => {
     if (regionOpen) fetchWilayas();
   }, [regionOpen, fetchWilayas]);
 
   useEffect(() => {
-    if (typeOpen) fetchAnnonceTypes();
-  }, [typeOpen, fetchAnnonceTypes]);
+    if (currentTypeAnnonceId && typeOpen) {
+      fetchCategorieOptions(currentTypeAnnonceId);
+    }
+  }, [currentTypeAnnonceId, typeOpen, fetchCategorieOptions]);
 
-  // ── Categories ────────────────────────────────────────────────────────────
   const categories = [
     { id: "all", labelfr: "Accueil", labelar: "الرئيسية", icon: faHome, color: "text-gray-700" },
-    { id: "6", labelfr: "Immobilier", labelar: "العقارات", icon: faBuilding, color: "text-gray-700" },
-    { id: "10", labelfr: "Voiture", labelar: "السيارات", icon: faCar, color: "text-gray-700" },
-    { id: "5", labelfr: "Appareils", labelar: "الأجهزة", icon: faDesktop, color: "text-gray-700" },
-    { id: "3", labelfr: "Services", labelar: "خدمات", icon: faBriefcase, color: "text-gray-700" , typeAnnonceId: true },
+    { id: "1", labelfr: "Maison", labelar: "عقارات", icon: faBuilding, color: "text-gray-700" },
+    { id: "2", labelfr: "Voiture", labelar: "سيارات", icon: faCar, color: "text-gray-700" },
+    { id: "3", labelfr: "Électronique", labelar: "إلكترونيات", icon: faDesktop, color: "text-gray-700" },
+    { id: "4", labelfr: "Services", labelar: "خدمات", icon: faBriefcase, color: "text-gray-700" },
+    { id: "5", labelfr: "Demande", labelar: "طلب", icon: faHandshake, color: "text-gray-700" },
+    { id: "6", labelfr: "Autre", labelar: "أخرى", icon: faEllipsisH, color: "text-gray-700" },
   ];
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -134,11 +135,11 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
     router.refresh();
   };
 
-  const handleCategorySelect = (id: string) => {
+  const handleTypeSelect = (id: string) => {
     if (id === "all") {
-      pushParams({ categorieId: null, typeAnnonceId: null, wilayaId: null });
+      pushParams({ typeAnnonceId: null, categorieId: null, wilayaId: null });
     } else {
-      pushParams({ categorieId: id });
+      pushParams({ typeAnnonceId: id, categorieId: null });
     }
   };
 
@@ -152,33 +153,29 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
     pushParams({ wilayaId: null });
   };
 
-  const handleTypeSelect = (id: string | number) => {
-    pushParams({ typeAnnonceId: String(id) });
-    setTypeOpen(false);
-  };
-
-  const handleCategoryTypeSelect = (id: string) => {
-    pushParams({ typeAnnonceId: String(id), categorieId: null });
+  const handleCategorieSelect = (id: string | number) => {
+    pushParams({ categorieId: String(id) });
     setTypeOpen(false);
   };
 
   const handleClearType = (e: React.MouseEvent) => {
     e.stopPropagation();
-    pushParams({ typeAnnonceId: null });
+    pushParams({ typeAnnonceId: null, categorieId: null });
   };
 
-  // ── Derived labels ────────────────────────────────────────────────────────
   const selectedWilaya = wilayas.find((w) => String(w.id) === currentWilayaId);
-  const selectedType = annonceTypes.find((a) => String(a.id) === currentTypeAnnonceId);
-  const hasSelectedCategory = currentCategorieId !== "all" || !!currentTypeAnnonceId;
+  const selectedCategorie = categorieOptions.find((c) => String(c.id) === currentCategorieId);
+  const hasSelectedCategory = !!currentTypeAnnonceId;
 
   const wilayaLabel = selectedWilaya
     ? isRTL ? selectedWilaya.nameAr : selectedWilaya.name
     : isRTL ? "جميع المناطق" : "Toutes les régions";
 
-  const typeLabel = selectedType
-    ? isRTL ? selectedType.nameAr : selectedType.name
-    : isRTL ? "أنواع الاعلانات" : "Type d'annonces";
+  const categorieLabel = selectedCategorie
+    ? isRTL ? selectedCategorie.nameAr : selectedCategorie.name
+    : isRTL ? "القسم" : "Catégorie";
+
+  const isLeafType = currentTypeAnnonceId === "5" || currentTypeAnnonceId === "6";
 
   // ── Shared dropdown item styles ───────────────────────────────────────────
   const dropdownItem = (active: boolean) =>
@@ -192,15 +189,13 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
       {/* Grid of Categories */}
       <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-10 gap-2 px-4 pt-4 relative">
         {categories.map((cat) => {
-          const isActive = cat.typeAnnonceId
-            ? currentTypeAnnonceId === cat.id
-            : cat.id === "all"
-              ? currentCategorieId === "all" && currentTypeAnnonceId !== '3'
-              : currentCategorieId === cat.id;
+          const isActive = cat.id === "all"
+            ? !currentTypeAnnonceId
+            : currentTypeAnnonceId === cat.id;
           return (
             <button
               key={cat.id}
-              onClick={ cat.typeAnnonceId ? () => handleCategoryTypeSelect(cat.id) : () => handleCategorySelect(cat.id)}
+              onClick={() => handleTypeSelect(cat.id)}
               className="flex flex-col items-center justify-center gap-2 group focus:outline-none"
             >
               <div
@@ -304,18 +299,19 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
           )}
         </div>
 
-        {/* ── Annonce Type Dropdown ────────────────────────────────────────── */}
+        {/* ── Categorie Dropdown ────────────────────────────────────────────── */}
+        {!isLeafType && (
         <div ref={typeRef} className="relative">
           <button
             onClick={() => { setTypeOpen((v) => !v); setRegionOpen(false); }}
             className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl whitespace-nowrap text-sm font-medium transition-all duration-200 select-none ${
-              currentTypeAnnonceId
+              currentCategorieId
                 ? "bg-gradient-to-br from-blue-50 to-blue-100/80 border-blue-200 text-blue-700 shadow-sm"
                 : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm"
             }`}
           >
-            <span>{typeLabel}</span>
-            {currentTypeAnnonceId ? (
+            <span>{categorieLabel}</span>
+            {currentCategorieId ? (
               <span onClick={handleClearType} className="ms-1 cursor-pointer text-blue-400 hover:text-blue-700 transition-colors">
                 <FontAwesomeIcon icon={faTimes} className="text-xs" />
               </span>
@@ -334,34 +330,29 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
                 <div className="flex justify-center py-6">
                   <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                 </div>
-              ) : annonceTypes.length === 0 ? (
+              ) : categorieOptions.length === 0 ? (
                 <p className="text-center text-gray-400 text-sm py-4">
-                  {isRTL ? "لا توجد أنواع" : "Aucun type"}
+                  {isRTL ? "لا توجد أقسام" : "Aucune catégorie"}
                 </p>
               ) : (
                 <>
-                  {/* All types */}
                   <button
-                    onClick={() => { pushParams({ typeAnnonceId: null }); setTypeOpen(false); }}
-                    className={dropdownItem(!currentTypeAnnonceId)}
+                    onClick={() => { pushParams({ categorieId: null }); setTypeOpen(false); }}
+                    className={dropdownItem(!currentCategorieId)}
                   >
                     <span>{isRTL ? "الكل" : "Tout"}</span>
-                    {!currentTypeAnnonceId && <FontAwesomeIcon icon={faCheck} className="text-blue-500 text-xs" />}
+                    {!currentCategorieId && <FontAwesomeIcon icon={faCheck} className="text-blue-500 text-xs" />}
                   </button>
 
-                  {annonceTypes.map((at) => {
-                    const active = String(at.id) === currentTypeAnnonceId;
-                    // if at.id is 3 then don't show it in the dropdown services in category types
-                    if (at.id === 3) {
-                      return null;
-                    }
+                  {categorieOptions.map((opt) => {
+                    const active = String(opt.id) === currentCategorieId;
                     return (
                       <button
-                        key={at.id}
-                        onClick={() => handleTypeSelect(at.id)}
+                        key={opt.id}
+                        onClick={() => handleCategorieSelect(opt.id)}
                         className={dropdownItem(active)}
                       >
-                        <span>{isRTL ? at.nameAr : at.name}</span>
+                        <span>{isRTL ? opt.nameAr : opt.name}</span>
                         {active && <FontAwesomeIcon icon={faCheck} className="text-blue-500 text-xs" />}
                       </button>
                     );
@@ -371,6 +362,7 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
             </div>
           )}
         </div>
+        )}
       </div>
         </>
       )}
