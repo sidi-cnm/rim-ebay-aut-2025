@@ -159,7 +159,7 @@ export default function AnnonceItemUI({
         </button>
         
         {/* Overlay PRICE on Image (Minimalist Trend) */}
-        {a.isPriceHidden === false && (
+        {/* {a.isPriceHidden === false && (
              <div className={`absolute bottom-2 ${lang === "ar" ? "right-2" : "left-2"} z-20`}>
                  <div className="bg-white/95 backdrop-blur px-2.5 py-1 rounded-lg shadow-sm">
                    <div className="flex items-baseline gap-1 text-gray-900">
@@ -168,7 +168,7 @@ export default function AnnonceItemUI({
                    </div>
                  </div>
              </div>
-        )}
+        )} */}
       </div>
 
       {/* Contenu */}

@@ -117,7 +117,7 @@ export default function CategoryTypesUI({ locale }: { locale: string }) {
     { id: "3", labelfr: "Électronique", labelar: "إلكترونيات", icon: faDesktop, color: "text-gray-700" },
     { id: "4", labelfr: "Services", labelar: "خدمات", icon: faBriefcase, color: "text-gray-700" },
     { id: "5", labelfr: "Demande", labelar: "طلب", icon: faHandshake, color: "text-gray-700" },
-    { id: "6", labelfr: "Autre", labelar: "أخرى", icon: faEllipsisH, color: "text-gray-700" },
+    //{ id: "6", labelfr: "Autre", labelar: "أخرى", icon: faEllipsisH, color: "text-gray-700" },
   ];
 
   // ── Helpers ───────────────────────────────────────────────────────────────

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { FaWhatsapp } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useI18n } from "../../../locales/client";
@@ -51,6 +50,29 @@ const NavLink = ({
   </Link>
 );
 
+/* ---------- Flag SVG icons ---------- */
+function FlagIcon({ country, className }: { country: "mr" | "fr"; className?: string }) {
+  if (country === "mr") {
+    return (
+      <svg className={className} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="3" height="2" fill="#0DBF6E" />
+        <rect width="3" height="0.25" fill="#E85D3A" />
+        <rect width="3" y="1.75" height="0.25" fill="#E85D3A" />
+        <circle cx="1.4" cy="1" r=".5" fill="#FFD700" />
+        <circle cx="1.6" cy="1" r=".4" fill="#0DBF6E" />
+        <polygon points="1.5,.7 1.58,.88 1.78,.88 1.62,1.02 1.68,1.22 1.5,1.1 1.32,1.22 1.38,1.02 1.22,.88 1.42,.88" fill="#FFD700" />
+      </svg>
+    );
+  }
+  return (
+    <svg className={className} viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1" height="2" fill="#002395" />
+      <rect x="1" width="1" height="2" fill="#FFFFFF" />
+      <rect x="2" width="1" height="2" fill="#ED2939" />
+    </svg>
+  );
+}
+
 /* ---------- Sélecteur de langue (drapeaux) ---------- */
 /* ---------- Sélecteur de langue (dropdown) ---------- */
 function LanguageSelectFlags({
@@ -65,10 +87,10 @@ function LanguageSelectFlags({
   const [isOpen, setIsOpen] = useState(false);
 
   // Mapping des langues
-  const languages = [
-    { code: "ar", label: "AR", emoji: "🇲🇷", title: "العربية — موريتانيا" },
-    { code: "fr", label: "FR", emoji: "🇫🇷", title: "Français — France" },
-  ] as const;
+  const languages: { code: "fr" | "ar"; label: string; flag: "mr" | "fr"; title: string }[] = [
+    { code: "ar", label: "AR", flag: "mr", title: "العربية — موريتانيا" },
+    { code: "fr", label: "FR", flag: "fr", title: "Français — France" },
+  ];
 
   const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
 
@@ -84,10 +106,10 @@ function LanguageSelectFlags({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition text-gray-700 font-medium text-sm shadow-sm`}
+          className={`flex items-center gap-2 px-3 h-10 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 transition text-white font-medium text-sm`}
         >
           <span>{activeLang.label}</span>
-          <span className="text-lg leading-none">{activeLang.emoji}</span>
+          <FlagIcon country={activeLang.flag} className="w-5 h-5 rounded-sm" />
           <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
         </button>
 
@@ -112,7 +134,7 @@ function LanguageSelectFlags({
                     >
                       <div className="flex items-center gap-3">
                         <span className="font-bold">{lang.label}</span>
-                        <span className="text-xl leading-none">{lang.emoji}</span>
+                        <FlagIcon country={lang.flag} className="w-6 h-6 rounded-sm" />
                       </div>
                       {isActive && <Check className="h-4 w-4" />}
                     </button>
@@ -137,11 +159,11 @@ function LanguageSelectFlags({
             type="button"
             title={lang.title}
             onClick={() => onChange(lang.code)}
-            className={`relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-white text-lg leading-none shadow-sm ring-1 ring-gray-200 transition hover:ring-gray-300 ${
+            className={`relative inline-flex items-center justify-center h-10 w-10 rounded-full bg-white shadow-sm ring-1 ring-gray-200 transition hover:ring-gray-300 ${
                isActive ? "ring-2 ring-blue-500" : "opacity-70 grayscale hover:grayscale-0 hover:opacity-100"
             }`}
           >
-            <span aria-hidden>{lang.emoji}</span>
+            <FlagIcon country={lang.flag} className="w-7 h-7 rounded-sm" />
             {isActive && (
               <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-blue-500 grid place-items-center ring-2 ring-white">
                 <Check className="h-2.5 w-2.5 text-white" strokeWidth={4} />
@@ -180,8 +202,6 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
       router.refresh();
     }
   };
-
-  const whatsapp = localeKey == "ar" ? "واتساب" : "WhatsApp";
 
   return (
     <>
@@ -238,17 +258,6 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
 
           {/* Bloc opposé : actions (logout + langue) */}
           <div className={`flex items-center gap-4 ${isAr ? "order-1" : "order-2"}`}>
-            <Link
-              href="https://wa.me/22241862698"
-              target="_blank"
-              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5"
-            >
-              <FaWhatsapp className="h-5 w-5" />
-              {whatsapp}
-            </Link>
-            
-            <div className="h-6 w-px bg-gray-200"></div>
-
             <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
             
             {/* Desktop Logout */}
@@ -280,14 +289,6 @@ export const NavAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             </Link>
 
             <div className="flex items-center gap-3">
-                 <Link
-                  href="https://wa.me/22241862698"
-                  target="_blank"
-                  className="flex items-center justify-center w-10 h-10 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-md transition-colors"
-                >
-                  <FaWhatsapp className="h-5 w-5" />
-                </Link>
-
                  <button
                   onClick={handleLogout}
                   className="flex items-center justify-center w-10 h-10 bg-white/20 text-white hover:bg-white/30 rounded-full transition-colors"
@@ -319,8 +320,6 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
   const t = useI18n();
   const switchLocale = useLocaleSwitch();
 
-  const whatsapp = localeKey == "ar" ? "واتساب" : "WhatsApp";
-
   return (
     <>
     <nav className="sticky top-0 z-50 w-full bg-[#2563eb] backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
@@ -343,14 +342,6 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
             </Link>
 
             <div className="flex items-center gap-3">
-                 <Link
-                  href="https://wa.me/22241862698"
-                  target="_blank"
-                  className="flex items-center justify-center w-10 h-10 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-md transition-colors"
-                >
-                  <FaWhatsapp className="h-5 w-5" />
-                </Link>
-
                  <LanguageSelectFlags currentLocale={localeKey} onChange={switchLocale} compact />
             </div>
          </div>
@@ -379,17 +370,6 @@ export const NavNonAuthUI = ({ lang = "ar" }: { lang?: string }) => {
                <Link href={`/${localeKey}`} className="hover:text-white px-3 py-2 transition-colors">{t("nav.home")}</Link>
                <Link href={`/${localeKey}/about`} className="hover:text-white px-3 py-2 transition-colors">{t("nav.about") ?? "À propos"}</Link>
              </div>
-
-            <Link
-              href="https://wa.me/22241862698"
-              target="_blank"
-              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5"
-            >
-              <FaWhatsapp className="h-5 w-5" />
-              {whatsapp}
-            </Link>
-
-            <div className="h-6 w-px bg-gray-200"></div>
 
             <Link
               id="connexion"
